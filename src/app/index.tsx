@@ -1,98 +1,261 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  View,
+  Text,
+  Pressable,
+  TextInput,
+} from "react-native";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import { useState } from "react";
+import LocationInput from "../components/LocationInput";
+import { getForecasts } from "../services/forecastService";
+import {
+  getForecastsByCity,
+} from "../services/forecastService";
 
 export default function HomeScreen() {
+  const [orariAperti, setOrariAperti] = useState<string[]>([]);
+  const toggleOrario = (ora: string) => {
+  if (orariAperti.includes(ora)) {
+    setOrariAperti(
+      orariAperti.filter((o) => o !== ora)
+    );
+  } else {
+    setOrariAperti([...orariAperti, ora]);
+  }
+};
+  const [localita, setLocalita] = useState("Milano");
+  const [risoluzione, setRisoluzione] = useState("oraria");
+  const [giorno, setGiorno] = useState("Oggi");
+  const giorni = [
+  "Oggi",
+  "Domani",
+  "+2",
+  "+3",
+  "+4",
+  "+5",
+  "+6",
+]
+
+const confrontoCorrente =
+  getForecasts(giorno);
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <View
+      style={{
+        flex: 1,
+        padding: 20,
+        backgroundColor: "#f1f5f9",
+      }}
+    >
+    <LocationInput
+    localita={localita}
+    setLocalita={setLocalita}
+    />
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+    <View
+  style={{
+    flexDirection: "row",
+    marginBottom: 20,
+    gap: 10,
+  }}
+>
+  <Pressable
+    onPress={() => setRisoluzione("oraria")}
+    style={{
+      backgroundColor:
+        risoluzione === "oraria"
+          ? "#2563eb"
+          : "#e5e7eb",
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 10,
+    }}
+  >
+    <Text
+      style={{
+        color:
+          risoluzione === "oraria"
+            ? "white"
+            : "black",
+      }}
+    >
+      Oraria
+    </Text>
+  </Pressable>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+  <Pressable
+    onPress={() => setRisoluzione("trioraria")}
+    style={{
+      backgroundColor:
+        risoluzione === "trioraria"
+          ? "#2563eb"
+          : "#e5e7eb",
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 10,
+    }}
+  >
+    <Text
+      style={{
+        color:
+          risoluzione === "trioraria"
+            ? "white"
+            : "black",
+      }}
+    >
+      Trioraria
+    </Text>
+  </Pressable>
+</View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+<View
+  style={{
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 20,
+  }}
+>
+  {giorni.map((g) => (
+    <Pressable
+      key={g}
+      onPress={() => setGiorno(g)}
+      style={{
+        backgroundColor:
+          giorno === g ? "#2563eb" : "#e5e7eb",
+        paddingVertical: 8,
+        paddingHorizontal: 14,
+        borderRadius: 10,
+      }}
+    >
+      <Text
+        style={{
+          color: giorno === g ? "white" : "black",
+        }}
+      >
+        {g}
+      </Text>
+    </Pressable>
+  ))}
+</View>
+
+
+      <Text
+        style={{
+          fontSize: 24,
+          fontWeight: "bold",
+          marginBottom: 20,
+        }}
+      >
+       📍 {localita}
+      </Text>
+
+<View
+  style={{
+    backgroundColor: "white",
+    padding: 15,
+    borderRadius: 15,
+  }}
+>
+  <Text
+    style={{
+      fontSize: 18,
+      fontWeight: "bold",
+      marginBottom: 15,
+    }}
+  >
+    Confronto previsioni
+  </Text>
+
+  {confrontoCorrente.map((item) => (
+    <View
+      key={item.ora}
+      style={{
+        marginBottom: 15,
+      }}
+    >
+      <Pressable
+        onPress={() => {
+  if (
+    item.ilMeteo.probabilita > 0 ||
+    item.ilMeteo.accumulo > 0 ||
+    (item.treBMeteo?.probabilita ?? 0) > 0 ||
+    (item.treBMeteo?.accumulo ?? 0) > 0
+  ) {
+    toggleOrario(item.ora);
+  }
+}}
+      >
+        <Text>
+          {item.ora} {item.icona}{" "}
+          {item.ilMeteo.temperatura}°C /
+          {item.treBMeteo?.temperatura}°C{" "}
+          {item.ilMeteo.probabilita > 0 ||
+ item.ilMeteo.accumulo > 0 ||
+ (item.treBMeteo?.probabilita ?? 0) > 0 ||
+ (item.treBMeteo?.accumulo ?? 0) > 0
+  ? (orariAperti.includes(item.ora)
+      ? "▲"
+      : "▼")
+  : ""}{" "}
+          {item.alert ? "⚠️" : ""}
+        </Text>
+      </Pressable>
+
+      {orariAperti.includes(item.ora) && (
+        <View
+          style={{
+            marginTop: 10,
+            padding: 10,
+            backgroundColor: "#f8fafc",
+            borderRadius: 10,
+          }}
+        >
+         <View
+  style={{
+    flexDirection: "row",
+    justifyContent: "space-around",
+  }}
+>
+  <View
+    style={{
+      alignItems: "center",
+    }}
+  >
+    <Text>iLM</Text>
+    <Text>
+      {item.ilMeteo.probabilita}%
+    </Text>
+
+    <Text>
+      {item.ilMeteo.accumulo} mm
+    </Text>
+  </View>
+
+  <View
+    style={{
+      alignItems: "center",
+    }}
+  >
+    <Text>3BM</Text>
+
+    <Text>
+      {item.treBMeteo?.probabilita}%
+    </Text>
+
+    <Text>
+      {item.treBMeteo?.accumulo} mm
+    </Text>
+  </View>
+</View>
+        </View>
+      )}
+    </View>
+  ))}
+</View>
+
+
+    </View>
+
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
-});

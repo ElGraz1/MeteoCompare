@@ -1,0 +1,136 @@
+export const ilMeteoOggi = [
+  {
+    ora: "15:00",
+    icona: "🌧️",
+    temperatura: 24,
+    probabilita: 70,
+    accumulo: 2.5,
+    alert: true,
+  },
+  {
+    ora: "18:00",
+    icona: "🌧️",
+    temperatura: 22,
+    probabilita: 80,
+    accumulo: 6,
+    alert: true,
+  },
+  {
+  ora: "21:00",
+  icona: "⛅",
+  temperatura: 0,
+  probabilita: 0,
+  accumulo: 0,
+  alert: false,
+},
+]
+
+export const treBMeteoOggi = [
+  {
+    ora: "15:00",
+    icona: "🌧️",
+    temperatura: 23,
+    probabilita: 80,
+    accumulo: 4.2,
+    alert: true,
+  },
+  {
+    ora: "18:00",
+    icona: "🌧️",
+    temperatura: 21,
+    probabilita: 95,
+    accumulo: 8.5,
+    alert: true,
+  },
+  {
+    ora: "21:00",
+    icona: "⛅",
+    temperatura: 19,
+    probabilita: 0,
+    accumulo: 0,
+    alert: false,
+  },
+];
+
+export const ilMeteoDomani = [
+  {
+    ora: "15:00",
+    icona: "🌦️",
+    temperatura: 21,
+    probabilita: 40,
+    accumulo: 1.5,
+    alert: false,
+  },
+  {
+    ora: "18:00",
+    icona: "🌦️",
+    temperatura: 20,
+    probabilita: 50,
+    accumulo: 2,
+    alert: false,
+  },
+];
+
+export const treBMeteoDomani = [
+  {
+    ora: "15:00",
+    icona: "🌦️",
+    temperatura: 22,
+    probabilita: 30,
+    accumulo: 0.5,
+    alert: false,
+  },
+  {
+    ora: "18:00",
+    icona: "🌦️",
+    temperatura: 19,
+    probabilita: 60,
+    accumulo: 3,
+    alert: false,
+  },
+];
+export const ilMeteoRomaOggi = [
+  {
+    ora: "15:00",
+    icona: "🌧️",
+    temperatura: 28,
+    probabilita: 30,
+    accumulo: 1,
+    alert: false,
+  },
+  {
+    ora: "18:00",
+    icona: "🌦️",
+    temperatura: 26,
+    probabilita: 40,
+    accumulo: 1.5,
+    alert: false,
+  },
+];
+
+export const treBMeteoRomaOggi = [
+  {
+    ora: "15:00",
+    icona: "☀️",
+    temperatura: 29,
+    probabilita: 0,
+    accumulo: 0,
+    alert: false,
+  },
+  {
+    ora: "18:00",
+    icona: "🌦️",
+    temperatura: 26,
+    probabilita: 60,
+    accumulo: 2.5,
+    alert: false,
+  },
+  {
+    ora: "21:00",
+    icona: "🌧️",
+    temperatura: 21,
+    probabilita: 90,
+    accumulo: 8.2,
+    alert: true,
+  },
+];
