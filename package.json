@@ -40,7 +40,8 @@
     "typescript": "~6.0.3"
   },
 "scripts": {
-  "start": "expo start",
+  "start": "tsx server/server.ts",
+  "expo": "expo start",
   "server": "tsx server/server.ts",
   "reset-project": "node ./scripts/reset-project.js",
   "android": "expo start --android",
