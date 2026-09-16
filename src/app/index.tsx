@@ -10,36 +10,15 @@ import LocationInput from "../components/LocationInput";
 import { getForecasts } from "../services/forecastService";
 import {
   getForecastsByCity,
-} from "../services/forecastService";
+} from "../services/apiForecastService";
 import { Image } from "react-native";
 import { weatherIcons } from "../constants/weatherIcons";
 
 import { useEffect } from "react";
-import { testForecast } from "../test/testForecast";
-
-import {
-  testWidgetHtml,
-} from "../services/ilMeteoService";
 
 export default function HomeScreen() {
 
-useEffect(() => {
 
-  fetch(
-    "https://www.ilmeteo.it/meteo/genova"
-  )
-    .then(r => r.text())
-    .then(html => {
-      console.log(
-        "OK",
-        html.length
-      );
-    })
-    .catch(err => {
-      console.error(err);
-    });
-
-}, []);
 
 
   const [orariAperti, setOrariAperti] = useState<string[]>([]);
@@ -55,6 +34,34 @@ useEffect(() => {
   const [localita, setLocalita] = useState("Milano");
   const [risoluzione, setRisoluzione] = useState("oraria");
   const [giorno, setGiorno] = useState("Oggi");
+  const [
+  confrontoCorrente,
+  setConfrontoCorrente,
+] = useState<any[]>([]);
+useEffect(() => {
+
+  getForecastsByCity(localita, giorno)
+    .then((result) => {
+
+      setConfrontoCorrente(
+        result.confronto
+      );
+
+      console.log(
+        "Aggregator OK",
+        result
+      );
+
+    })
+    .catch((error) => {
+
+      console.error(
+        error
+      );
+
+    });
+
+}, [localita, giorno]);
   const giorni = [
   "Oggi",
   "Domani",
@@ -65,8 +72,9 @@ useEffect(() => {
   "+6",
 ]
 
-const confrontoCorrente =
-  getForecasts(giorno);
+// const confrontoCorrente =
+//   getForecasts(giorno);
+
 
   return (
     <View
@@ -80,37 +88,6 @@ const confrontoCorrente =
     localita={localita}
     setLocalita={setLocalita}
     />
-
-
-
-<Pressable
-  onPress={async () => {
-    try {
-      const html =
-        await testWidgetHtml("5913");
-
-      console.log(
-        html.substring(0, 1000)
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  }}
->
-  <Text>
-    Test Widget HTML
-  </Text>
-</Pressable>
-
-
-
-
-
-
-
-
-
-
 
     <View
   style={{

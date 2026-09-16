@@ -53,10 +53,10 @@ export default function LocationInput({
     localitaScelta: CitySuggestion
   ) => {
     setTesto(localitaScelta.nome);
-    localStorage.setItem(
-  "city",
-  JSON.stringify(localitaScelta)
-);
+// localStorage.setItem(
+//   "city",
+//   JSON.stringify(localitaScelta)
+// );
     setLocalita(localitaScelta.nome);
     console.log(localitaScelta)
     setSuggerimenti([]);

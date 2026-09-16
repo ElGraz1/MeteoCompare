@@ -8,6 +8,10 @@ import {
 } from "../data/mockForecasts";
 
 import {
+  getAggregatedForecast,
+} from "./forecastAggregatorService";
+
+import {
   searchCity,
 } from "./ilMeteoService";
 
@@ -22,19 +26,29 @@ export async function getCityId(
 
   return risultati[0].id;
 }
+
 export async function getForecastsByCity(
   city: string,
   giorno: string
 ) {
-  const cityId = await getCityId(city);
+
+  const cityId =
+    await getCityId(city);
 
   console.log(
     "Città selezionata:",
     cityId
   );
 
-  return getForecasts(giorno);
+  const risultato =
+    await getAggregatedForecast(
+      city.toLowerCase()
+    );
+
+  return risultato;
 }
+
+
 export function buildComparison(
   ilMeteo: any[],
   treBMeteo: any[]
