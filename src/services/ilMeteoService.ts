@@ -4,64 +4,28 @@ export type CitySuggestion = {
   provincia: string;
   regione: string;
 };
+import { loadLocations } from "./locationService";
 
-const localitaDisponibili: CitySuggestion[] = [
-  {
-    id: "roma-rm",
-    nome: "Roma",
-    provincia: "RM",
-    regione: "Lazio",
-  },
-  {
-    id: "roma-fiumicino-rm",
-    nome: "Roma Fiumicino",
-    provincia: "RM",
-    regione: "Lazio",
-  },
-  {
-    id: "roma-tiburtina-rm",
-    nome: "Roma Tiburtina",
-    provincia: "RM",
-    regione: "Lazio",
-  },
-  {
-    id: "milano-mi",
-    nome: "Milano",
-    provincia: "MI",
-    regione: "Lombardia",
-  },
-  {
-    id: "milano-linate-mi",
-    nome: "Milano Linate",
-    provincia: "MI",
-    regione: "Lombardia",
-  },
-  {
-    id: "salerno-sa",
-    nome: "Salerno",
-    provincia: "SA",
-    regione: "Campania",
-  },
-  {
-    id: "napoli-na",
-    nome: "Napoli",
-    provincia: "NA",
-    regione: "Campania",
-  },
-];
 
 export async function searchCity(
   testo: string
 ): Promise<CitySuggestion[]> {
-  const ricerca = testo.trim().toLowerCase();
+
+  const ricerca =
+    testo.trim().toLowerCase();
 
   if (ricerca.length < 2) {
     return [];
   }
 
+  const localitaDisponibili =
+    await loadLocations();
+
   return localitaDisponibili
-    .filter((localita) =>
-      localita.nome.toLowerCase().includes(ricerca)
+    .filter((localita: CitySuggestion) =>
+      localita.nome
+        .toLowerCase()
+        .includes(ricerca)
     )
     .slice(0, 5);
 }
@@ -76,4 +40,16 @@ export async function getCityId(
   }
 
   return risultati[0].id;
+}
+
+export async function testWidgetHtml(
+  cityId: string
+) {
+  const response = await fetch(
+    `https://www.ilmeteo.it/box/previsioni.php?citta=${cityId}&type=tri1`
+  );
+
+  const html = await response.text();
+
+  return html;
 }

@@ -11,8 +11,37 @@ import { getForecasts } from "../services/forecastService";
 import {
   getForecastsByCity,
 } from "../services/forecastService";
+import { Image } from "react-native";
+import { weatherIcons } from "../constants/weatherIcons";
+
+import { useEffect } from "react";
+import { testForecast } from "../test/testForecast";
+
+import {
+  testWidgetHtml,
+} from "../services/ilMeteoService";
 
 export default function HomeScreen() {
+
+useEffect(() => {
+
+  fetch(
+    "https://www.ilmeteo.it/meteo/genova"
+  )
+    .then(r => r.text())
+    .then(html => {
+      console.log(
+        "OK",
+        html.length
+      );
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
+}, []);
+
+
   const [orariAperti, setOrariAperti] = useState<string[]>([]);
   const toggleOrario = (ora: string) => {
   if (orariAperti.includes(ora)) {
@@ -51,6 +80,37 @@ const confrontoCorrente =
     localita={localita}
     setLocalita={setLocalita}
     />
+
+
+
+<Pressable
+  onPress={async () => {
+    try {
+      const html =
+        await testWidgetHtml("5913");
+
+      console.log(
+        html.substring(0, 1000)
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }}
+>
+  <Text>
+    Test Widget HTML
+  </Text>
+</Pressable>
+
+
+
+
+
+
+
+
+
+
 
     <View
   style={{
@@ -186,11 +246,30 @@ const confrontoCorrente =
   }
 }}
       >
-        <Text>
-          {item.ora} {item.icona}{" "}
-          {item.ilMeteo.temperatura}°C /
-          {item.treBMeteo?.temperatura}°C{" "}
-          {item.ilMeteo.probabilita > 0 ||
+ <View
+  style={{
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  }}
+>
+  <Image
+    source={
+      weatherIcons[
+        item.ilMeteo.codiceIcona
+      ]
+    }
+    style={{
+      width: 24,
+      height: 24,
+    }}
+  />
+
+  <Text>
+    {item.ora}{" "}
+    {item.ilMeteo.temperatura}°C /
+    {item.treBMeteo?.temperatura}°C{" "}     
+    {item.ilMeteo.probabilita > 0 ||
  item.ilMeteo.accumulo > 0 ||
  (item.treBMeteo?.probabilita ?? 0) > 0 ||
  (item.treBMeteo?.accumulo ?? 0) > 0
@@ -200,6 +279,7 @@ const confrontoCorrente =
   : ""}{" "}
           {item.alert ? "⚠️" : ""}
         </Text>
+      </View>
       </Pressable>
 
       {orariAperti.includes(item.ora) && (

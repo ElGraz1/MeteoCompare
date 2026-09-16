@@ -7,6 +7,9 @@ import {
   treBMeteoRomaOggi,
 } from "../data/mockForecasts";
 
+import {
+  searchCity,
+} from "./ilMeteoService";
 
 export async function getCityId(
   city: string
@@ -68,8 +71,15 @@ export function buildComparison(
 }
 
 export function getForecasts(giorno: string) {
+const cityRaw =
+  localStorage.getItem("city");
+
+const city = cityRaw
+  ? JSON.parse(cityRaw)
+  : null;
+
 const isRoma =
-  localStorage.getItem("city") === "Roma";
+  city?.nome === "Roma";
 
   const dati =
     giorno === "Domani"
