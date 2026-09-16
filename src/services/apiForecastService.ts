@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  "http://192.168.1.12:3000";
+  "https://site--meteocompare-api--ddx7k442y97b.code.run";
 
 export async function getForecastsByCity(
   city: string
