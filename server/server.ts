@@ -11,6 +11,13 @@ const app = express();
 
 app.use(cors());
 
+app.get("/", (req, res) => {
+  res.json({
+    status: "ok",
+    service: "MeteoCompare API"
+  });
+});
+
 app.get(
   "/forecast/:city",
   async (req, res) => {
@@ -57,4 +64,3 @@ app.listen(
 
   }
 );
-``

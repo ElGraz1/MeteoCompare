@@ -10,6 +10,27 @@ import {
   getForecastFrom3BMeteo,
 } from "./treBMeteoSiteParser";
 
+const CITY_ALIASES: Record<string, string> = {
+  "pontecagnano faiano": "pontecagnano",
+  "pontecagnano-faiano": "pontecagnano",
+};
+
+function normalizeCity(
+  city: string
+): string {
+
+  const normalized =
+    city
+      .trim()
+      .toLowerCase();
+
+  return (
+    CITY_ALIASES[normalized] ??
+    normalized
+  );
+
+}
+
 export interface ForecastComparisonItem {
   ora: string;
 
@@ -187,9 +208,23 @@ export function buildForecastComparison(
 export async function getAggregatedForecast(
   slug: string
 ): Promise<AggregatedForecast> {
-  const normalizedSlug =
-    normalizeSlug(slug);
 
+  const cityToSearch =
+    normalizeCity(slug);
+
+  if (
+    cityToSearch !==
+    slug.toLowerCase()
+  ) {
+
+    console.log(
+      `[ALIAS] ${slug} -> ${cityToSearch}`
+    );
+
+  }
+
+  const normalizedSlug =
+    normalizeSlug(cityToSearch);
   const [
     ilMeteo,
     treBMeteo,
