@@ -6,48 +6,28 @@ import {
 
 async function main() {
 
-  const cities = [
-    "roma",
-    "milano",
-    "genova",
-    "napoli",
-    "torino",
-  ];
-
-  for (const city of cities) {
-
-    console.log("\n");
-    console.log("==============");
-    console.log(city.toUpperCase());
-    console.log("==============");
-
-    const forecasts =
-      await getForecastFromSite(city);
-
-    console.log(
-      "Righe trovate:",
-      forecasts.length
+  const data =
+    await getForecastFromSite(
+      "genova"
     );
 
-    console.log(
-      "Prima riga:"
-    );
+  console.log(
+    "Numero righe:",
+    data.length
+  );
 
-    console.log(
-      forecasts[0]
-    );
+  console.log(
+    "\nORE RESTITUITE:"
+  );
 
-    console.log(
-      "Ultima riga:"
-    );
-
-    console.log(
-      forecasts[
-        forecasts.length - 1
-      ]
-    );
-  }
+  console.log(
+    data.map(
+      (item) => item.ora
+    )
+  );
 
 }
 
-main().catch(console.error);
+main().catch(
+  console.error
+);

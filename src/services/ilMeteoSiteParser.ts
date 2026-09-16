@@ -178,13 +178,27 @@ export async function getForecastFromSite(
   }
 
   const html = await response.text();
-  const forecasts = parseIlMeteoHtml(html);
+const forecasts = parseIlMeteoHtml(html);
 
-  if (forecasts.length === 0) {
-    throw new Error(
-      `Nessuna previsione oraria trovata per ${normalizedSlug}`
-    );
+if (forecasts.length === 0) {
+  throw new Error(
+    `Nessuna previsione oraria trovata per ${normalizedSlug}`
+  );
+}
+
+const todayForecasts: ForecastItem[] = [];
+
+for (const forecast of forecasts) {
+
+  if (forecast.ora === "00:00") {
+    break;
   }
 
-  return forecasts;
+  todayForecasts.push(
+    forecast
+  );
+
+}
+
+return todayForecasts;
 }
