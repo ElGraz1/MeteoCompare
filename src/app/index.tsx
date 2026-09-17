@@ -7,6 +7,29 @@ import { weatherIcons } from "../constants/weatherIcons";
 import { mapIlMeteoCode } from "../constants/weatherTypeMapper";
 import { map3BMeteoDescription } from "../constants/weatherTypeMapper";
 
+function getDays() {
+  const labels: string[] = [];
+
+  const giorni = getDays();
+
+  for (let i = 0; i <= 6; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() + i);
+
+    if (i === 0) {
+      labels.push("Oggi");
+      continue;
+    }
+
+    const giorno = giorniSettimana[date.getDay()];
+    const numero = String(date.getDate()).padStart(2, "0");
+
+    labels.push(`${giorno} ${numero}`);
+  }
+
+  return labels;
+}
+
 export default function HomeScreen() {
   const [orariAperti, setOrariAperti] = useState<string[]>([]);
   const toggleOrario = (ora: string) => {
@@ -21,17 +44,7 @@ export default function HomeScreen() {
   const [confrontoCorrente, setConfrontoCorrente] = useState<any[]>([]);
 
   useEffect(() => {
-    const dayMap: Record<string, number> = {
-      Oggi: 0,
-      Domani: 1,
-      "+2": 2,
-      "+3": 3,
-      "+4": 4,
-      "+5": 5,
-      "+6": 6,
-    };
-
-    const day = dayMap[giorno] ?? 0;
+    const day = giorni.indexOf(giorno);
 
     getForecastsByCity(localita, day)
       .then((result) => {
