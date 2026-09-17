@@ -43,9 +43,6 @@ export default function HomeScreen() {
   }, [localita, giorno]);
   const giorni = ["Oggi", "Domani", "+2", "+3", "+4", "+5", "+6"];
 
-  // const confrontoCorrente =
-  //   getForecasts(giorno);
-
   return (
     <View
       style={{
@@ -221,7 +218,7 @@ export default function HomeScreen() {
 
                   <Text
                     style={{
-                      width: 110,
+                      width: 90,
                       fontSize: 16,
                     }}
                   >
