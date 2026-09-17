@@ -4,6 +4,15 @@ import { getForecastFromSite } from "./ilMeteoSiteParser";
 
 import { getForecastFrom3BMeteo } from "./treBMeteoSiteParser";
 
+interface CacheEntry {
+  timestamp: number;
+  data: AggregatedForecast;
+}
+
+const forecastCache = new Map<string, CacheEntry>();
+
+const CACHE_TTL = 15 * 60 * 1000;
+
 const CITY_ALIASES: Record<string, string> = {
   "pontecagnano faiano": "pontecagnano",
   "pontecagnano-faiano": "pontecagnano",
@@ -155,6 +164,19 @@ export async function getAggregatedForecast(
   }
 
   const normalizedSlug = normalizeSlug(cityToSearch);
+
+  const cacheKey = `${normalizedSlug}-${day}`;
+
+  const cached = forecastCache.get(cacheKey);
+
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    console.log(`[CACHE HIT] ${cacheKey}`);
+
+    return cached.data;
+  }
+
+  console.log(`[CACHE MISS] ${cacheKey}`);
+
   const [ilMeteo, treBMeteo] = await Promise.all([
     getForecastFromSite(normalizedSlug, day),
 
@@ -173,7 +195,7 @@ export async function getAggregatedForecast(
     );
   }
 
-  return {
+  const result = {
     localita: normalizedSlug,
 
     ilMeteo,
@@ -182,4 +204,11 @@ export async function getAggregatedForecast(
 
     confronto: buildForecastComparison(ilMeteo, treBMeteo),
   };
+
+  forecastCache.set(cacheKey, {
+    timestamp: Date.now(),
+    data: result,
+  });
+
+  return result;
 }
