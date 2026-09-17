@@ -8,30 +8,19 @@ import {
   View,
 } from "react-native";
 
-import {
-  searchCity,
-  CitySuggestion,
-} from "../services/ilMeteoService";
+import { searchCity, CitySuggestion } from "../services/ilMeteoService";
 
 type Props = {
   localita: string;
   setLocalita: (valore: string) => void;
 };
 
-export default function LocationInput({
-  localita,
-  setLocalita,
-}: Props) {
+export default function LocationInput({ localita, setLocalita }: Props) {
   const [testo, setTesto] = useState(localita);
-  const [suggerimenti, setSuggerimenti] = useState<
-    CitySuggestion[]
-  >([]);
-  const [ricercaInCorso, setRicercaInCorso] =
-    useState(false);
+  const [suggerimenti, setSuggerimenti] = useState<CitySuggestion[]>([]);
+  const [ricercaInCorso, setRicercaInCorso] = useState(false);
 
-  const handleTestoChange = async (
-    nuovoTesto: string
-  ) => {
+  const handleTestoChange = async (nuovoTesto: string) => {
     setTesto(nuovoTesto);
 
     if (nuovoTesto.trim().length < 2) {
@@ -49,16 +38,9 @@ export default function LocationInput({
     }
   };
 
-  const selezionaLocalita = (
-    localitaScelta: CitySuggestion
-  ) => {
+  const selezionaLocalita = (localitaScelta: CitySuggestion) => {
     setTesto(localitaScelta.nome);
-// localStorage.setItem(
-//   "city",
-//   JSON.stringify(localitaScelta)
-// );
     setLocalita(localitaScelta.nome);
-    console.log(localitaScelta)
     setSuggerimenti([]);
   };
 
@@ -76,6 +58,7 @@ export default function LocationInput({
           backgroundColor: "white",
           borderRadius: 12,
           paddingHorizontal: 12,
+          height: 56,
         }}
       >
         <TextInput
@@ -85,16 +68,12 @@ export default function LocationInput({
           autoCorrect={false}
           style={{
             flex: 1,
+            fontSize: 16,
             paddingVertical: 12,
           }}
         />
 
-        {ricercaInCorso && (
-          <ActivityIndicator
-            size="small"
-            color="#2563eb"
-          />
-        )}
+        {ricercaInCorso && <ActivityIndicator size="small" color="#2563eb" />}
       </View>
 
       {suggerimenti.length > 0 && (
@@ -111,14 +90,10 @@ export default function LocationInput({
           {suggerimenti.map((suggerimento) => (
             <Pressable
               key={suggerimento.id}
-              onPress={() =>
-                selezionaLocalita(suggerimento)
-              }
+              onPress={() => selezionaLocalita(suggerimento)}
               style={({ pressed }) => ({
                 padding: 12,
-                backgroundColor: pressed
-                  ? "#eff6ff"
-                  : "white",
+                backgroundColor: pressed ? "#eff6ff" : "white",
                 borderBottomWidth: 1,
                 borderBottomColor: "#e2e8f0",
               })}
@@ -138,8 +113,7 @@ export default function LocationInput({
                   color: "#64748b",
                 }}
               >
-                {suggerimento.provincia} ·{" "}
-                {suggerimento.regione}
+                {suggerimento.provincia} · {suggerimento.regione}
               </Text>
             </Pressable>
           ))}
