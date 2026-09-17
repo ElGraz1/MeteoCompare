@@ -154,7 +154,8 @@ export function parseIlMeteoHtml(
 }
 
 export async function getForecastFromSite(
-  slug: string
+  slug: string,
+  day: number = 0
 ): Promise<ForecastItem[]> {
   const normalizedSlug = slug
     .trim()
@@ -167,9 +168,14 @@ export async function getForecastFromSite(
     throw new Error("Slug della località non valido");
   }
 
-  const response = await fetch(
-    `https://www.ilmeteo.it/meteo/${normalizedSlug}`
-  );
+let url =
+  `https://www.ilmeteo.it/meteo/${normalizedSlug}`;
+
+if (day === 1) {
+  url += "/domani";
+}
+
+const response = await fetch(url);
 
   if (!response.ok) {
     throw new Error(
@@ -184,6 +190,32 @@ if (forecasts.length === 0) {
   throw new Error(
     `Nessuna previsione oraria trovata per ${normalizedSlug}`
   );
+}
+
+if (day > 0) {
+
+  const filtered: ForecastItem[] = [];
+
+  let firstMidnightFound = false;
+
+  for (const forecast of forecasts) {
+
+    if (forecast.ora === "00:00") {
+
+      if (firstMidnightFound) {
+        break;
+      }
+
+      firstMidnightFound = true;
+
+    }
+
+    filtered.push(forecast);
+
+  }
+
+  return filtered;
+
 }
 
 const todayForecasts: ForecastItem[] = [];

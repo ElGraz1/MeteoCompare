@@ -24,9 +24,13 @@ app.get(
 
     try {
 
+      const day =
+      Number(req.query.day ?? 0);
+
       const result =
         await getAggregatedForecast(
-          req.params.city
+          req.params.city,
+          day
         );
 
       res.json(result);

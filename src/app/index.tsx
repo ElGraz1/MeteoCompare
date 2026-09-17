@@ -38,18 +38,23 @@ export default function HomeScreen() {
   confrontoCorrente,
   setConfrontoCorrente,
 ] = useState<any[]>([]);
+
+
+
 useEffect(() => {
 
-  getForecastsByCity(localita, giorno)
+  
+  const day =
+  giorno === "Domani"
+    ? 1
+    : 0;
+
+
+  getForecastsByCity(localita, day)
     .then((result) => {
 
       setConfrontoCorrente(
         result.confronto
-      );
-
-      console.log(
-        "Aggregator OK",
-        result
       );
 
     })
@@ -152,11 +157,19 @@ useEffect(() => {
     gap: 8,
     marginBottom: 20,
   }}
+
+  // {giorni.map((g) => (
+  //<Pressable
+  //key={g}
+    //  onPress={() => setGiorno(g)} 
+
 >
-  {giorni.map((g) => (
-    <Pressable
-      key={g}
-      onPress={() => setGiorno(g)}
+{giorni.map((g) => (
+  <Pressable
+    key={g}
+    onPress={() => {
+      setGiorno(g);
+    }}
       style={{
         backgroundColor:
           giorno === g ? "#2563eb" : "#e5e7eb",
@@ -185,6 +198,16 @@ useEffect(() => {
         }}
       >
        📍 {localita}
+       <Text
+  style={{
+    fontSize: 18,
+    marginBottom: 10,
+    color: "#2563eb",
+    fontWeight: "bold",
+  }}
+>
+  Giorno selezionato: {giorno}
+</Text>
       </Text>
 
 <View

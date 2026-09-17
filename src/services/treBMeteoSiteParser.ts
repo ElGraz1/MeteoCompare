@@ -189,7 +189,8 @@ export function parseTreBMeteoHtml(
 }
 
 export async function getForecastFrom3BMeteo(
-  slug: string
+  slug: string,
+  day: number = 0
 ): Promise<ForecastItem[]> {
 
   const normalizedSlug =
@@ -197,10 +198,15 @@ export async function getForecastFrom3BMeteo(
       .trim()
       .toLowerCase();
 
-  const response =
-    await fetch(
-      `https://www.3bmeteo.com/meteo/${normalizedSlug}`
-    );
+let url =
+  `https://www.3bmeteo.com/meteo/${normalizedSlug}`;
+
+if (day === 1) {
+  url += "/1";
+}
+
+const response =
+  await fetch(url);
 
   if (!response.ok) {
 

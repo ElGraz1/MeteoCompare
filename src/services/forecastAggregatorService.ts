@@ -206,8 +206,10 @@ export function buildForecastComparison(
 }
 
 export async function getAggregatedForecast(
-  slug: string
+  slug: string,
+  day: number = 0
 ): Promise<AggregatedForecast> {
+
 
   const cityToSearch =
     normalizeCity(slug);
@@ -230,11 +232,13 @@ export async function getAggregatedForecast(
     treBMeteo,
   ] = await Promise.all([
     getForecastFromSite(
-      normalizedSlug
+      normalizedSlug,
+      day
     ),
 
     getForecastFrom3BMeteo(
-      normalizedSlug
+      normalizedSlug,
+      day
     ),
   ]);
 
