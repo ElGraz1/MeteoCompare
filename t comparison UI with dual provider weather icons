@@ -1,0 +1,1371 @@
+warning: in the working copy of 'src/app/index.tsx', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/src/app/index.tsx b/src/app/index.tsx[m
+[1mindex 1601404..1852a02 100644[m
+[1m--- a/src/app/index.tsx[m
+[1m+++ b/src/app/index.tsx[m
+[36m@@ -1,12 +1,11 @@[m
+ import { View, Text, Pressable } from "react-native";[m
+[31m-[m
+ import { useState } from "react";[m
+ import LocationInput from "../components/LocationInput";[m
+ import { getForecastsByCity } from "../services/apiForecastService";[m
+[31m-import { Image } from "react-native";[m
+[31m-import { weatherIcons } from "../constants/weatherIcons";[m
+[31m-[m
+ import { useEffect } from "react";[m
+[32m+[m[32mimport { weatherIcons } from "../constants/weatherIcons";[m
+[32m+[m[32mimport { mapIlMeteoCode } from "../constants/weatherTypeMapper";[m
+[32m+[m[32mimport { map3BMeteoDescription } from "../constants/weatherTypeMapper";[m
+ [m
+ export default function HomeScreen() {[m
+   const [orariAperti, setOrariAperti] = useState<string[]>([]);[m
+[36m@@ -127,6 +126,47 @@[m [mexport default function HomeScreen() {[m
+           Confronto previsioni[m
+         </Text>[m
+ [m
+[32m+[m[32m        <View[m
+[32m+[m[32m          style={{[m
+[32m+[m[32m            flexDirection: "row",[m
+[32m+[m[32m            marginBottom: 10,[m
+[32m+[m[32m            alignItems: "center",[m
+[32m+[m[32m          }}[m
+[32m+[m[32m        >[m
+[32m+[m[32m          <Text[m
+[32m+[m[32m            style={{[m
+[32m+[m[32m              width: 70,[m
+[32m+[m[32m              fontWeight: "bold",[m
+[32m+[m[32m            }}[m
+[32m+[m[32m          >[m
+[32m+[m[32m            Ora[m
+[32m+[m[32m          </Text>[m
+[32m+[m
+[32m+[m[32m          <Text[m
+[32m+[m[32m            style={{[m
+[32m+[m[32m              width: 110,[m
+[32m+[m[32m              fontWeight: "bold",[m
+[32m+[m[32m              color: "#2563eb",[m
+[32m+[m[32m              textAlign: "left",[m
+[32m+[m[32m              paddingLeft: 10,[m
+[32m+[m[32m            }}[m
+[32m+[m[32m          >[m
+[32m+[m[32m            iLM[m
+[32m+[m[32m          </Text>[m
+[32m+[m
+[32m+[m[32m          <Text[m
+[32m+[m[32m            style={{[m
+[32m+[m[32m              width: 110,[m
+[32m+[m[32m              fontWeight: "bold",[m
+[32m+[m[32m              color: "#16a34a",[m
+[32m+[m[32m              textAlign: "left",[m
+[32m+[m[32m              paddingLeft: 10,[m
+[32m+[m[32m            }}[m
+[32m+[m[32m          >[m
+[32m+[m[32m            3bM[m
+[32m+[m[32m          </Text>[m
+[32m+[m[32m        </View>[m
+[32m+[m
+         {confrontoCorrente.map((item) => ([m
+           <View[m
+             key={item.ora}[m
+[36m@@ -153,27 +193,58 @@[m [mexport default function HomeScreen() {[m
+                   gap: 8,[m
+                 }}[m
+               >[m
+[31m-                <Image[m
+[31m-                  source={weatherIcons[item.ilMeteo.codiceIcona]}[m
+[32m+[m[32m                <View[m
+                   style={{[m
+[31m-                    width: 24,[m
+[31m-                    height: 24,[m
+[32m+[m[32m                    flexDirection: "row",[m
+[32m+[m[32m                    alignItems: "center",[m
+                   }}[m
+[31m-                />[m
+[32m+[m[32m                >[m
+[32m+[m[32m                  <Text[m
+[32m+[m[32m                    style={{[m
+[32m+[m[32m                      width: 70,[m
+[32m+[m[32m                      fontWeight: "600",[m
+[32m+[m[32m                      fontSize: 16,[m
+[32m+[m[32m                    }}[m
+[32m+[m[32m                  >[m
+[32m+[m[32m                    {item.ora}[m
+[32m+[m[32m                  </Text>[m
+ [m
+[31m-                <Text>[m
+[31m-                  {item.ora} {item.ilMeteo.temperatura}°C /[m
+[31m-                  {item.treBMeteo?.temperatura}°C{" "}[m
+[31m-                  {item.ilMeteo.probabilita > 0 ||[m
+[31m-                  item.ilMeteo.accumulo > 0 ||[m
+[31m-                  (item.treBMeteo?.probabilita ?? 0) > 0 ||[m
+[31m-                  (item.treBMeteo?.accumulo ?? 0) > 0[m
+[31m-                    ? orariAperti.includes(item.ora)[m
+[31m-                      ? "▲"[m
+[31m-                      : "▼"[m
+[31m-                    : ""}{" "}[m
+[31m-                  {item.alert ? "⚠️" : ""}[m
+[31m-                </Text>[m
+[32m+[m[32m                  <Text[m
+[32m+[m[32m                    style={{[m
+[32m+[m[32m                      width: 110,[m
+[32m+[m[32m                      fontSize: 16,[m
+[32m+[m[32m                    }}[m
+[32m+[m[32m                  >[m
+[32m+[m[32m                    {weatherIcons[mapIlMeteoCode(item.ilMeteo.codiceIcona)]}{" "}[m
+[32m+[m[32m                    {item.ilMeteo.temperatura}°[m
+[32m+[m[32m                  </Text>[m
+[32m+[m
+[32m+[m[32m                  <Text[m
+[32m+[m[32m                    style={{[m
+[32m+[m[32m                      width: 110,[m
+[32m+[m[32m                      fontSize: 16,[m
+[32m+[m[32m                    }}[m
+[32m+[m[32m                  >[m
+[32m+[m[32m                    {[m
+[32m+[m[32m                      weatherIcons[[m
+[32m+[m[32m                        map3BMeteoDescription(item.treBMeteo?.descrizione ?? "")[m
+[32m+[m[32m                      ][m
+[32m+[m[32m                    }{" "}[m
+[32m+[m[32m                    {item.treBMeteo?.temperatura}°[m
+[32m+[m[32m                  </Text>[m
+[32m+[m
+[32m+[m[32m                  <Text>[m
+[32m+[m[32m                    {item.ilMeteo.probabilita > 0 ||[m
+[32m+[m[32m                    item.ilMeteo.accumulo > 0 ||[m
+[32m+[m[32m                    (item.treBMeteo?.probabilita ?? 0) > 0 ||[m
+[32m+[m[32m                    (item.treBMeteo?.accumulo ?? 0) > 0[m
+[32m+[m[32m                      ? orariAperti.includes(item.ora)[m
+[32m+[m[32m                        ? "▲"[m
+[32m+[m[32m                        : "▼"[m
+[32m+[m[32m                      : ""}{" "}[m
+[32m+[m[32m                    {item.alert ? "⚠️" : ""}[m
+[32m+[m[32m                  </Text>[m
+[32m+[m[32m                </View>[m
+               </View>[m
+             </Pressable>[m
+ [m
+[1mdiff --git a/src/constants/weatherIcons.ts b/src/constants/weatherIcons.ts[m
+[1mindex 07e8ede..ae6ee8c 100644[m
+[1m--- a/src/constants/weatherIcons.ts[m
+[1m+++ b/src/constants/weatherIcons.ts[m
+[36m@@ -1,15 +1,21 @@[m
+[31m-import type {[m
+[31m-  ImageSourcePropType,[m
+[31m-} from "react-native";[m
+[31m-[m
+[31m-export const weatherIcons: Record<[m
+[31m-  number,[m
+[31m-  ImageSourcePropType[m
+[31m-> = {[m
+[31m-  1: require("../../assets/weather-icons/1.gif"),[m
+[31m-  3: require("../../assets/weather-icons/3.gif"),[m
+[31m-  7: require("../../assets/weather-icons/7.gif"),[m
+[31m-  8: require("../../assets/weather-icons/8.gif"),[m
+[31m-  10: require("../../assets/weather-icons/10.gif"),[m
+[31m-  101: require("../../assets/weather-icons/101.gif"),[m
+[31m-};[m
+\ No newline at end of file[m
+[32m+[m[32mimport type { WeatherType } from "../types/WeatherType";[m
+[32m+[m
+[32m+[m[32mexport const weatherIcons: Record<WeatherType, string> = {[m
+[32m+[m[32m  sun: "☀️",[m
+[32m+[m
+[32m+[m[32m  partlyCloudy: "⛅",[m
+[32m+[m
+[32m+[m[32m  cloudy: "☁️",[m
+[32m+[m
+[32m+[m[32m  rainLight: "🌦️",[m
+[32m+[m
+[32m+[m[32m  rain: "🌧️",[m
+[32m+[m
+[32m+[m[32m  storm: "⛈️",[m
+[32m+[m
+[32m+[m[32m  snow: "🌨️",[m
+[32m+[m
+[32m+[m[32m  fog: "🌫️",[m
+[32m+[m
+[32m+[m[32m  wind: "💨",[m
+[32m+[m[32m};[m
+[1mdiff --git a/src/services/apiForecastService.ts b/src/services/apiForecastService.ts[m
+[1mindex ce51f0a..89f69c7 100644[m
+[1m--- a/src/services/apiForecastService.ts[m
+[1m+++ b/src/services/apiForecastService.ts[m
+[36m@@ -1,29 +1,13 @@[m
+[31m-const API_BASE_URL =[m
+[31m-  "https://site--meteocompare-api--ddx7k442y97b.code.run";[m
+[32m+[m[32mconst API_BASE_URL = "https://site--meteocompare-api--ddx7k442y97b.code.run";[m
+ [m
+[32m+[m[32mexport async function getForecastsByCity(city: string, day: number = 0) {[m
+[32m+[m[32m  const url = `${API_BASE_URL}/forecast/${city.toLowerCase()}?day=${day}`;[m
+ [m
+[31m-/* const API_BASE_URL =[m
+[31m-  "http://10.0.2.2:3000"; */[m
+[31m-[m
+[31m-export async function getForecastsByCity([m
+[31m-  city: string,[m
+[31m-  day: number = 0[m
+[31m-) {[m
+[31m-[m
+[31m-const url =[m
+[31m-  `${API_BASE_URL}/forecast/${city.toLowerCase()}?day=${day}`;[m
+[31m-[m
+[31m-const response =[m
+[31m-  await fetch(url);[m
+[32m+[m[32m  const response = await fetch(url);[m
+ [m
+   if (!response.ok) {[m
+[31m-[m
+[31m-    throw new Error([m
+[31m-      `HTTP ${response.status}`[m
+[31m-    );[m
+[31m-[m
+[32m+[m[32m    throw new Error(`HTTP ${response.status}`);[m
+   }[m
+ [m
+   return response.json();[m
+[31m-[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/src/services/treBMeteoSiteParser.ts b/src/services/treBMeteoSiteParser.ts[m
+[1mindex aaef141..7ba5886 100644[m
+[1m--- a/src/services/treBMeteoSiteParser.ts[m
+[1m+++ b/src/services/treBMeteoSiteParser.ts[m
+[36m@@ -1,53 +1,31 @@[m
+ import * as cheerio from "cheerio";[m
+ import type { ForecastItem } from "../types/ForecastItem";[m
+ [m
+[31m-function normalizeHour([m
+[31m-  value: string[m
+[31m-): string {[m
+[31m-[m
+[31m-  const hour = Number.parseInt([m
+[31m-    value.trim(),[m
+[31m-    10[m
+[31m-  );[m
+[32m+[m[32mfunction normalizeHour(value: string): string {[m
+[32m+[m[32m  const hour = Number.parseInt(value.trim(), 10);[m
+ [m
+   if (!Number.isFinite(hour)) {[m
+     return "";[m
+   }[m
+ [m
+[31m-  return ([m
+[31m-    String(hour).padStart(2, "0") +[m
+[31m-    ":00"[m
+[31m-  );[m
+[32m+[m[32m  return String(hour).padStart(2, "0") + ":00";[m
+ }[m
+ [m
+[31m-function extractNumber([m
+[31m-  value: string[m
+[31m-): number {[m
+[31m-[m
+[31m-  const normalized =[m
+[31m-    value.replace(",", ".");[m
+[32m+[m[32mfunction extractNumber(value: string): number {[m
+[32m+[m[32m  const normalized = value.replace(",", ".");[m
+ [m
+[31m-  const match =[m
+[31m-    normalized.match([m
+[31m-      /(\d+(?:\.\d+)?)/i[m
+[31m-    );[m
+[32m+[m[32m  const match = normalized.match(/(\d+(?:\.\d+)?)/i);[m
+ [m
+[31m-  return match[m
+[31m-    ? Number(match[1])[m
+[31m-    : 0;[m
+[32m+[m[32m  return match ? Number(match[1]) : 0;[m
+ }[m
+ [m
+ function getParamValue([m
+   item: cheerio.Cheerio<any>,[m
+   param: string,[m
+[31m-  $[m
+[31m-: cheerio.CheerioAPI[m
+[32m+[m[32m  $: cheerio.CheerioAPI,[m
+ ): string {[m
+[31m-[m
+   return item[m
+[31m-    .find([m
+[31m-      `[data-param="${param}"] .ds-label-medium`[m
+[31m-    )[m
+[32m+[m[32m    .find(`[data-param="${param}"] .ds-label-medium`)[m
+     .first()[m
+     .text()[m
+     .trim();[m
+[36m@@ -55,23 +33,14 @@[m [mfunction getParamValue([m
+ [m
+ function extractIconCode([m
+   item: cheerio.Cheerio<any>,[m
+[31m-  $[m
+[31m-: cheerio.CheerioAPI[m
+[32m+[m[32m  $: cheerio.CheerioAPI,[m
+ ): number {[m
+[31m-[m
+[31m-  const images = item[m
+[31m-    .find("img")[m
+[31m-    .toArray();[m
+[32m+[m[32m  const images = item.find("img").toArray();[m
+ [m
+   for (const image of images) {[m
+[32m+[m[32m    const src = $(image).attr("src") || "";[m
+ [m
+[31m-    const src =[m
+[31m-      $(image).attr("src") || "";[m
+[31m-[m
+[31m-    const match =[m
+[31m-      src.match([m
+[31m-        /\/(\d+)\.svg(?:\?|$)/i[m
+[31m-      );[m
+[32m+[m[32m    const match = src.match(/\/(\d+)\.svg(?:\?|$)/i);[m
+ [m
+     if (match) {[m
+       return Number(match[1]);[m
+[36m@@ -81,158 +50,77 @@[m [mfunction extractIconCode([m
+   return 0;[m
+ }[m
+ [m
+[31m-export function parseTreBMeteoHtml([m
+[31m-  html: string[m
+[31m-): ForecastItem[] {[m
+[31m-[m
+[32m+[m[32mexport function parseTreBMeteoHtml(html: string): ForecastItem[] {[m
+   const $ = cheerio.load(html);[m
+ [m
+   const forecasts: ForecastItem[] = [];[m
+ [m
+[31m-  $("li.fc-accordion-item").each([m
+[31m-    (_, element) => {[m
+[31m-[m
+[31m-      const item =[m
+[31m-        $(element);[m
+[31m-[m
+[31m-      const ora =[m
+[31m-        normalizeHour([m
+[31m-          item[m
+[31m-            .find([m
+[31m-              ".ds-forecast-time"[m
+[31m-            )[m
+[31m-            .first()[m
+[31m-            .text()[m
+[31m-        );[m
+[31m-[m
+[31m-      if (!ora) {[m
+[31m-        return;[m
+[31m-      }[m
+[31m-[m
+[31m-      const codiceIcona =[m
+[31m-        extractIconCode([m
+[31m-          item,[m
+[31m-          $[m
+[31m-        );[m
+[31m-[m
+[31m-      const temperatura = Number([m
+[31m-        item[m
+[31m-          .find([m
+[31m-            '.unit-temp[data-temp-c]'[m
+[31m-          )[m
+[31m-          .first()[m
+[31m-          .attr("data-temp-c") ||[m
+[31m-        "0"[m
+[31m-      );[m
+[31m-[m
+[31m-      const descrizione =[m
+[31m-        item[m
+[31m-          .find([m
+[31m-            ".unit-tempo"[m
+[31m-          )[m
+[31m-          .first()[m
+[31m-          .text()[m
+[31m-          .trim();[m
+[31m-[m
+[31m-      const probabilita =[m
+[31m-        extractNumber([m
+[31m-          getParamValue([m
+[31m-            item,[m
+[31m-            "probabilita",[m
+[31m-            $[m
+[31m-          )[m
+[31m-        );[m
+[31m-[m
+[31m-      const umidita =[m
+[31m-        extractNumber([m
+[31m-          getParamValue([m
+[31m-            item,[m
+[31m-            "umidita",[m
+[31m-            $[m
+[31m-          )[m
+[31m-        );[m
+[31m-[m
+[31m-      const pressione =[m
+[31m-        extractNumber([m
+[31m-          getParamValue([m
+[31m-            item,[m
+[31m-            "pressione",[m
+[31m-            $[m
+[31m-          )[m
+[31m-        );[m
+[31m-[m
+[31m-      const accumulo =[m
+[31m-        extractNumber([m
+[31m-          getParamValue([m
+[31m-            item,[m
+[31m-            "precipitazioni",[m
+[31m-            $[m
+[31m-          )[m
+[31m-        );[m
+[31m-[m
+[31m-      forecasts.push({[m
+[31m-        ora,[m
+[31m-        codiceIcona,[m
+[31m-        temperatura,[m
+[31m-        pressione,[m
+[31m-        umidita,[m
+[31m-        probabilita,[m
+[31m-        descrizione,[m
+[31m-        accumulo,[m
+[31m-        grandine: 0,[m
+[31m-      });[m
+[32m+[m[32m  $("li.fc-accordion-item").each((_, element) => {[m
+[32m+[m[32m    const item = $(element);[m
+[32m+[m
+[32m+[m[32m    const ora = normalizeHour(item.find(".ds-forecast-time").first().text());[m
+ [m
+[32m+[m[32m    if (!ora) {[m
+[32m+[m[32m      return;[m
+     }[m
+[31m-  );[m
+[32m+[m
+[32m+[m[32m    const codiceIcona = extractIconCode(item, $);[m
+[32m+[m
+[32m+[m[32m    const temperatura = Number([m
+[32m+[m[32m      item.find(".unit-temp[data-temp-c]").first().attr("data-temp-c") || "0",[m
+[32m+[m[32m    );[m
+[32m+[m
+[32m+[m[32m    const descrizione = item.find(".unit-tempo").first().text().trim();[m
+[32m+[m
+[32m+[m[32m    const probabilita = extractNumber(getParamValue(item, "probabilita", $));[m
+[32m+[m
+[32m+[m[32m    const umidita = extractNumber(getParamValue(item, "umidita", $));[m
+[32m+[m
+[32m+[m[32m    const pressione = extractNumber(getParamValue(item, "pressione", $));[m
+[32m+[m
+[32m+[m[32m    const accumulo = extractNumber(getParamValue(item, "precipitazioni", $));[m
+[32m+[m
+[32m+[m[32m    forecasts.push({[m
+[32m+[m[32m      ora,[m
+[32m+[m[32m      codiceIcona,[m
+[32m+[m[32m      temperatura,[m
+[32m+[m[32m      pressione,[m
+[32m+[m[32m      umidita,[m
+[32m+[m[32m      probabilita,[m
+[32m+[m[32m      descrizione,[m
+[32m+[m[32m      accumulo,[m
+[32m+[m[32m      grandine: 0,[m
+[32m+[m[32m    });[m
+[32m+[m[32m  });[m
+ [m
+   return forecasts;[m
+ }[m
+ [m
+ export async function getForecastFrom3BMeteo([m
+   slug: string,[m
+[31m-  day: number = 0[m
+[32m+[m[32m  day: number = 0,[m
+ ): Promise<ForecastItem[]> {[m
+[32m+[m[32m  const normalizedSlug = slug.trim().toLowerCase();[m
+ [m
+[31m-  const normalizedSlug =[m
+[31m-    slug[m
+[31m-      .trim()[m
+[31m-      .toLowerCase();[m
+[32m+[m[32m  let url = `https://www.3bmeteo.com/meteo/${normalizedSlug}`;[m
+ [m
+[31m-let url =[m
+[31m-  `https://www.3bmeteo.com/meteo/${normalizedSlug}`;[m
+[31m-[m
+[31m-if (day > 0) {[m
+[31m-  url += `/${day}`;[m
+[31m-}[m
+[32m+[m[32m  if (day > 0) {[m
+[32m+[m[32m    url += `/${day}`;[m
+[32m+[m[32m  }[m
+ [m
+[31m-const response =[m
+[31m-  await fetch(url);[m
+[32m+[m[32m  const response = await fetch(url);[m
+ [m
+   if (!response.ok) {[m
+[31m-[m
+[31m-    throw new Error([m
+[31m-      `Errore HTTP ${response.status}`[m
+[31m-    );[m
+[31m-[m
+[32m+[m[32m    throw new Error(`Errore HTTP ${response.status}`);[m
+   }[m
+ [m
+[31m-  const html =[m
+[31m-    await response.text();[m
+[31m-[m
+[31m-  const forecasts =[m
+[31m-    parseTreBMeteoHtml([m
+[31m-      html[m
+[31m-    );[m
+[32m+[m[32m  const html = await response.text();[m
+ [m
+[31m-  if ([m
+[31m-    forecasts.length === 0[m
+[31m-  ) {[m
+[31m-[m
+[31m-    throw new Error([m
+[31m-      `Nessuna previsione trovata per ${normalizedSlug}`[m
+[31m-    );[m
+[32m+[m[32m  const forecasts = parseTreBMeteoHtml(html);[m
+ [m
+[32m+[m[32m  if (forecasts.length === 0) {[m
+[32m+[m[32m    throw new Error(`Nessuna previsione trovata per ${normalizedSlug}`);[m
+   }[m
+ [m
+   return forecasts;[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/src/types/ForecastItem.ts b/src/types/ForecastItem.ts[m
+[1mindex ff71012..bb1eaa8 100644[m
+[1m--- a/src/types/ForecastItem.ts[m
+[1m+++ b/src/types/ForecastItem.ts[m
+[36m@@ -1,11 +1,17 @@[m
+[32m+[m[32mimport type { WeatherType } from "./WeatherType";[m
+[32m+[m
+ export interface ForecastItem {[m
+   ora: string;[m
+   temperatura: number;[m
+   probabilita: number;[m
+   accumulo: number;[m
+[31m-  codiceIcona: number;[m
+[32m+[m
+[32m+[m[32m  codiceIcona: number; // resta per debug[m
+[32m+[m
+[32m+[m[32m  weatherType: WeatherType;[m
+[32m+[m
+   descrizione: string;[m
+   umidita: number;[m
+   pressione: number;[m
+   grandine: number;[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/test-3bmeteo-final.ts b/test-3bmeteo-final.ts[m
+[1mdeleted file mode 100644[m
+[1mindex 9827453..0000000[m
+[1m--- a/test-3bmeteo-final.ts[m
+[1m+++ /dev/null[m
+[36m@@ -1,56 +0,0 @@[m
+[31m-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";[m
+[31m-[m
+[31m-import {[m
+[31m-  getForecastFrom3BMeteo,[m
+[31m-} from "./src/services/treBMeteoSiteParser";[m
+[31m-[m
+[31m-async function main() {[m
+[31m-[m
+[31m-  const cities = [[m
+[31m-    "roma",[m
+[31m-    "milano",[m
+[31m-    "genova",[m
+[31m-    "napoli",[m
+[31m-    "torino",[m
+[31m-  ];[m
+[31m-[m
+[31m-  for (const city of cities) {[m
+[31m-[m
+[31m-    console.log("\n");[m
+[31m-    console.log("==============");[m
+[31m-    console.log(city.toUpperCase());[m
+[31m-    console.log("==============");[m
+[31m-[m
+[31m-    const forecasts =[m
+[31m-      await getForecastFrom3BMeteo([m
+[31m-        city[m
+[31m-      );[m
+[31m-[m
+[31m-    console.log([m
+[31m-      "Righe trovate:",[m
+[31m-      forecasts.length[m
+[31m-    );[m
+[31m-[m
+[31m-    console.log([m
+[31m-      "Prima riga:"[m
+[31m-    );[m
+[31m-[m
+[31m-    console.log([m
+[31m-      forecasts[0][m
+[31m-    );[m
+[31m-[m
+[31m-    console.log([m
+[31m-      "Ultima riga:"[m
+[31m-    );[m
+[31m-[m
+[31m-    console.log([m
+[31m-      forecasts[[m
+[31m-        forecasts.length - 1[m
+[31m-      ][m
+[31m-    );[m
+[31m-[m
+[31m-  }[m
+[31m-[m
+[31m-}[m
+[31m-[m
+[31m-main().catch(console.error);[m
+\ No newline at end of file[m
+[1mdiff --git a/test-3bmeteo-parser.mjs b/test-3bmeteo-parser.mjs[m
+[1mdeleted file mode 100644[m
+[1mindex 7c540ea..0000000[m
+[1m--- a/test-3bmeteo-parser.mjs[m
+[1m+++ /dev/null[m
+[36m@@ -1,157 +0,0 @@[m
+[31m-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";[m
+[31m-[m
+[31m-import * as cheerio from "cheerio";[m
+[31m-[m
+[31m-function normalizeHour(value) {[m
+[31m-[m
+[31m-  const hour =[m
+[31m-    parseInt(value.trim(), 10);[m
+[31m-[m
+[31m-  if (!Number.isFinite(hour)) {[m
+[31m-    return "";[m
+[31m-  }[m
+[31m-[m
+[31m-  return ([m
+[31m-    String(hour).padStart(2, "0") +[m
+[31m-    ":00"[m
+[31m-  );[m
+[31m-}[m
+[31m-[m
+[31m-function extractNumber(value) {[m
+[31m-[m
+[31m-  const match =[m
+[31m-    value.match([m
+[31m-      /(\d+(?:\.\d+)?)/i[m
+[31m-    );[m
+[31m-[m
+[31m-  return match[m
+[31m-    ? Number(match[1])[m
+[31m-    : 0;[m
+[31m-}[m
+[31m-[m
+[31m-const response =[m
+[31m-  await fetch([m
+[31m-    "https://www.3bmeteo.com/meteo/genova"[m
+[31m-  );[m
+[31m-[m
+[31m-const html =[m
+[31m-  await response.text();[m
+[31m-[m
+[31m-const $ =[m
+[31m-  cheerio.load(html);[m
+[31m-[m
+[31m-const forecasts = [];[m
+[31m-[m
+[31m-$("li.fc-accordion-item").each([m
+[31m-  (_, element) => {[m
+[31m-[m
+[31m-    const item =[m
+[31m-      $(element);[m
+[31m-[m
+[31m-    const ora =[m
+[31m-      normalizeHour([m
+[31m-        item[m
+[31m-          .find(".ds-forecast-time")[m
+[31m-          .first()[m
+[31m-          .text()[m
+[31m-      );[m
+[31m-[m
+[31m-    if (!ora) {[m
+[31m-      return;[m
+[31m-    }[m
+[31m-[m
+[31m-    const iconSrc =[m
+[31m-      item[m
+[31m-        .find("img")[m
+[31m-        .first()[m
+[31m-        .attr("src") || "";[m
+[31m-[m
+[31m-    const iconMatch =[m
+[31m-      iconSrc.match([m
+[31m-        /\/(\d+)\.svg$/i[m
+[31m-      );[m
+[31m-[m
+[31m-    const codiceIcona =[m
+[31m-      iconMatch[m
+[31m-        ? Number(iconMatch[1])[m
+[31m-        : 0;[m
+[31m-[m
+[31m-    const descrizione =[m
+[31m-      item[m
+[31m-        .find(".unit-tempo")[m
+[31m-        .first()[m
+[31m-        .text()[m
+[31m-        .trim();[m
+[31m-[m
+[31m-    const temperatura =[m
+[31m-      Number([m
+[31m-        item[m
+[31m-          .find([m
+[31m-            ".unit-temp[data-temp-c]"[m
+[31m-          )[m
+[31m-          .first()[m
+[31m-          .attr("data-temp-c")[m
+[31m-      );[m
+[31m-[m
+[31m-    const probabilita =[m
+[31m-      extractNumber([m
+[31m-        item[m
+[31m-          .find([m
+[31m-            '[data-param="probabilita"] .ds-label-medium'[m
+[31m-          )[m
+[31m-          .text()[m
+[31m-      );[m
+[31m-[m
+[31m-    const umidita =[m
+[31m-      extractNumber([m
+[31m-        item[m
+[31m-          .find([m
+[31m-            '[data-param="umidita"] .ds-label-medium'[m
+[31m-          )[m
+[31m-          .text()[m
+[31m-      );[m
+[31m-[m
+[31m-    const pressione =[m
+[31m-      extractNumber([m
+[31m-        item[m
+[31m-          .find([m
+[31m-            '[data-param="pressione"] .ds-label-medium'[m
+[31m-          )[m
+[31m-          .text()[m
+[31m-      );[m
+[31m-[m
+[31m-    const accumulo =[m
+[31m-      extractNumber([m
+[31m-        item[m
+[31m-          .find([m
+[31m-            '[data-param="precipitazioni"] .ds-label-medium'[m
+[31m-          )[m
+[31m-          .text()[m
+[31m-      );[m
+[31m-[m
+[31m-    forecasts.push({[m
+[31m-      ora,[m
+[31m-      codiceIcona,[m
+[31m-      temperatura,[m
+[31m-      pressione,[m
+[31m-      umidita,[m
+[31m-      probabilita,[m
+[31m-      descrizione,[m
+[31m-      accumulo,[m
+[31m-      grandine: 0[m
+[31m-    });[m
+[31m-[m
+[31m-  }[m
+[31m-);[m
+[31m-[m
+[31m-console.log([m
+[31m-  forecasts[0][m
+[31m-);[m
+[31m-[m
+[31m-console.log([m
+[31m-  JSON.stringify([m
+[31m-    forecasts,[m
+[31m-    null,[m
+[31m-    2[m
+[31m-  )[m
+[31m-);[m
+\ No newline at end of file[m
+[1mdiff --git a/test-3bmeteo.mjs b/test-3bmeteo.mjs[m
+[1mdeleted file mode 100644[m
+[1mindex 8e71d39..0000000[m
+[1m--- a/test-3bmeteo.mjs[m
+[1m+++ /dev/null[m
+[36m@@ -1,18 +0,0 @@[m
+[31m-import {[m
+[31m-  getForecastFrom3BMeteo[m
+[31m-} from "./src/services/treBMeteoSiteParser";[m
+[31m-[m
+[31m-async function main() {[m
+[31m-[m
+[31m-  const data =[m
+[31m-    await getForecastFrom3BMeteo([m
+[31m-      "genova"[m
+[31m-    );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    data[0][m
+[31m-  );[m
+[31m-[m
+[31m-}[m
+[31m-[m
+[31m-main().catch(console.error);[m
+\ No newline at end of file[m
+[1mdiff --git a/test-aggregator-final.ts b/test-aggregator-final.ts[m
+[1mdeleted file mode 100644[m
+[1mindex 7fae8b7..0000000[m
+[1m--- a/test-aggregator-final.ts[m
+[1m+++ /dev/null[m
+[36m@@ -1,69 +0,0 @@[m
+[31m-process.env.NODE_TLS_REJECT_UNAUTHORIZED =[m
+[31m-  "0";[m
+[31m-[m
+[31m-import {[m
+[31m-  getAggregatedForecast,[m
+[31m-} from "./src/services/forecastAggregatorService";[m
+[31m-[m
+[31m-async function main() {[m
+[31m-[m
+[31m-  const risultato =[m
+[31m-    await getAggregatedForecast([m
+[31m-      "genova"[m
+[31m-    );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    "Località:",[m
+[31m-    risultato.localita[m
+[31m-  );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    "Righe iLMeteo:",[m
+[31m-    risultato.ilMeteo.length[m
+[31m-  );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    "Righe 3BMeteo:",[m
+[31m-    risultato.treBMeteo.length[m
+[31m-  );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    "Righe confronto:",[m
+[31m-    risultato.confronto.length[m
+[31m-  );[m
+[31m-[m
+[31m-  const oreComuni =[m
+[31m-    risultato.confronto.filter([m
+[31m-      (item) =>[m
+[31m-        item.ilMeteo !== null &&[m
+[31m-        item.treBMeteo !== null[m
+[31m-    );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    "Ore comuni:",[m
+[31m-    oreComuni.length[m
+[31m-  );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    "Primo confronto:"[m
+[31m-  );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    oreComuni[0][m
+[31m-  );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    "Alert trovati:"[m
+[31m-  );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    risultato.confronto.filter([m
+[31m-      (item) => item.alert[m
+[31m-    )[m
+[31m-  );[m
+[31m-[m
+[31m-}[m
+[31m-[m
+[31m-main().catch([m
+[31m-  console.error[m
+[31m-);[m
+\ No newline at end of file[m
+[1mdiff --git a/test-download.mjs b/test-download.mjs[m
+[1mdeleted file mode 100644[m
+[1mindex b4f7942..0000000[m
+[1m--- a/test-download.mjs[m
+[1m+++ /dev/null[m
+[36m@@ -1,13 +0,0 @@[m
+[31m-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";[m
+[31m-[m
+[31m-const response = await fetch([m
+[31m-  "https://www.ilmeteo.it/box/previsioni.php?citta=5913&type=tri1"[m
+[31m-);[m
+[31m-[m
+[31m-console.log("Status:", response.status);[m
+[31m-[m
+[31m-const html = await response.text();[m
+[31m-[m
+[31m-console.log([m
+[31m-  html.substring(0, 500)[m
+[31m-);[m
+\ No newline at end of file[m
+[1mdiff --git a/test-genova.mjs b/test-genova.mjs[m
+[1mdeleted file mode 100644[m
+[1mindex 2c27c70..0000000[m
+[1m--- a/test-genova.mjs[m
+[1m+++ /dev/null[m
+[36m@@ -1,148 +0,0 @@[m
+[31m-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";[m
+[31m-[m
+[31m-import * as cheerio from "cheerio";[m
+[31m-[m
+[31m-const response = await fetch([m
+[31m-  "https://www.ilmeteo.it/meteo/genova"[m
+[31m-);[m
+[31m-[m
+[31m-const html = await response.text();[m
+[31m-[m
+[31m-const $ = cheerio.load(html);[m
+[31m-[m
+[31m-const forecasts = [];[m
+[31m-[m
+[31m-function normalizeHour(hour) {[m
+[31m-[m
+[31m-  let h = parseInt(hour, 10);[m
+[31m-[m
+[31m-  if (h === 24) {[m
+[31m-    h = 0;[m
+[31m-  }[m
+[31m-[m
+[31m-  return ([m
+[31m-    String(h).padStart(2, "0") +[m
+[31m-    ":00"[m
+[31m-  );[m
+[31m-}[m
+[31m-[m
+[31m-$("tr.forecast_1h").each((_, row) => {[m
+[31m-[m
+[31m-  const td = $(row).find("td");[m
+[31m-[m
+[31m-  const dialogId =[m
+[31m-    $(row).attr("data-dialogid");[m
+[31m-[m
+[31m- const dialog =[m
+[31m-  $(`#dialog-dettaglio-${dialogId}`);[m
+[31m-[m
+[31m-const dialogHtml =[m
+[31m-  dialog.html() || "";[m
+[31m-[m
+[31m-if ([m
+[31m-  normalizeHour([m
+[31m-    $(td[0]).text().trim()[m
+[31m-  ) === "02:00"[m
+[31m-) {[m
+[31m-[m
+[31m-  console.log([m
+[31m-    "Percepita:",[m
+[31m-    dialogHtml.includes("Percepita")[m
+[31m-  );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    "percepita:",[m
+[31m-    dialogHtml.includes("percepita")[m
+[31m-  );[m
+[31m-[m
+[31m-}[m
+[31m-[m
+[31m-[m
+[31m-  const descrizione =[m
+[31m-    dialog.find(".previ-descri")[m
+[31m-      .text()[m
+[31m-      .trim();[m
+[31m-[m
+[31m-[m
+[31m-  const mmMatch =[m
+[31m-    dialogHtml.match([m
+[31m-      /(\d+(?:\.\d+)?)\s*&nbsp;mm/i[m
+[31m-    ) ||[m
+[31m-    dialogHtml.match([m
+[31m-      /(\d+(?:\.\d+)?)\s*mm/i[m
+[31m-    );[m
+[31m-[m
+[31m-  const accumulo =[m
+[31m-    mmMatch[m
+[31m-      ? Number(mmMatch[1])[m
+[31m-      : 0;[m
+[31m-[m
+[31m-  const grandineMatch =[m
+[31m-    dialogHtml.match([m
+[31m-      /Grandine[\s\S]*?(\d+)%/i[m
+[31m-    );[m
+[31m-[m
+[31m-  const grandine =[m
+[31m-    grandineMatch[m
+[31m-      ? Number(grandineMatch[1])[m
+[31m-      : 0;[m
+[31m-[m
+[31m-  forecasts.push({[m
+[31m-[m
+[31m-    ora: normalizeHour([m
+[31m-      $(td[0])[m
+[31m-        .text()[m
+[31m-        .trim()[m
+[31m-    ),[m
+[31m-[m
+[31m-    codiceIcona: Number([m
+[31m-      $(td[1])[m
+[31m-        .find("[data-simbolo]")[m
+[31m-        .attr("data-simbolo")[m
+[31m-    ),[m
+[31m-[m
+[31m-    temperatura: Number([m
+[31m-      $(td[2])[m
+[31m-        .text()[m
+[31m-        .trim()[m
+[31m-        .replace(",", ".")[m
+[31m-    ),[m
+[31m-[m
+[31m-    percepita: Number([m
+[31m-      $(td[11])[m
+[31m-        .text()[m
+[31m-        .trim()[m
+[31m-        .replace(",", ".")[m
+[31m-    ),[m
+[31m-[m
+[31m-    pressione: Number([m
+[31m-      $(td[9]).text()[m
+[31m-    ),[m
+[31m-[m
+[31m-    umidita: Number([m
+[31m-      $(td[8]).text()[m
+[31m-    ),[m
+[31m-[m
+[31m-    probabilita: Number([m
+[31m-      $(td[6])[m
+[31m-        .text()[m
+[31m-        .replace("%", "")[m
+[31m-    ),[m
+[31m-[m
+[31m-    descrizione,[m
+[31m-[m
+[31m-    accumulo,[m
+[31m-[m
+[31m-    grandine,[m
+[31m-[m
+[31m-  });[m
+[31m-[m
+[31m-});[m
+[31m-[m
+[31m-console.log([m
+[31m-  JSON.stringify([m
+[31m-    forecasts,[m
+[31m-    null,[m
+[31m-    2[m
+[31m-  )[m
+[31m-);[m
+\ No newline at end of file[m
+[1mdiff --git a/test-ilmeteo-final.ts b/test-ilmeteo-final.ts[m
+[1mdeleted file mode 100644[m
+[1mindex 733a7d8..0000000[m
+[1m--- a/test-ilmeteo-final.ts[m
+[1m+++ /dev/null[m
+[36m@@ -1,33 +0,0 @@[m
+[31m-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";[m
+[31m-[m
+[31m-import {[m
+[31m-  getForecastFromSite,[m
+[31m-} from "./src/services/ilMeteoSiteParser";[m
+[31m-[m
+[31m-async function main() {[m
+[31m-[m
+[31m-  const data =[m
+[31m-    await getForecastFromSite([m
+[31m-      "genova"[m
+[31m-    );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    "Numero righe:",[m
+[31m-    data.length[m
+[31m-  );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    "\nORE RESTITUITE:"[m
+[31m-  );[m
+[31m-[m
+[31m-  console.log([m
+[31m-    data.map([m
+[31m-      (item) => item.ora[m
+[31m-    )[m
+[31m-  );[m
+[31m-[m
+[31m-}[m
+[31m-[m
+[31m-main().catch([m
+[31m-  console.error[m
+[31m-);[m
+\ No newline at end of file[m
+[1mdiff --git a/test-ilmeteo.mjs b/test-ilmeteo.mjs[m
+[1mdeleted file mode 100644[m
+[1mindex e69de29..0000000[m
+[1mdiff --git a/test-live-parser.mjs b/test-live-parser.mjs[m
+[1mdeleted file mode 100644[m
+[1mindex 36721f3..0000000[m
+[1m--- a/test-live-parser.mjs[m
+[1m+++ /dev/null[m
+[36m@@ -1,48 +0,0 @@[m
+[31m-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";[m
+[31m-[m
+[31m-import * as cheerio from "cheerio";[m
+[31m-[m
+[31m-const response = await fetch([m
+[31m-  "https://www.ilmeteo.it/box/previsioni.php?citta=5913&type=tri1"[m
+[31m-);[m
+[31m-[m
+[31m-const html = await response.text();[m
+[31m-[m
+[31m-const $ = cheerio.load(html);[m
+[31m-[m
+[31m-const righe = [];[m
+[31m-[m
+[31m-$("tr").each((_, row) => {[m
+[31m-  const td = $(row).find("td");[m
+[31m-[m
+[31m-  if (td.length >= 8) {[m
+[31m-[m
+[31m-    const ora =[m
+[31m-      $(td[0]).text().trim();[m
+[31m-[m
+[31m-    if ([m
+[31m-      ora &&[m
+[31m-      /^[0-9]{2}\.[0-9]{2}$/.test(ora)[m
+[31m-    ) {[m
+[31m-[m
+[31m-      const temperatura =[m
+[31m-        $(td[3])[m
+[31m-          .text()[m
+[31m-          .replace("°C", "")[m
+[31m-          .trim();[m
+[31m-[m
+[31m-      const precipitazioni =[m
+[31m-        $(td[5])[m
+[31m-          .text()[m
+[31m-          .trim();[m
+[31m-[m
+[31m-      righe.push({[m
+[31m-        ora: ora.replace(".", ":"),[m
+[31m-        temperatura,[m
+[31m-        precipitazioni,[m
+[31m-      });[m
+[31m-    }[m
+[31m-  }[m
+[31m-});[m
+[31m-[m
+[31m-console.log(righe);[m
+\ No newline at end of file[m
+[1mdiff --git a/test-parser.js b/test-parser.js[m
+[1mdeleted file mode 100644[m
+[1mindex 68847f3..0000000[m
+[1m--- a/test-parser.js[m
+[1m+++ /dev/null[m
+[36m@@ -1,15 +0,0 @@[m
+[31m-const fs = require("fs");[m
+[31m-[m
+[31m-let html = fs.readFileSync([m
+[31m-  "./roma.html",[m
+[31m-  "utf8"[m
+[31m-);[m
+[31m-[m
+[31m-console.log([m
+[31m-  html.includes("&lt;tr&gt;")[m
+[31m-);[m
+[31m-[m
+[31m-console.log([m
+[31m-  html.includes("<tr>")[m
+[31m-);[m
+[31m-``[m
+\ No newline at end of file[m
+[1mdiff --git a/test-real-service.js b/test-real-service.js[m
+[1mdeleted file mode 100644[m
+[1mindex 3d28cf1..0000000[m
+[1m--- a/test-real-service.js[m
+[1m+++ /dev/null[m
+[36m@@ -1,40 +0,0 @@[m
+[31m-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";[m
+[31m-[m
+[31m-const cheerio = require("cheerio");[m
+[31m-[m
+[31m-async function test() {[m
+[31m-  const response = await fetch([m
+[31m-    "https://www.ilmeteo.it/box/previsioni.php?citta=5913&type=tri1"[m
+[31m-  );[m
+[31m-[m
+[31m-  const html = await response.text();[m
+[31m-[m
+[31m-  const $ = cheerio.load(html);[m
+[31m-[m
+[31m-  const righe = [];[m
+[31m-[m
+[31m-  $("tr").each((_, row) => {[m
+[31m-    const td = $(row).find("td");[m
+[31m-[m
+[31m-    if (td.length >= 8) {[m
+[31m-      const ora = $(td[0])[m
+[31m-        .text()[m
+[31m-        .trim();[m
+[31m-[m
+[31m-      if ([m
+[31m-        ora &&[m
+[31m-        /^[0-9]{2}\.[0-9]{2}$/.test(ora)[m
+[31m-      ) {[m
+[31m-        righe.push({[m
+[31m-          ora,[m
+[31m-          temperatura: $(td[3]).text().trim(),[m
+[31m-          precipitazioni: $(td[5]).text().trim(),[m
+[31m-        });[m
+[31m-      }[m
+[31m-    }[m
+[31m-  });[m
+[31m-[m
+[31m-  console.log(righe);[m
+[31m-}[m
+[31m-[m
+[31m-test();[m
+\ No newline at end of file[m
+[1mdiff --git a/test-real-service.mjs b/test-real-service.mjs[m
+[1mdeleted file mode 100644[m
+[1mindex dfb506d..0000000[m
+[1m--- a/test-real-service.mjs[m
+[1m+++ /dev/null[m
+[36m@@ -1,8 +0,0 @@[m
+[31m-import {[m
+[31m-  getRealForecast,[m
+[31m-} from "./src/services/realForecastService.js";[m
+[31m-[m
+[31m-const data =[m
+[31m-  await getRealForecast("5913");[m
+[31m-[m
+[31m-console.log(data);[m
+\ No newline at end of file[m
+[1mdiff --git a/test-site.mjs b/test-site.mjs[m
+[1mdeleted file mode 100644[m
+[1mindex 2b1a98c..0000000[m
+[1m--- a/test-site.mjs[m
+[1m+++ /dev/null[m
+[36m@@ -1,13 +0,0 @@[m
+[31m-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";[m
+[31m-[m
+[31m-const response = await fetch([m
+[31m-  "https://www.ilmeteo.it/meteo/roma"[m
+[31m-);[m
+[31m-[m
+[31m-console.log("Status:", response.status);[m
+[31m-[m
+[31m-const html = await response.text();[m
+[31m-[m
+[31m-console.log([m
+[31m-  html.substring(0, 1000)[m
+[31m-);[m
+\ No newline at end of file[m
+[1mdiff --git a/test-widget.mjs b/test-widget.mjs[m
+[1mdeleted file mode 100644[m
+[1mindex a972014..0000000[m
+[1m--- a/test-widget.mjs[m
+[1m+++ /dev/null[m
+[36m@@ -1,12 +0,0 @@[m
+[31m-const url =[m
+[31m-  "https://www.ilmeteo.it/box/previsioni.php?citta=5913&type=tri1";[m
+[31m-[m
+[31m-const response = await fetch(url);[m
+[31m-[m
+[31m-console.log("Status:", response.status);[m
+[31m-[m
+[31m-const html = await response.text();[m
+[31m-[m
+[31m-console.log([m
+[31m-  html.substring(0, 1000)[m
+[31m-);[m
+\ No newline at end of file[m
+[1mdiff --git a/verify-columns.mjs b/verify-columns.mjs[m
+[1mdeleted file mode 100644[m
+[1mindex 7d9a38e..0000000[m
+[1m--- a/verify-columns.mjs[m
+[1m+++ /dev/null[m
+[36m@@ -1,41 +0,0 @@[m
+[31m-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";[m
+[31m-[m
+[31m-import * as cheerio from "cheerio";[m
+[31m-[m
+[31m-const cities = [[m
+[31m-  "roma",[m
+[31m-  "milano",[m
+[31m-  "genova",[m
+[31m-  "napoli",[m
+[31m-  "torino"[m
+[31m-];[m
+[31m-[m
+[31m-for (const city of cities) {[m
+[31m-[m
+[31m-  const response = await fetch([m
+[31m-    `https://www.ilmeteo.it/meteo/${city}`[m
+[31m-  );[m
+[31m-[m
+[31m-  const html = await response.text();[m
+[31m-[m
+[31m-  const $ = cheerio.load(html);[m
+[31m-[m
+[31m-  const row =[m
+[31m-    $("tr.forecast_1h").last();[m
+[31m-[m
+[31m-  const td =[m
+[31m-    row.find("td");[m
+[31m-[m
+[31m-  console.log("\n=================");[m
+[31m-  console.log(city.toUpperCase());[m
+[31m-  console.log("=================");[m
+[31m-[m
+[31m-  td.each((i, el) => {[m
+[31m-[m
+[31m-    console.log([m
+[31m-      i,[m
+[31m-      $(el).text().trim()[m
+[31m-    );[m
+[31m-[m
+[31m-  });[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/verify-percepita.mjs b/verify-percepita.mjs[m
+[1mdeleted file mode 100644[m
+[1mindex db7b39d..0000000[m
+[1m--- a/verify-percepita.mjs[m
+[1m+++ /dev/null[m
+[36m@@ -1,34 +0,0 @@[m
+[31m-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";[m
+[31m-[m
+[31m-import * as cheerio from "cheerio";[m
+[31m-[m
+[31m-const cities = [[m
+[31m-  "roma",[m
+[31m-  "milano",[m
+[31m-  "genova",[m
+[31m-  "napoli",[m
+[31m-  "torino"[m
+[31m-];[m
+[31m-[m
+[31m-for (const city of cities) {[m
+[31m-[m
+[31m-  const response = await fetch([m
+[31m-    `https://www.ilmeteo.it/meteo/${city}`[m
+[31m-  );[m
+[31m-[m
+[31m-  const html = await response.text();[m
+[31m-[m
+[31m-  const $ = cheerio.load(html);[m
+[31m-[m
+[31m-  const row =[m
+[31m-    $("tr.forecast_1h").last();[m
+[31m-[m
+[31m-  const td =[m
+[31m-    row.find("td");[m
+[31m-[m
+[31m-  console.log([m
+[31m-    city,[m
+[31m-    "td[11]=",[m
+[31m-    $(td[11]).text().trim()[m
+[31m-  );[m
+[31m-}[m
+\ No newline at end of file[m

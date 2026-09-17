@@ -7,17 +7,11 @@ import {
   treBMeteoRomaOggi,
 } from "../data/mockForecasts";
 
-import {
-  getAggregatedForecast,
-} from "./forecastAggregatorService";
+import { getAggregatedForecast } from "./forecastAggregatorService";
 
-import {
-  searchCity,
-} from "./ilMeteoService";
+import { searchCity } from "./ilMeteoService";
 
-export async function getCityId(
-  city: string
-) {
+export async function getCityId(city: string) {
   const risultati = await searchCity(city);
 
   if (risultati.length === 0) {
@@ -27,49 +21,26 @@ export async function getCityId(
   return risultati[0].id;
 }
 
-export async function getForecastsByCity(
-  city: string,
-  giorno: string
-) {
+export async function getForecastsByCity(city: string, giorno: string) {
+  const cityId = await getCityId(city);
 
-  const cityId =
-    await getCityId(city);
-
-  console.log(
-    "Città selezionata:",
-    cityId
-  );
-
-  const risultato =
-    await getAggregatedForecast(
-      city.toLowerCase()
-    );
+  const risultato = await getAggregatedForecast(city.toLowerCase());
 
   return risultato;
 }
 
-
-export function buildComparison(
-  ilMeteo: any[],
-  treBMeteo: any[]
-) {
+export function buildComparison(ilMeteo: any[], treBMeteo: any[]) {
   return ilMeteo.map((ilMeteoItem) => {
     const treBMeteoItem = treBMeteo.find(
-      (item) => item.ora === ilMeteoItem.ora
+      (item) => item.ora === ilMeteoItem.ora,
     );
 
     const differenzaProbabilita = treBMeteoItem
-      ? Math.abs(
-          ilMeteoItem.probabilita -
-            treBMeteoItem.probabilita
-        )
+      ? Math.abs(ilMeteoItem.probabilita - treBMeteoItem.probabilita)
       : 0;
 
     const differenzaAccumulo = treBMeteoItem
-      ? Math.abs(
-          ilMeteoItem.accumulo -
-            treBMeteoItem.accumulo
-        )
+      ? Math.abs(ilMeteoItem.accumulo - treBMeteoItem.accumulo)
       : 0;
 
     return {
@@ -77,23 +48,17 @@ export function buildComparison(
       icona: ilMeteoItem.icona,
       ilMeteo: ilMeteoItem,
       treBMeteo: treBMeteoItem,
-      alert:
-        differenzaProbabilita > 20 ||
-        differenzaAccumulo > 3,
+      alert: differenzaProbabilita > 20 || differenzaAccumulo > 3,
     };
   });
 }
 
 export function getForecasts(giorno: string) {
-const cityRaw =
-  localStorage.getItem("city");
+  const cityRaw = localStorage.getItem("city");
 
-const city = cityRaw
-  ? JSON.parse(cityRaw)
-  : null;
+  const city = cityRaw ? JSON.parse(cityRaw) : null;
 
-const isRoma =
-  city?.nome === "Roma";
+  const isRoma = city?.nome === "Roma";
 
   const dati =
     giorno === "Domani"
@@ -101,18 +66,15 @@ const isRoma =
           ilMeteo: ilMeteoDomani,
           treBMeteo: treBMeteoDomani,
         }
-     : isRoma
-  ? {
-      ilMeteo: ilMeteoRomaOggi,
-      treBMeteo: treBMeteoRomaOggi,
-    }
-  : {
-      ilMeteo: ilMeteoOggi,
-      treBMeteo: treBMeteoOggi,
-    };
+      : isRoma
+        ? {
+            ilMeteo: ilMeteoRomaOggi,
+            treBMeteo: treBMeteoRomaOggi,
+          }
+        : {
+            ilMeteo: ilMeteoOggi,
+            treBMeteo: treBMeteoOggi,
+          };
 
-  return buildComparison(
-    dati.ilMeteo,
-    dati.treBMeteo
-  );
+  return buildComparison(dati.ilMeteo, dati.treBMeteo);
 }

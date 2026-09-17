@@ -1,34 +1,18 @@
-import type {
-  ForecastItem,
-} from "../types/ForecastItem";
+import type { ForecastItem } from "../types/ForecastItem";
 
-import {
-  getForecastFromSite,
-} from "./ilMeteoSiteParser";
+import { getForecastFromSite } from "./ilMeteoSiteParser";
 
-import {
-  getForecastFrom3BMeteo,
-} from "./treBMeteoSiteParser";
+import { getForecastFrom3BMeteo } from "./treBMeteoSiteParser";
 
 const CITY_ALIASES: Record<string, string> = {
   "pontecagnano faiano": "pontecagnano",
   "pontecagnano-faiano": "pontecagnano",
 };
 
-function normalizeCity(
-  city: string
-): string {
+function normalizeCity(city: string): string {
+  const normalized = city.trim().toLowerCase();
 
-  const normalized =
-    city
-      .trim()
-      .toLowerCase();
-
-  return (
-    CITY_ALIASES[normalized] ??
-    normalized
-  );
-
+  return CITY_ALIASES[normalized] ?? normalized;
 }
 
 export interface ForecastComparisonItem {
@@ -61,35 +45,19 @@ export interface AggregatedForecast {
   confronto: ForecastComparisonItem[];
 }
 
-function roundToOneDecimal(
-  value: number
-): number {
+function roundToOneDecimal(value: number): number {
   return Math.round(value * 10) / 10;
 }
 
-function absoluteDifference(
-  firstValue: number,
-  secondValue: number
-): number {
-  return roundToOneDecimal(
-    Math.abs(firstValue - secondValue)
-  );
+function absoluteDifference(firstValue: number, secondValue: number): number {
+  return roundToOneDecimal(Math.abs(firstValue - secondValue));
 }
 
-function normalizeSlug(
-  slug: string
-): string {
-  const normalizedSlug = slug
-    .trim()
-    .toLowerCase();
+function normalizeSlug(slug: string): string {
+  const normalizedSlug = slug.trim().toLowerCase();
 
-  if (
-    !normalizedSlug ||
-    !/^[a-z0-9-]+$/.test(normalizedSlug)
-  ) {
-    throw new Error(
-      "Slug della località non valido"
-    );
+  if (!normalizedSlug || !/^[a-z0-9-]+$/.test(normalizedSlug)) {
+    throw new Error("Slug della località non valido");
   }
 
   return normalizedSlug;
@@ -97,51 +65,30 @@ function normalizeSlug(
 
 export function buildForecastComparison(
   ilMeteoForecasts: ForecastItem[],
-  treBMeteoForecasts: ForecastItem[]
+  treBMeteoForecasts: ForecastItem[],
 ): ForecastComparisonItem[] {
   const ilMeteoByHour = new Map(
-    ilMeteoForecasts.map(
-      (forecast) => [
-        forecast.ora,
-        forecast,
-      ]
-    )
+    ilMeteoForecasts.map((forecast) => [forecast.ora, forecast]),
   );
 
   const treBMeteoByHour = new Map(
-    treBMeteoForecasts.map(
-      (forecast) => [
-        forecast.ora,
-        forecast,
-      ]
-    )
+    treBMeteoForecasts.map((forecast) => [forecast.ora, forecast]),
   );
 
   const hours = Array.from(
-    new Set([
-      ...ilMeteoByHour.keys(),
-      ...treBMeteoByHour.keys(),
-    ])
+    new Set([...ilMeteoByHour.keys(), ...treBMeteoByHour.keys()]),
   ).sort((firstHour, secondHour) => {
-    const firstValue = Number.parseInt(
-      firstHour,
-      10
-    );
+    const firstValue = Number.parseInt(firstHour, 10);
 
-    const secondValue = Number.parseInt(
-      secondHour,
-      10
-    );
+    const secondValue = Number.parseInt(secondHour, 10);
 
     return firstValue - secondValue;
   });
 
   return hours.map((ora) => {
-    const ilMeteo =
-      ilMeteoByHour.get(ora) ?? null;
+    const ilMeteo = ilMeteoByHour.get(ora) ?? null;
 
-    const treBMeteo =
-      treBMeteoByHour.get(ora) ?? null;
+    const treBMeteo = treBMeteoByHour.get(ora) ?? null;
 
     if (!ilMeteo || !treBMeteo) {
       return {
@@ -157,39 +104,32 @@ export function buildForecastComparison(
       };
     }
 
-    const differenzaTemperatura =
-      absoluteDifference(
-        ilMeteo.temperatura,
-        treBMeteo.temperatura
-      );
+    const differenzaTemperatura = absoluteDifference(
+      ilMeteo.temperatura,
+      treBMeteo.temperatura,
+    );
 
-    const differenzaProbabilita =
-      absoluteDifference(
-        ilMeteo.probabilita,
-        treBMeteo.probabilita
-      );
+    const differenzaProbabilita = absoluteDifference(
+      ilMeteo.probabilita,
+      treBMeteo.probabilita,
+    );
 
-    const differenzaAccumulo =
-      absoluteDifference(
-        ilMeteo.accumulo,
-        treBMeteo.accumulo
-      );
+    const differenzaAccumulo = absoluteDifference(
+      ilMeteo.accumulo,
+      treBMeteo.accumulo,
+    );
 
-    const differenzaUmidita =
-      absoluteDifference(
-        ilMeteo.umidita,
-        treBMeteo.umidita
-      );
+    const differenzaUmidita = absoluteDifference(
+      ilMeteo.umidita,
+      treBMeteo.umidita,
+    );
 
-    const differenzaPressione =
-      absoluteDifference(
-        ilMeteo.pressione,
-        treBMeteo.pressione
-      );
+    const differenzaPressione = absoluteDifference(
+      ilMeteo.pressione,
+      treBMeteo.pressione,
+    );
 
-    const alert =
-      differenzaProbabilita > 20 ||
-      differenzaAccumulo > 3;
+    const alert = differenzaProbabilita > 20 || differenzaAccumulo > 3;
 
     return {
       ora,
@@ -207,50 +147,29 @@ export function buildForecastComparison(
 
 export async function getAggregatedForecast(
   slug: string,
-  day: number = 0
+  day: number = 0,
 ): Promise<AggregatedForecast> {
+  const cityToSearch = normalizeCity(slug);
 
-
-  const cityToSearch =
-    normalizeCity(slug);
-
-  if (
-    cityToSearch !==
-    slug.toLowerCase()
-  ) {
-
-    console.log(
-      `[ALIAS] ${slug} -> ${cityToSearch}`
-    );
-
+  if (cityToSearch !== slug.toLowerCase()) {
   }
 
-  const normalizedSlug =
-    normalizeSlug(cityToSearch);
-  const [
-    ilMeteo,
-    treBMeteo,
-  ] = await Promise.all([
-    getForecastFromSite(
-      normalizedSlug,
-      day
-    ),
+  const normalizedSlug = normalizeSlug(cityToSearch);
+  const [ilMeteo, treBMeteo] = await Promise.all([
+    getForecastFromSite(normalizedSlug, day),
 
-    getForecastFrom3BMeteo(
-      normalizedSlug,
-      day
-    ),
+    getForecastFrom3BMeteo(normalizedSlug, day),
   ]);
 
   if (ilMeteo.length === 0) {
     throw new Error(
-      `iLMeteo non ha restituito previsioni per ${normalizedSlug}`
+      `iLMeteo non ha restituito previsioni per ${normalizedSlug}`,
     );
   }
 
   if (treBMeteo.length === 0) {
     throw new Error(
-      `3BMeteo non ha restituito previsioni per ${normalizedSlug}`
+      `3BMeteo non ha restituito previsioni per ${normalizedSlug}`,
     );
   }
 
@@ -261,10 +180,6 @@ export async function getAggregatedForecast(
 
     treBMeteo,
 
-    confronto:
-      buildForecastComparison(
-        ilMeteo,
-        treBMeteo
-      ),
+    confronto: buildForecastComparison(ilMeteo, treBMeteo),
   };
 }

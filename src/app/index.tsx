@@ -1,12 +1,11 @@
 import { View, Text, Pressable } from "react-native";
-
 import { useState } from "react";
 import LocationInput from "../components/LocationInput";
 import { getForecastsByCity } from "../services/apiForecastService";
-import { Image } from "react-native";
-import { weatherIcons } from "../constants/weatherIcons";
-
 import { useEffect } from "react";
+import { weatherIcons } from "../constants/weatherIcons";
+import { mapIlMeteoCode } from "../constants/weatherTypeMapper";
+import { map3BMeteoDescription } from "../constants/weatherTypeMapper";
 
 export default function HomeScreen() {
   const [orariAperti, setOrariAperti] = useState<string[]>([]);
@@ -127,6 +126,47 @@ export default function HomeScreen() {
           Confronto previsioni
         </Text>
 
+        <View
+          style={{
+            flexDirection: "row",
+            marginBottom: 10,
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              width: 70,
+              fontWeight: "bold",
+            }}
+          >
+            Ora
+          </Text>
+
+          <Text
+            style={{
+              width: 110,
+              fontWeight: "bold",
+              color: "#2563eb",
+              textAlign: "left",
+              paddingLeft: 10,
+            }}
+          >
+            iLM
+          </Text>
+
+          <Text
+            style={{
+              width: 110,
+              fontWeight: "bold",
+              color: "#16a34a",
+              textAlign: "left",
+              paddingLeft: 10,
+            }}
+          >
+            3bM
+          </Text>
+        </View>
+
         {confrontoCorrente.map((item) => (
           <View
             key={item.ora}
@@ -153,27 +193,58 @@ export default function HomeScreen() {
                   gap: 8,
                 }}
               >
-                <Image
-                  source={weatherIcons[item.ilMeteo.codiceIcona]}
+                <View
                   style={{
-                    width: 24,
-                    height: 24,
+                    flexDirection: "row",
+                    alignItems: "center",
                   }}
-                />
+                >
+                  <Text
+                    style={{
+                      width: 70,
+                      fontWeight: "600",
+                      fontSize: 16,
+                    }}
+                  >
+                    {item.ora}
+                  </Text>
 
-                <Text>
-                  {item.ora} {item.ilMeteo.temperatura}°C /
-                  {item.treBMeteo?.temperatura}°C{" "}
-                  {item.ilMeteo.probabilita > 0 ||
-                  item.ilMeteo.accumulo > 0 ||
-                  (item.treBMeteo?.probabilita ?? 0) > 0 ||
-                  (item.treBMeteo?.accumulo ?? 0) > 0
-                    ? orariAperti.includes(item.ora)
-                      ? "▲"
-                      : "▼"
-                    : ""}{" "}
-                  {item.alert ? "⚠️" : ""}
-                </Text>
+                  <Text
+                    style={{
+                      width: 110,
+                      fontSize: 16,
+                    }}
+                  >
+                    {weatherIcons[mapIlMeteoCode(item.ilMeteo.codiceIcona)]}{" "}
+                    {item.ilMeteo.temperatura}°
+                  </Text>
+
+                  <Text
+                    style={{
+                      width: 110,
+                      fontSize: 16,
+                    }}
+                  >
+                    {
+                      weatherIcons[
+                        map3BMeteoDescription(item.treBMeteo?.descrizione ?? "")
+                      ]
+                    }{" "}
+                    {item.treBMeteo?.temperatura}°
+                  </Text>
+
+                  <Text>
+                    {item.ilMeteo.probabilita > 0 ||
+                    item.ilMeteo.accumulo > 0 ||
+                    (item.treBMeteo?.probabilita ?? 0) > 0 ||
+                    (item.treBMeteo?.accumulo ?? 0) > 0
+                      ? orariAperti.includes(item.ora)
+                        ? "▲"
+                        : "▼"
+                      : ""}{" "}
+                    {item.alert ? "⚠️" : ""}
+                  </Text>
+                </View>
               </View>
             </Pressable>
 
