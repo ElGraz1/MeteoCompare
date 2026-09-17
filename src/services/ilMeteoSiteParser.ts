@@ -174,6 +174,12 @@ let url =
 if (day === 1) {
   url += "/domani";
 }
+else if (day === 2) {
+  url += "/dopodomani";
+}
+else if (day >= 3) {
+  url += `/${day}`;
+}
 
 const response = await fetch(url);
 

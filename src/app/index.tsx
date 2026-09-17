@@ -44,10 +44,18 @@ export default function HomeScreen() {
 useEffect(() => {
 
   
-  const day =
-  giorno === "Domani"
-    ? 1
-    : 0;
+const dayMap: Record<string, number> = {
+  "Oggi": 0,
+  "Domani": 1,
+  "+2": 2,
+  "+3": 3,
+  "+4": 4,
+  "+5": 5,
+  "+6": 6,
+};
+
+const day =
+  dayMap[giorno] ?? 0;
 
 
   getForecastsByCity(localita, day)

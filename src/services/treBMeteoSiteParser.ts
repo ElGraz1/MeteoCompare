@@ -201,8 +201,8 @@ export async function getForecastFrom3BMeteo(
 let url =
   `https://www.3bmeteo.com/meteo/${normalizedSlug}`;
 
-if (day === 1) {
-  url += "/1";
+if (day > 0) {
+  url += `/${day}`;
 }
 
 const response =
