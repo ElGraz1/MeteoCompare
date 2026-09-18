@@ -176,9 +176,8 @@ export async function getAggregatedForecast(
   slug: string,
   day: number = 0,
 ): Promise<AggregatedForecast> {
-  const cityToSearch = normalizeCity(slug);
+  const normalizedSlug = slug.trim().toLowerCase();
 
-  const normalizedSlug = normalizeSlug(cityToSearch);
   const cacheKey = `${normalizedSlug}-${day}`;
 
   const cached = forecastCache.get(cacheKey);
