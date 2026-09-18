@@ -13,31 +13,17 @@ const forecastCache = new Map<string, CacheEntry>();
 
 const CACHE_TTL = 15 * 60 * 1000;
 
+const CITY_ALIASES: Record<string, string> = {
+  "pontecagnano faiano": "pontecagnano",
+  "pontecagnano-faiano": "pontecagnano",
+};
+
 function normalizeCity(city: string): string {
-  return city
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/'/g, "")
-    .replace(/-/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  const normalized = city.trim().toLowerCase();
+
+  return CITY_ALIASES[normalized] ?? normalized;
 }
 
-function getFallbackCities(city: string): string[] {
-  const normalized = normalizeCity(city);
-
-  const attempts = [normalized];
-
-  const parts = normalized.split(" ");
-
-  if (parts.length > 1) {
-    attempts.push(parts[0]);
-  }
-
-  return [...new Set(attempts)];
-}
 export interface ForecastComparisonItem {
   ora: string;
 
