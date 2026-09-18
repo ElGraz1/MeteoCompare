@@ -13,17 +13,31 @@ const forecastCache = new Map<string, CacheEntry>();
 
 const CACHE_TTL = 15 * 60 * 1000;
 
-const CITY_ALIASES: Record<string, string> = {
-  "pontecagnano faiano": "pontecagnano",
-  "pontecagnano-faiano": "pontecagnano",
-};
-
 function normalizeCity(city: string): string {
-  const normalized = city.trim().toLowerCase();
-
-  return CITY_ALIASES[normalized] ?? normalized;
+  return city
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/'/g, "")
+    .replace(/-/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
+function getFallbackCities(city: string): string[] {
+  const normalized = normalizeCity(city);
+
+  const attempts = [normalized];
+
+  const parts = normalized.split(" ");
+
+  if (parts.length > 1) {
+    attempts.push(parts[0]);
+  }
+
+  return [...new Set(attempts)];
+}
 export interface ForecastComparisonItem {
   ora: string;
 
@@ -172,16 +186,34 @@ export async function getAggregatedForecast(
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     console.log(`[CACHE HIT] ${cacheKey}`);
 
+    console.log("[CACHE DATA]", cacheKey, {
+      ilMeteo: cached.data.ilMeteo.length,
+      treBMeteo: cached.data.treBMeteo.length,
+      confronto: cached.data.confronto.length,
+    });
+
     return cached.data;
   }
 
   console.log(`[CACHE MISS] ${cacheKey}`);
 
-  const [ilMeteo, treBMeteo] = await Promise.all([
-    getForecastFromSite(normalizedSlug, day),
+  const ilMeteo = await getForecastFromSite(normalizedSlug, day);
 
-    getForecastFrom3BMeteo(normalizedSlug, day),
-  ]);
+  let treBMeteo: ForecastItem[] = [];
+
+  for (const candidate of candidates) {
+    try {
+      treBMeteo = await getForecastFrom3BMeteo(normalizeSlug(candidate), day);
+
+      if (treBMeteo.length > 0) {
+        console.log(`[3BM OK] ${candidate}`);
+
+        break;
+      }
+    } catch (error) {
+      console.log(`[3BM FAIL] ${candidate}`);
+    }
+  }
 
   if (ilMeteo.length === 0) {
     throw new Error(
