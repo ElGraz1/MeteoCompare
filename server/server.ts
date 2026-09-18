@@ -14,9 +14,15 @@ app.use(cors());
 
 app.get("/locations", async (_req, res) => {
   try {
-    const filePath = path.join(process.cwd(), "ilmeteo_codici_comuni.csv");
+    const filePath = path.join(
+      process.cwd(),
+      "data",
+      "ilmeteo_codici_comuni.csv",
+    );
 
+    console.log("CSV PATH:", filePath);
     const csv = fs.readFileSync(filePath, "utf8");
+    console.log("CSV LOADED");
 
     const parsed = Papa.parse(csv, {
       delimiter: ";",
