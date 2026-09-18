@@ -29,6 +29,13 @@
 - Espansione dettagli ▼ ▲
 - Cache server-side
 
+## Refactoring backend
+
+- Endpoint /locations
+- Cache località lato app
+- Matching località lato backend
+- Alias località lato backend
+
 ---
 
 ## Backend

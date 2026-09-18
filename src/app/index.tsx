@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { weatherIcons } from "../constants/weatherIcons";
 import { mapIlMeteoCode } from "../constants/weatherTypeMapper";
 import { map3BMeteoDescription } from "../constants/weatherTypeMapper";
+import { View, Text, Pressable, ScrollView } from "react-native";
 
 function getDays() {
   const labels: string[] = [];
@@ -66,14 +67,14 @@ export default function HomeScreen() {
         backgroundColor: "#f1f5f9",
       }}
     >
-      <View
-        style={{
-          flex: 1,
+      <ScrollView
+        contentContainerStyle={{
           padding: 20,
+          paddingBottom: 40,
         }}
       >
+        ``
         <LocationInput localita={localita} setLocalita={setLocalita} />
-
         <View
           style={{
             flexDirection: "row",
@@ -86,6 +87,7 @@ export default function HomeScreen() {
             <Pressable
               key={g}
               onPress={() => {
+                setOrariAperti([]);
                 setGiorno(g);
               }}
               style={{
@@ -105,7 +107,6 @@ export default function HomeScreen() {
             </Pressable>
           ))}
         </View>
-
         <Text
           style={{
             fontSize: 28,
@@ -115,7 +116,6 @@ export default function HomeScreen() {
         >
           🌍 {localita}
         </Text>
-
         <View
           style={{
             backgroundColor: "white",
@@ -290,7 +290,7 @@ export default function HomeScreen() {
             </View>
           ))}
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
