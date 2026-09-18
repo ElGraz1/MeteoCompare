@@ -1,5 +1,3 @@
-import Papa from "papaparse";
-
 export type CitySuggestion = {
   id: string;
   nome: string;
@@ -9,22 +7,8 @@ export type CitySuggestion = {
 
 export async function loadLocations() {
   const response = await fetch(
-    "/ilmeteo_codici_comuni.csv"
+    "https://site--meteocompare-api--ddx7k442y97b.code.run/locations",
   );
 
-  const csv = await response.text();
-
-  const parsed = Papa.parse(csv, {
-    delimiter: ";",
-  });
-
-  return parsed.data
-    .filter((row: any) => row.length >= 4)
-    .map((row: any) => ({
-      id: row[0],
-      nome: row[1],
-      provincia: row[2],
-      regione: row[3],
-    }));
+  return await response.json();
 }
-``
