@@ -176,9 +176,9 @@ export async function getAggregatedForecast(
   slug: string,
   day: number = 0,
 ): Promise<AggregatedForecast> {
-  const candidates = getFallbackCities(slug);
+  const cityToSearch = normalizeCity(slug);
 
-  const normalizedSlug = normalizeSlug(candidates[0]);
+  const normalizedSlug = normalizeSlug(cityToSearch);
   const cacheKey = `${normalizedSlug}-${day}`;
 
   const cached = forecastCache.get(cacheKey);
@@ -197,23 +197,11 @@ export async function getAggregatedForecast(
 
   console.log(`[CACHE MISS] ${cacheKey}`);
 
-  const ilMeteo = await getForecastFromSite(normalizedSlug, day);
-
-  let treBMeteo: ForecastItem[] = [];
-
-  for (const candidate of candidates) {
-    try {
-      treBMeteo = await getForecastFrom3BMeteo(normalizeSlug(candidate), day);
-
-      if (treBMeteo.length > 0) {
-        console.log(`[3BM OK] ${candidate}`);
-
-        break;
-      }
-    } catch (error) {
-      console.log(`[3BM FAIL] ${candidate}`);
-    }
-  }
+  const [ilMeteo, treBMeteo] = await Promise.all([
+    getForecastFromSite(normalizedSlug, day),
+    getForecastFrom3BMeteo(normalizedSlug, day),
+  ]);
+  ``;
 
   if (ilMeteo.length === 0) {
     throw new Error(
