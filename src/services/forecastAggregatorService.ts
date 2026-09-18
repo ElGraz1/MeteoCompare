@@ -200,19 +200,10 @@ export async function getAggregatedForecast(
 
   let treBMeteo: ForecastItem[] = [];
 
-  for (const candidate of candidates) {
-    try {
-      treBMeteo = await getForecastFrom3BMeteo(normalizeSlug(candidate), day);
-
-      if (treBMeteo.length > 0) {
-        console.log(`[3BM OK] ${candidate}`);
-
-        break;
-      }
-    } catch (error) {
-      console.log(`[3BM FAIL] ${candidate}`);
-    }
-  }
+  const [ilMeteo, treBMeteo] = await Promise.all([
+    getForecastFromSite(normalizedSlug, day),
+    getForecastFrom3BMeteo(normalizedSlug, day),
+  ]);
 
   if (ilMeteo.length === 0) {
     throw new Error(
