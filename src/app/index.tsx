@@ -1,4 +1,3 @@
-import { View, Text, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import LocationInput from "../components/LocationInput";
@@ -67,13 +66,12 @@ export default function HomeScreen() {
         backgroundColor: "#f1f5f9",
       }}
     >
-      <ScrollView
-        contentContainerStyle={{
+      <View
+        style={{
+          flex: 1,
           padding: 20,
-          paddingBottom: 40,
         }}
       >
-        ``
         <LocationInput localita={localita} setLocalita={setLocalita} />
         <View
           style={{
@@ -116,181 +114,191 @@ export default function HomeScreen() {
         >
           🌍 {localita}
         </Text>
-        <View
+
+        <ScrollView
           style={{
-            backgroundColor: "white",
-            padding: 15,
-            borderRadius: 15,
+            flex: 1,
+          }}
+          contentContainerStyle={{
+            paddingBottom: 40,
           }}
         >
           <View
             style={{
-              flexDirection: "row",
-              marginBottom: 10,
-              alignItems: "center",
+              backgroundColor: "white",
+              padding: 15,
+              borderRadius: 15,
             }}
           >
-            <Text
-              style={{
-                width: 70,
-                fontWeight: "bold",
-              }}
-            >
-              Ora
-            </Text>
-
-            <Text
-              style={{
-                width: 110,
-                fontWeight: "bold",
-                color: "#2563eb",
-                textAlign: "left",
-                paddingLeft: 10,
-              }}
-            >
-              iLM
-            </Text>
-
-            <Text
-              style={{
-                width: 110,
-                fontWeight: "bold",
-                color: "#16a34a",
-                textAlign: "left",
-                paddingLeft: 10,
-              }}
-            >
-              3bM
-            </Text>
-          </View>
-
-          {confrontoCorrente.map((item) => (
             <View
-              key={item.ora}
               style={{
-                marginBottom: 15,
+                flexDirection: "row",
+                marginBottom: 10,
+                alignItems: "center",
               }}
             >
-              <Pressable
-                onPress={() => {
-                  if (
-                    item.ilMeteo.probabilita > 0 ||
-                    item.ilMeteo.accumulo > 0 ||
-                    (item.treBMeteo?.probabilita ?? 0) > 0 ||
-                    (item.treBMeteo?.accumulo ?? 0) > 0
-                  ) {
-                    toggleOrario(item.ora);
-                  }
+              <Text
+                style={{
+                  width: 70,
+                  fontWeight: "bold",
                 }}
               >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 8,
+                Ora
+              </Text>
+
+              <Text
+                style={{
+                  width: 110,
+                  fontWeight: "bold",
+                  color: "#2563eb",
+                  textAlign: "left",
+                  paddingLeft: 10,
+                }}
+              >
+                iLM
+              </Text>
+
+              <Text
+                style={{
+                  width: 110,
+                  fontWeight: "bold",
+                  color: "#16a34a",
+                  textAlign: "left",
+                  paddingLeft: 10,
+                }}
+              >
+                3bM
+              </Text>
+            </View>
+
+            {confrontoCorrente.map((item) => (
+              <View
+                key={item.ora}
+                style={{
+                  marginBottom: 15,
+                }}
+              >
+                <Pressable
+                  onPress={() => {
+                    if (
+                      item.ilMeteo.probabilita > 0 ||
+                      item.ilMeteo.accumulo > 0 ||
+                      (item.treBMeteo?.probabilita ?? 0) > 0 ||
+                      (item.treBMeteo?.accumulo ?? 0) > 0
+                    ) {
+                      toggleOrario(item.ora);
+                    }
                   }}
                 >
                   <View
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
+                      gap: 8,
                     }}
                   >
-                    <Text
+                    <View
                       style={{
-                        width: 70,
-                        fontWeight: "600",
-                        fontSize: 16,
+                        flexDirection: "row",
+                        alignItems: "center",
                       }}
                     >
-                      {item.ora}
-                    </Text>
+                      <Text
+                        style={{
+                          width: 70,
+                          fontWeight: "600",
+                          fontSize: 16,
+                        }}
+                      >
+                        {item.ora}
+                      </Text>
 
-                    <Text
-                      style={{
-                        width: 110,
-                        fontSize: 16,
-                      }}
-                    >
-                      {weatherIcons[mapIlMeteoCode(item.ilMeteo.codiceIcona)]}{" "}
-                      {item.ilMeteo.temperatura}°
-                    </Text>
+                      <Text
+                        style={{
+                          width: 110,
+                          fontSize: 16,
+                        }}
+                      >
+                        {weatherIcons[mapIlMeteoCode(item.ilMeteo.codiceIcona)]}{" "}
+                        {item.ilMeteo.temperatura}°
+                      </Text>
 
-                    <Text
-                      style={{
-                        width: 90,
-                        fontSize: 16,
-                      }}
-                    >
-                      {
-                        weatherIcons[
-                          map3BMeteoDescription(
-                            item.treBMeteo?.descrizione ?? "",
-                          )
-                        ]
-                      }{" "}
-                      {item.treBMeteo?.temperatura}°
-                    </Text>
+                      <Text
+                        style={{
+                          width: 90,
+                          fontSize: 16,
+                        }}
+                      >
+                        {
+                          weatherIcons[
+                            map3BMeteoDescription(
+                              item.treBMeteo?.descrizione ?? "",
+                            )
+                          ]
+                        }{" "}
+                        {item.treBMeteo?.temperatura}°
+                      </Text>
 
-                    <Text>
-                      {item.ilMeteo.probabilita > 0 ||
-                      item.ilMeteo.accumulo > 0 ||
-                      (item.treBMeteo?.probabilita ?? 0) > 0 ||
-                      (item.treBMeteo?.accumulo ?? 0) > 0
-                        ? orariAperti.includes(item.ora)
-                          ? "▲"
-                          : "▼"
-                        : ""}{" "}
-                      {item.alert ? "⚠️" : ""}
-                    </Text>
+                      <Text>
+                        {item.ilMeteo.probabilita > 0 ||
+                        item.ilMeteo.accumulo > 0 ||
+                        (item.treBMeteo?.probabilita ?? 0) > 0 ||
+                        (item.treBMeteo?.accumulo ?? 0) > 0
+                          ? orariAperti.includes(item.ora)
+                            ? "▲"
+                            : "▼"
+                          : ""}{" "}
+                        {item.alert ? "⚠️" : ""}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              </Pressable>
+                </Pressable>
 
-              {orariAperti.includes(item.ora) && (
-                <View
-                  style={{
-                    marginTop: 10,
-                    padding: 10,
-                    backgroundColor: "#f8fafc",
-                    borderRadius: 10,
-                  }}
-                >
+                {orariAperti.includes(item.ora) && (
                   <View
                     style={{
-                      flexDirection: "row",
-                      justifyContent: "space-around",
+                      marginTop: 10,
+                      padding: 10,
+                      backgroundColor: "#f8fafc",
+                      borderRadius: 10,
                     }}
                   >
                     <View
                       style={{
-                        alignItems: "center",
+                        flexDirection: "row",
+                        justifyContent: "space-around",
                       }}
                     >
-                      <Text>iLM</Text>
-                      <Text>{item.ilMeteo.probabilita}%</Text>
+                      <View
+                        style={{
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text>iLM</Text>
+                        <Text>{item.ilMeteo.probabilita}%</Text>
 
-                      <Text>{item.ilMeteo.accumulo} mm</Text>
-                    </View>
+                        <Text>{item.ilMeteo.accumulo} mm</Text>
+                      </View>
 
-                    <View
-                      style={{
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text>3BM</Text>
+                      <View
+                        style={{
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text>3BM</Text>
 
-                      <Text>{item.treBMeteo?.probabilita}%</Text>
+                        <Text>{item.treBMeteo?.probabilita}%</Text>
 
-                      <Text>{item.treBMeteo?.accumulo} mm</Text>
+                        <Text>{item.treBMeteo?.accumulo} mm</Text>
+                      </View>
                     </View>
                   </View>
-                </View>
-              )}
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+                )}
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }

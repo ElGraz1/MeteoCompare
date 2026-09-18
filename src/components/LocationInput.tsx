@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   View,
+  ScrollView,
 } from "react-native";
 
 import { searchCity, CitySuggestion } from "../services/ilMeteoService";
@@ -85,38 +86,41 @@ export default function LocationInput({ localita, setLocalita }: Props) {
             overflow: "hidden",
             borderWidth: 1,
             borderColor: "#e2e8f0",
+            maxHeight: 250,
           }}
         >
-          {suggerimenti.map((suggerimento) => (
-            <Pressable
-              key={suggerimento.id}
-              onPress={() => selezionaLocalita(suggerimento)}
-              style={({ pressed }) => ({
-                padding: 12,
-                backgroundColor: pressed ? "#eff6ff" : "white",
-                borderBottomWidth: 1,
-                borderBottomColor: "#e2e8f0",
-              })}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                }}
+          <ScrollView nestedScrollEnabled>
+            {suggerimenti.map((suggerimento) => (
+              <Pressable
+                key={suggerimento.id}
+                onPress={() => selezionaLocalita(suggerimento)}
+                style={({ pressed }) => ({
+                  padding: 12,
+                  backgroundColor: pressed ? "#eff6ff" : "white",
+                  borderBottomWidth: 1,
+                  borderBottomColor: "#e2e8f0",
+                })}
               >
-                {suggerimento.nome}
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                  }}
+                >
+                  {suggerimento.nome}
+                </Text>
 
-              <Text
-                style={{
-                  marginTop: 2,
-                  fontSize: 12,
-                  color: "#64748b",
-                }}
-              >
-                {suggerimento.provincia} · {suggerimento.regione}
-              </Text>
-            </Pressable>
-          ))}
+                <Text
+                  style={{
+                    marginTop: 2,
+                    fontSize: 12,
+                    color: "#64748b",
+                  }}
+                >
+                  {suggerimento.provincia} · {suggerimento.regione}
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
         </View>
       )}
 

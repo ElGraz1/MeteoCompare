@@ -35,6 +35,7 @@ app.get("/locations", async (_req, res) => {
         nome: row[1],
         provincia: row[2],
         regione: row[3],
+        popolazione: Number(row[4]) || 0,
       }));
 
     res.json(locations);
