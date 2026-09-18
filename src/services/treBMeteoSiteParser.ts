@@ -100,7 +100,7 @@ export async function getForecastFrom3BMeteo(
   slug: string,
   day: number = 0,
 ): Promise<ForecastItem[]> {
-  const normalizedSlug = slug.trim().toLowerCase().replace(/-/g, "+");
+  const normalizedSlug = slug.trim().toLowerCase();
 
   let url = `https://www.3bmeteo.com/meteo/${normalizedSlug}`;
 

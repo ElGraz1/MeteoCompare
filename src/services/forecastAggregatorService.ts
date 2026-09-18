@@ -13,17 +13,31 @@ const forecastCache = new Map<string, CacheEntry>();
 
 const CACHE_TTL = 15 * 60 * 1000;
 
-const CITY_ALIASES: Record<string, string> = {
-  "pontecagnano faiano": "pontecagnano",
-  "pontecagnano-faiano": "pontecagnano",
-};
-
 function normalizeCity(city: string): string {
-  const normalized = city.trim().toLowerCase();
-
-  return CITY_ALIASES[normalized] ?? normalized;
+  return city
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/'/g, "")
+    .replace(/-/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
+function getFallbackCities(city: string): string[] {
+  const normalized = normalizeCity(city);
+
+  const attempts = [normalized];
+
+  const parts = normalized.split(" ");
+
+  if (parts.length > 1) {
+    attempts.push(parts[0]);
+  }
+
+  return [...new Set(attempts)];
+}
 export interface ForecastComparisonItem {
   ora: string;
 
@@ -63,11 +77,7 @@ function absoluteDifference(firstValue: number, secondValue: number): number {
 }
 
 function normalizeSlug(slug: string): string {
-  const normalizedSlug = slug
-    .trim()
-    .toLowerCase()
-    .replace(/'/g, "")
-    .replace(/\s+/g, "-");
+  const normalizedSlug = slug.trim().toLowerCase();
 
   if (!normalizedSlug || !/^[a-z0-9-]+$/.test(normalizedSlug)) {
     throw new Error("Slug della località non valido");
@@ -162,7 +172,12 @@ export async function getAggregatedForecast(
   slug: string,
   day: number = 0,
 ): Promise<AggregatedForecast> {
-  const normalizedSlug = slug.trim().toLowerCase();
+  const cityToSearch = normalizeCity(slug);
+
+  if (cityToSearch !== slug.toLowerCase()) {
+  }
+
+  const normalizedSlug = normalizeSlug(cityToSearch);
 
   const cacheKey = `${normalizedSlug}-${day}`;
 
@@ -182,11 +197,23 @@ export async function getAggregatedForecast(
 
   console.log(`[CACHE MISS] ${cacheKey}`);
 
-  const [ilMeteo, treBMeteo] = await Promise.all([
-    getForecastFromSite(normalizedSlug, day),
-    getForecastFrom3BMeteo(normalizedSlug, day),
-  ]);
-  ``;
+  const ilMeteo = await getForecastFromSite(normalizedSlug, day);
+
+  let treBMeteo: ForecastItem[] = [];
+
+  for (const candidate of candidates) {
+    try {
+      treBMeteo = await getForecastFrom3BMeteo(normalizeSlug(candidate), day);
+
+      if (treBMeteo.length > 0) {
+        console.log(`[3BM OK] ${candidate}`);
+
+        break;
+      }
+    } catch (error) {
+      console.log(`[3BM FAIL] ${candidate}`);
+    }
+  }
 
   if (ilMeteo.length === 0) {
     throw new Error(
