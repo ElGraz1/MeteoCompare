@@ -196,10 +196,6 @@ export async function getAggregatedForecast(
 
   console.log(`[CACHE MISS] ${cacheKey}`);
 
-  const ilMeteo = await getForecastFromSite(normalizedSlug, day);
-
-  let treBMeteo: ForecastItem[] = [];
-
   const [ilMeteo, treBMeteo] = await Promise.all([
     getForecastFromSite(normalizedSlug, day),
     getForecastFrom3BMeteo(normalizedSlug, day),
