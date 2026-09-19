@@ -16,9 +16,7 @@ function normalizeHour(hour: string): string {
 }
 
 function extractNumber(value: string): number {
-  const normalized = value
-    .replace(",", ".")
-    .replace(/\u00a0/g, " ");
+  const normalized = value.replace(",", ".").replace(/\u00a0/g, " ");
 
   const match = normalized.match(/-?\d+(?:\.\d+)?/);
 
@@ -37,15 +35,13 @@ function normalizeLabel(value: string): string {
 function getValueByLabel(
   dialog: cheerio.Cheerio<any>,
   label: string,
-  $: cheerio.CheerioAPI
+  $: cheerio.CheerioAPI,
 ): string {
   const expectedLabel = normalizeLabel(label);
   let result = "";
 
   dialog.find(".data-row").each((_, row) => {
-    const currentLabel = normalizeLabel(
-      $(row).find(".data-label").text()
-    );
+    const currentLabel = normalizeLabel($(row).find(".data-label").text());
 
     if (
       currentLabel === expectedLabel ||
@@ -65,9 +61,7 @@ function getValueByLabel(
   return result;
 }
 
-export function parseIlMeteoHtml(
-  html: string
-): ForecastItem[] {
+export function parseIlMeteoHtml(html: string): ForecastItem[] {
   const $ = cheerio.load(html);
   const forecasts: ForecastItem[] = [];
 
@@ -94,39 +88,26 @@ export function parseIlMeteoHtml(
     }
 
     const codiceIcona = Number(
-      cells
-        .eq(1)
-        .find("[data-simbolo]")
-        .attr("data-simbolo")
+      cells.eq(1).find("[data-simbolo]").attr("data-simbolo"),
     );
 
     const temperatura = extractNumber(
-      getValueByLabel(dialog, "Temperatura", $)
+      getValueByLabel(dialog, "Temperatura", $),
     );
 
-    const umidita = extractNumber(
-      getValueByLabel(dialog, "Umidità rel.", $)
-    );
+    const umidita = extractNumber(getValueByLabel(dialog, "Umidità rel.", $));
 
-    const pressione = extractNumber(
-      getValueByLabel(dialog, "Pressione", $)
-    );
+    const pressione = extractNumber(getValueByLabel(dialog, "Pressione", $));
 
     const probabilita = extractNumber(
-      getValueByLabel(
-        dialog,
-        "Probabilità di precipitazione",
-        $
-      )
+      getValueByLabel(dialog, "Probabilità di precipitazione", $),
     );
 
     const accumulo = extractNumber(
-      getValueByLabel(dialog, "Precipitazioni", $)
+      getValueByLabel(dialog, "Precipitazioni", $),
     );
 
-    const grandine = extractNumber(
-      getValueByLabel(dialog, "Grandine", $)
-    );
+    const grandine = extractNumber(getValueByLabel(dialog, "Grandine", $));
 
     const descrizione = dialog
       .find(".previ-descri")
@@ -138,8 +119,7 @@ export function parseIlMeteoHtml(
 
     forecasts.push({
       ora,
-      codiceIcona:
-        Number.isFinite(codiceIcona) ? codiceIcona : 0,
+      codiceIcona: Number.isFinite(codiceIcona) ? codiceIcona : 0,
       temperatura,
       pressione,
       umidita,
@@ -155,88 +135,66 @@ export function parseIlMeteoHtml(
 
 export async function getForecastFromSite(
   slug: string,
-  day: number = 0
+  day: number = 0,
 ): Promise<ForecastItem[]> {
-  const normalizedSlug = slug
-    .trim()
-    .toLowerCase();
+  const normalizedSlug = slug.trim().toLowerCase();
 
-  if (
-    !normalizedSlug ||
-    !/^[a-z0-9-]+$/.test(normalizedSlug)
-  ) {
+  if (!normalizedSlug || !/^[a-z0-9+]+$/.test(normalizedSlug)) {
     throw new Error("Slug della località non valido");
   }
 
-let url =
-  `https://www.ilmeteo.it/meteo/${normalizedSlug}`;
+  let url = `https://www.ilmeteo.it/meteo/${normalizedSlug}`;
 
-if (day === 1) {
-  url += "/domani";
-}
-else if (day === 2) {
-  url += "/dopodomani";
-}
-else if (day >= 3) {
-  url += `/${day}`;
-}
+  if (day === 1) {
+    url += "/domani";
+  } else if (day === 2) {
+    url += "/dopodomani";
+  } else if (day >= 3) {
+    url += `/${day}`;
+  }
 
-const response = await fetch(url);
+  const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error(
-      `Errore iLMeteo HTTP ${response.status}`
-    );
+    throw new Error(`Errore iLMeteo HTTP ${response.status}`);
   }
 
   const html = await response.text();
-const forecasts = parseIlMeteoHtml(html);
+  const forecasts = parseIlMeteoHtml(html);
 
-if (forecasts.length === 0) {
-  throw new Error(
-    `Nessuna previsione oraria trovata per ${normalizedSlug}`
-  );
-}
+  if (forecasts.length === 0) {
+    throw new Error(`Nessuna previsione oraria trovata per ${normalizedSlug}`);
+  }
 
-if (day > 0) {
+  if (day > 0) {
+    const filtered: ForecastItem[] = [];
 
-  const filtered: ForecastItem[] = [];
+    let firstMidnightFound = false;
 
-  let firstMidnightFound = false;
+    for (const forecast of forecasts) {
+      if (forecast.ora === "00:00") {
+        if (firstMidnightFound) {
+          break;
+        }
 
-  for (const forecast of forecasts) {
-
-    if (forecast.ora === "00:00") {
-
-      if (firstMidnightFound) {
-        break;
+        firstMidnightFound = true;
       }
 
-      firstMidnightFound = true;
-
+      filtered.push(forecast);
     }
 
-    filtered.push(forecast);
-
+    return filtered;
   }
 
-  return filtered;
+  const todayForecasts: ForecastItem[] = [];
 
-}
+  for (const forecast of forecasts) {
+    if (forecast.ora === "00:00") {
+      break;
+    }
 
-const todayForecasts: ForecastItem[] = [];
-
-for (const forecast of forecasts) {
-
-  if (forecast.ora === "00:00") {
-    break;
+    todayForecasts.push(forecast);
   }
 
-  todayForecasts.push(
-    forecast
-  );
-
-}
-
-return todayForecasts;
+  return todayForecasts;
 }
