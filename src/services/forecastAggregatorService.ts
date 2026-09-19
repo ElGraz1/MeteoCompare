@@ -176,6 +176,8 @@ export async function getAggregatedForecast(
   if (cityToSearch !== slug.toLowerCase()) {
   }
 
+  console.log("[CITY]", slug);
+  console.log("[CITY_TO_SEARCH]", cityToSearch);
   const normalizedSlug = normalizeSlug(cityToSearch);
 
   const cacheKey = `${normalizedSlug}-${day}`;
