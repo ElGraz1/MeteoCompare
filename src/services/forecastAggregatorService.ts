@@ -76,15 +76,18 @@ function absoluteDifference(firstValue: number, secondValue: number): number {
 }
 
 function normalizeSlug(slug: string): string {
-  const normalizedSlug = slug.trim().toLowerCase();
+  const normalizedSlug = slug
+    .trim()
+    .toLowerCase()
+    .replace(/'/g, "")
+    .replace(/\s+/g, "+");
 
-  if (!normalizedSlug || !/^[a-z0-9-]+$/.test(normalizedSlug)) {
+  if (!normalizedSlug || !/^[a-z0-9+]+$/.test(normalizedSlug)) {
     throw new Error("Slug della località non valido");
   }
 
   return normalizedSlug;
 }
-
 export function buildForecastComparison(
   ilMeteoForecasts: ForecastItem[],
   treBMeteoForecasts: ForecastItem[],
