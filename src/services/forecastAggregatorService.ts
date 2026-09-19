@@ -13,17 +13,9 @@ const forecastCache = new Map<string, CacheEntry>();
 
 const CACHE_TTL = 15 * 60 * 1000;
 
-const CITY_ALIASES: Record<string, string> = {
-  "pontecagnano faiano": "pontecagnano",
-  "pontecagnano-faiano": "pontecagnano",
-};
-
 function normalizeCity(city: string): string {
-  const normalized = city.trim().toLowerCase();
-
-  return CITY_ALIASES[normalized] ?? normalized;
+  return city.trim().toLowerCase();
 }
-
 function getFallbackCities(city: string): string[] {
   const normalized = normalizeCity(city);
 
