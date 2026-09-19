@@ -108,6 +108,7 @@ export async function getForecastFrom3BMeteo(
     url += `/${day}`;
   }
 
+  console.log("[3BM URL]", url);
   const response = await fetch(url);
 
   if (!response.ok) {
