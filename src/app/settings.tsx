@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { View, Text, Pressable } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LocationInput from "../components/LocationInput";
-import { TextInput, Switch } from "react-native";
+import { Switch } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Picker } from "@react-native-picker/picker";
 import { Modal, FlatList } from "react-native";
+import { ScrollView } from "react-native";
 
 export default function SettingsScreen() {
   const [localita, setLocalita] = useState("");
@@ -24,15 +24,23 @@ export default function SettingsScreen() {
 
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-  const [showRainPicker, setShowRainPicker] = useState(false);
-
-  const [showAccumulationPicker, setShowAccumulationPicker] = useState(false);
-
   const [time, setTime] = useState(new Date());
 
   const [showRainModal, setShowRainModal] = useState(false);
 
   const [showAccumulationModal, setShowAccumulationModal] = useState(false);
+
+  const [criticalStart, setCriticalStart] = useState("08:00");
+
+  const [criticalEnd, setCriticalEnd] = useState("18:00");
+
+  const [showCriticalStartPicker, setShowCriticalStartPicker] = useState(false);
+
+  const [showCriticalEndPicker, setShowCriticalEndPicker] = useState(false);
+
+  const [criticalStartDate, setCriticalStartDate] = useState(new Date());
+
+  const [criticalEndDate, setCriticalEndDate] = useState(new Date());
 
   useEffect(() => {
     async function loadSettings() {
@@ -43,6 +51,8 @@ export default function SettingsScreen() {
         "rainThreshold",
         "accumulationThreshold",
         "provider",
+        "criticalStart",
+        "criticalEnd",
       ]);
 
       const settings = Object.fromEntries(values);
@@ -70,6 +80,13 @@ export default function SettingsScreen() {
       if (settings.provider) {
         setProvider(settings.provider);
       }
+      if (settings.criticalStart) {
+        setCriticalStart(settings.criticalStart);
+      }
+
+      if (settings.criticalEnd) {
+        setCriticalEnd(settings.criticalEnd);
+      }
     }
 
     loadSettings();
@@ -83,6 +100,8 @@ export default function SettingsScreen() {
       ["rainThreshold", rainThreshold],
       ["accumulationThreshold", accumulationThreshold],
       ["provider", provider],
+      ["criticalStart", criticalStart],
+      ["criticalEnd", criticalEnd],
     ]);
 
     setSavedMessage(true);
@@ -107,13 +126,48 @@ export default function SettingsScreen() {
 
     setNotificationHour(`${hh}:${mm}`);
   };
+  const onCriticalStartChange = (event: any, selectedDate?: Date) => {
+    setShowCriticalStartPicker(false);
+
+    if (!selectedDate) {
+      return;
+    }
+
+    setCriticalStartDate(selectedDate);
+
+    const hh = String(selectedDate.getHours()).padStart(2, "0");
+
+    const mm = String(selectedDate.getMinutes()).padStart(2, "0");
+
+    setCriticalStart(`${hh}:${mm}`);
+  };
+  const onCriticalEndChange = (event: any, selectedDate?: Date) => {
+    setShowCriticalEndPicker(false);
+
+    if (!selectedDate) {
+      return;
+    }
+
+    setCriticalEndDate(selectedDate);
+
+    const hh = String(selectedDate.getHours()).padStart(2, "0");
+
+    const mm = String(selectedDate.getMinutes()).padStart(2, "0");
+
+    setCriticalEnd(`${hh}:${mm}`);
+  };
+
+  const [showProviderModal, setShowProviderModal] = useState(false);
 
   return (
-    <View
+    <ScrollView
       style={{
         flex: 1,
-        padding: 20,
         backgroundColor: "#fff",
+      }}
+      contentContainerStyle={{
+        padding: 20,
+        paddingBottom: 40,
       }}
     >
       <Text
@@ -174,7 +228,6 @@ export default function SettingsScreen() {
         }}
       >
         <Text>🕘 Ora notifica</Text>
-
         <Pressable
           onPress={() => setShowTimePicker(true)}
           style={{
@@ -186,7 +239,6 @@ export default function SettingsScreen() {
         >
           <Text>{notificationHour}</Text>
         </Pressable>
-
         {showTimePicker && (
           <DateTimePicker
             value={time}
@@ -195,16 +247,23 @@ export default function SettingsScreen() {
             onChange={onTimeChange}
           />
         )}
-        {showTimePicker && (
+        {showCriticalStartPicker && (
           <DateTimePicker
-            value={time}
+            value={criticalStartDate}
             mode="time"
             is24Hour
-            onChange={onTimeChange}
+            onChange={onCriticalStartChange}
+          />
+        )}
+        {showCriticalEndPicker && (
+          <DateTimePicker
+            value={criticalEndDate}
+            mode="time"
+            is24Hour
+            onChange={onCriticalEndChange}
           />
         )}
         <Text>🌧 Probabilità minima (%)</Text>
-
         <Pressable
           onPress={() => setShowRainModal(true)}
           style={{
@@ -216,9 +275,7 @@ export default function SettingsScreen() {
         >
           <Text>{rainThreshold}%</Text>
         </Pressable>
-
         <Text>💧 Accumulo minimo (mm)</Text>
-
         <Pressable
           onPress={() => setShowAccumulationModal(true)}
           style={{
@@ -230,21 +287,90 @@ export default function SettingsScreen() {
         >
           <Text>{accumulationThreshold} mm</Text>
         </Pressable>
-
-        <Text>☁️ Provider notifiche</Text>
+        <Text>☁️ Fonte notifica</Text>
 
         <Pressable
-          onPress={() => setProvider("max")}
+          onPress={() => setShowProviderModal(true)}
           style={{
-            padding: 10,
-            backgroundColor: "#e5e7eb",
+            borderWidth: 1,
             borderRadius: 10,
+            padding: 12,
             marginBottom: 20,
           }}
         >
-          <Text>Più prudente</Text>
+          <Text>
+            {provider === "ilm"
+              ? "iLMeteo"
+              : provider === "3bm"
+                ? "3BMeteo"
+                : provider === "both"
+                  ? "Entrambi"
+                  : "Più prudente"}
+          </Text>
         </Pressable>
+        <Text
+          style={{
+            marginTop: 10,
+            marginBottom: 10,
+            fontWeight: "bold",
+          }}
+        >
+          ⏰ Ore critiche
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 15,
+          }}
+        >
+          <Pressable
+            onPress={() => setShowCriticalStartPicker(true)}
+            style={{
+              flex: 1,
+              borderWidth: 1,
+              borderRadius: 10,
+              padding: 12,
+            }}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+              }}
+            >
+              {criticalStart}
+            </Text>
+          </Pressable>
 
+          <Text
+            style={{
+              marginHorizontal: 12,
+              fontSize: 18,
+              fontWeight: "600",
+            }}
+          >
+            →
+          </Text>
+
+          <Pressable
+            onPress={() => setShowCriticalEndPicker(true)}
+            style={{
+              flex: 1,
+              borderWidth: 1,
+              borderRadius: 10,
+              padding: 12,
+            }}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+              }}
+            >
+              {criticalEnd}
+            </Text>
+          </Pressable>
+        </View>
         <Pressable
           onPress={savePreferredCity}
           style={{
@@ -264,6 +390,7 @@ export default function SettingsScreen() {
             Salva
           </Text>
         </Pressable>
+
         {savedMessage && (
           <Text
             style={{
@@ -384,6 +511,74 @@ export default function SettingsScreen() {
           </View>
         </View>
       </Modal>
-    </View>
+      <Modal visible={showProviderModal} transparent animationType="fade">
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            backgroundColor: "rgba(0,0,0,0.4)",
+            padding: 20,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              borderRadius: 15,
+              padding: 20,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "bold",
+                marginBottom: 15,
+              }}
+            >
+              ☁️ Fonte notifica
+            </Text>
+
+            <Pressable
+              onPress={() => {
+                setProvider("ilm");
+                setShowProviderModal(false);
+              }}
+              style={{ padding: 12 }}
+            >
+              <Text>iLMeteo</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => {
+                setProvider("3bm");
+                setShowProviderModal(false);
+              }}
+              style={{ padding: 12 }}
+            >
+              <Text>3BMeteo</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => {
+                setProvider("both");
+                setShowProviderModal(false);
+              }}
+              style={{ padding: 12 }}
+            >
+              <Text>Entrambi</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => {
+                setProvider("max");
+                setShowProviderModal(false);
+              }}
+              style={{ padding: 12 }}
+            >
+              <Text>Più prudente</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 }
