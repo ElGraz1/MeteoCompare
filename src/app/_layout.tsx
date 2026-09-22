@@ -16,6 +16,19 @@ export default function RootLayout() {
           title: "Impostazioni",
         }}
       />
+      <Stack.Screen
+        name="probability-info"
+        options={{
+          title: "Probabilità minima",
+        }}
+      />
+
+      <Stack.Screen
+        name="accumulation-info"
+        options={{
+          title: "Accumulo minimo",
+        }}
+      />
     </Stack>
   );
 }

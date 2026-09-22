@@ -6,6 +6,7 @@ import { Switch } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Modal, FlatList } from "react-native";
 import { ScrollView } from "react-native";
+import { router } from "expo-router";
 
 export default function SettingsScreen() {
   const [localita, setLocalita] = useState("");
@@ -14,11 +15,11 @@ export default function SettingsScreen() {
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
-  const [notificationHour, setNotificationHour] = useState("21:00");
+  const [notificationHour, setNotificationHour] = useState("20:00");
 
   const [rainThreshold, setRainThreshold] = useState("60");
 
-  const [accumulationThreshold, setAccumulationThreshold] = useState("5");
+  const [accumulationThreshold, setAccumulationThreshold] = useState("3");
 
   const [provider, setProvider] = useState("max");
 
@@ -30,9 +31,9 @@ export default function SettingsScreen() {
 
   const [showAccumulationModal, setShowAccumulationModal] = useState(false);
 
-  const [criticalStart, setCriticalStart] = useState("08:00");
+  const [criticalStart, setCriticalStart] = useState("07:00");
 
-  const [criticalEnd, setCriticalEnd] = useState("18:00");
+  const [criticalEnd, setCriticalEnd] = useState("20:00");
 
   const [showCriticalStartPicker, setShowCriticalStartPicker] = useState(false);
 
@@ -264,50 +265,150 @@ export default function SettingsScreen() {
           />
         )}
         <Text>🌧 Probabilità minima (%)</Text>
-        <Pressable
-          onPress={() => setShowRainModal(true)}
-          style={{
-            borderWidth: 1,
-            borderRadius: 10,
-            padding: 12,
-            marginBottom: 15,
-          }}
-        >
-          <Text>{rainThreshold}%</Text>
-        </Pressable>
-        <Text>💧 Accumulo minimo (mm)</Text>
-        <Pressable
-          onPress={() => setShowAccumulationModal(true)}
-          style={{
-            borderWidth: 1,
-            borderRadius: 10,
-            padding: 12,
-            marginBottom: 15,
-          }}
-        >
-          <Text>{accumulationThreshold} mm</Text>
-        </Pressable>
-        <Text>☁️ Fonte notifica</Text>
 
-        <Pressable
-          onPress={() => setShowProviderModal(true)}
+        <View
           style={{
-            borderWidth: 1,
-            borderRadius: 10,
-            padding: 12,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            marginBottom: 15,
+          }}
+        >
+          <Pressable
+            onPress={() => setShowRainModal(true)}
+            style={{
+              flex: 1,
+              borderWidth: 1,
+              borderRadius: 10,
+              padding: 12,
+            }}
+          >
+            <Text>{rainThreshold}%</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => router.push("/probability-info")}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              backgroundColor: "#dbeafe",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                color: "#2563eb",
+                fontSize: 18,
+                fontWeight: "700",
+              }}
+            >
+              i
+            </Text>
+          </Pressable>
+        </View>
+        <Text>💧 Accumulo minimo (mm)</Text>
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            marginBottom: 15,
+          }}
+        >
+          <Pressable
+            onPress={() => setShowAccumulationModal(true)}
+            style={{
+              flex: 1,
+              borderWidth: 1,
+              borderRadius: 10,
+              padding: 12,
+            }}
+          >
+            <Text>{accumulationThreshold} mm</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => router.push("/accumulation-info")}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              backgroundColor: "#dbeafe",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                color: "#2563eb",
+                fontSize: 18,
+                fontWeight: "700",
+              }}
+            >
+              i
+            </Text>
+          </Pressable>
+        </View>
+        <Text
+          style={{
+            marginBottom: 8,
+          }}
+        >
+          ☁️ Fonte notifica
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
             marginBottom: 20,
           }}
         >
-          <Text>
-            {provider === "ilm"
-              ? "iLMeteo"
-              : provider === "3bm"
-                ? "3BMeteo"
-                : provider === "both"
-                  ? "Entrambi"
-                  : "Più prudente"}
-          </Text>
-        </Pressable>
+          <Pressable
+            onPress={() => setShowProviderModal(true)}
+            style={{
+              flex: 1,
+              borderWidth: 1,
+              borderRadius: 10,
+              padding: 12,
+            }}
+          >
+            <Text>
+              {provider === "ilm"
+                ? "iLMeteo"
+                : provider === "3bm"
+                  ? "3BMeteo"
+                  : provider === "both"
+                    ? "Entrambi"
+                    : "Più prudente"}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => router.push("/provider-info")}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              backgroundColor: "#dbeafe",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                color: "#2563eb",
+                fontSize: 18,
+                fontWeight: "700",
+              }}
+            >
+              i
+            </Text>
+          </Pressable>
+        </View>
         <Text
           style={{
             marginTop: 10,
@@ -448,6 +549,10 @@ export default function SettingsScreen() {
                   <Text
                     style={{
                       fontSize: 18,
+                      fontWeight:
+                        rainThreshold === String(item) ? "700" : "400",
+                      color:
+                        rainThreshold === String(item) ? "#2563eb" : "black",
                     }}
                   >
                     {item}%
@@ -501,6 +606,12 @@ export default function SettingsScreen() {
                   <Text
                     style={{
                       fontSize: 18,
+                      fontWeight:
+                        accumulationThreshold === String(item) ? "700" : "400",
+                      color:
+                        accumulationThreshold === String(item)
+                          ? "#2563eb"
+                          : "black",
                     }}
                   >
                     {item} mm
@@ -544,7 +655,14 @@ export default function SettingsScreen() {
               }}
               style={{ padding: 12 }}
             >
-              <Text>iLMeteo</Text>
+              <Text
+                style={{
+                  fontWeight: provider === "ilm" ? "700" : "400",
+                  color: provider === "ilm" ? "#2563eb" : "black",
+                }}
+              >
+                iLMeteo
+              </Text>
             </Pressable>
 
             <Pressable
@@ -554,7 +672,14 @@ export default function SettingsScreen() {
               }}
               style={{ padding: 12 }}
             >
-              <Text>3BMeteo</Text>
+              <Text
+                style={{
+                  fontWeight: provider === "3bm" ? "700" : "400",
+                  color: provider === "3bm" ? "#2563eb" : "black",
+                }}
+              >
+                3BMeteo
+              </Text>
             </Pressable>
 
             <Pressable
@@ -564,7 +689,14 @@ export default function SettingsScreen() {
               }}
               style={{ padding: 12 }}
             >
-              <Text>Entrambi</Text>
+              <Text
+                style={{
+                  fontWeight: provider === "both" ? "700" : "400",
+                  color: provider === "both" ? "#2563eb" : "black",
+                }}
+              >
+                Entrambi
+              </Text>
             </Pressable>
 
             <Pressable
@@ -574,7 +706,14 @@ export default function SettingsScreen() {
               }}
               style={{ padding: 12 }}
             >
-              <Text>Più prudente</Text>
+              <Text
+                style={{
+                  fontWeight: provider === "max" ? "700" : "400",
+                  color: provider === "max" ? "#2563eb" : "black",
+                }}
+              >
+                Più prudente
+              </Text>
             </Pressable>
           </View>
         </View>
