@@ -72,6 +72,8 @@ export function parseTreBMeteoHtml(html: string): ForecastItem[] {
 
     const descrizione = item.find(".unit-tempo").first().text().trim();
 
+    console.log("[3BM ICON]", codiceIcona, descrizione);
+
     const probabilita = extractNumber(getParamValue(item, "probabilita", $));
 
     const umidita = extractNumber(getParamValue(item, "umidita", $));
