@@ -5,8 +5,10 @@ import LocationInput from "../components/LocationInput";
 import { Switch } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Modal, FlatList } from "react-native";
-import { ScrollView } from "react-native";
+import { ScrollView, Alert } from "react-native";
 import { router } from "expo-router";
+
+import { generateNotification } from "../services/notificationService";
 
 export default function SettingsScreen() {
   const [localita, setLocalita] = useState("");
@@ -481,6 +483,38 @@ export default function SettingsScreen() {
             borderRadius: 10,
           }}
         >
+          <Pressable
+            onPress={async () => {
+              try {
+                const message = await generateNotification();
+
+                Alert.alert(
+                  "Test motore notifiche",
+                  message ?? "Nessuna notifica da inviare",
+                );
+              } catch (error) {
+                console.error(error);
+
+                Alert.alert("Errore", "Impossibile generare la notifica.");
+              }
+            }}
+            style={{
+              marginTop: 10,
+              backgroundColor: "#0f766e",
+              padding: 12,
+              borderRadius: 10,
+            }}
+          >
+            <Text
+              style={{
+                color: "white",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              🔔 Simula notifica
+            </Text>
+          </Pressable>
           <Text
             style={{
               color: "white",

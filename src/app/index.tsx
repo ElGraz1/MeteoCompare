@@ -7,7 +7,13 @@ import { useEffect } from "react";
 import { weatherIcons } from "../constants/weatherIcons";
 import { mapIlMeteoCode } from "../constants/weatherTypeMapper";
 import { map3BMeteoDescription } from "../constants/weatherTypeMapper";
-import { View, Text, Pressable, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { router } from "expo-router";
 
 function getDays() {
@@ -47,19 +53,7 @@ export default function HomeScreen() {
   const [localita, setLocalita] = useState("");
   const [giorno, setGiorno] = useState("Oggi");
   const [confrontoCorrente, setConfrontoCorrente] = useState<any[]>([]);
-
-  useEffect(() => {
-    async function loadPreferredCity() {
-      const city = await AsyncStorage.getItem("preferredCity");
-
-      if (city) {
-        setLocalita(city);
-      }
-    }
-
-    loadPreferredCity();
-  }, []);
-
+  const [isLoadingForecast, setIsLoadingForecast] = useState(true);
   useEffect(() => {
     async function loadPreferredCity() {
       const city = await AsyncStorage.getItem("preferredCity");
@@ -79,16 +73,49 @@ export default function HomeScreen() {
 
     const day = giorni.indexOf(giorno);
 
+    setIsLoadingForecast(true);
+
     getForecastsByCity(localita, day)
       .then((result) => {
         setConfrontoCorrente(result.confronto);
       })
       .catch((error) => {
         console.error(error);
+      })
+      .finally(() => {
+        setIsLoadingForecast(false);
       });
   }, [localita, giorno]);
   const giorni = getDays();
+  if (isLoadingForecast && localita) {
+    return (
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: "#f1f5f9",
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ActivityIndicator size="large" color="#2563eb" />
 
+          <Text
+            style={{
+              marginTop: 12,
+              color: "#64748b",
+            }}
+          >
+            Caricamento previsioni...
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
   return (
     <SafeAreaView
       style={{
