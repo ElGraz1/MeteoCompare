@@ -9,6 +9,13 @@ export default function RootLayout() {
           headerShown: false,
         }}
       />
+
+      <Stack.Screen
+        name="settings"
+        options={{
+          title: "Impostazioni",
+        }}
+      />
     </Stack>
   );
 }

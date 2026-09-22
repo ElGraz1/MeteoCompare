@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "dependencies": {
     "@expo/ui": "~57.0.18",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-community/datetimepicker": "9.1.0",
+    "@react-native-picker/picker": "2.11.4",
     "cheerio": "^1.2.0",
     "cors": "^2.8.6",
     "expo": "~57.0.22",
@@ -39,15 +42,15 @@
     "tsx": "^4.23.13",
     "typescript": "~6.0.3"
   },
-"scripts": {
-  "start": "tsx server/server.ts",
-  "expo": "expo start",
-  "server": "tsx server/server.ts",
-  "reset-project": "node ./scripts/reset-project.js",
-  "android": "expo start --android",
-  "ios": "expo start --ios",
-  "web": "expo start --web",
-  "lint": "expo lint"
-},
+  "scripts": {
+    "start": "tsx server/server.ts",
+    "expo": "expo start",
+    "server": "tsx server/server.ts",
+    "reset-project": "node ./scripts/reset-project.js",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "expo lint"
+  },
   "private": true
 }

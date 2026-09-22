@@ -1,4 +1,5 @@
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import LocationInput from "../components/LocationInput";
 import { getForecastsByCity } from "../services/apiForecastService";
@@ -7,6 +8,7 @@ import { weatherIcons } from "../constants/weatherIcons";
 import { mapIlMeteoCode } from "../constants/weatherTypeMapper";
 import { map3BMeteoDescription } from "../constants/weatherTypeMapper";
 import { View, Text, Pressable, ScrollView } from "react-native";
+import { router } from "expo-router";
 
 function getDays() {
   const labels: string[] = [];
@@ -42,11 +44,39 @@ export default function HomeScreen() {
       setOrariAperti([...orariAperti, ora]);
     }
   };
-  const [localita, setLocalita] = useState("Milano");
+  const [localita, setLocalita] = useState("");
   const [giorno, setGiorno] = useState("Oggi");
   const [confrontoCorrente, setConfrontoCorrente] = useState<any[]>([]);
 
   useEffect(() => {
+    async function loadPreferredCity() {
+      const city = await AsyncStorage.getItem("preferredCity");
+
+      if (city) {
+        setLocalita(city);
+      }
+    }
+
+    loadPreferredCity();
+  }, []);
+
+  useEffect(() => {
+    async function loadPreferredCity() {
+      const city = await AsyncStorage.getItem("preferredCity");
+
+      if (city) {
+        setLocalita(city);
+      }
+    }
+
+    loadPreferredCity();
+  }, []);
+
+  useEffect(() => {
+    if (!localita) {
+      return;
+    }
+
     const day = giorni.indexOf(giorno);
 
     getForecastsByCity(localita, day)
@@ -105,15 +135,33 @@ export default function HomeScreen() {
             </Pressable>
           ))}
         </View>
-        <Text
+        <View
           style={{
-            fontSize: 28,
-            fontWeight: "bold",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
             marginBottom: 12,
           }}
         >
-          🌍 {localita}
-        </Text>
+          <Text
+            style={{
+              fontSize: 28,
+              fontWeight: "bold",
+            }}
+          >
+            🌍 {localita}
+          </Text>
+
+          <Pressable onPress={() => router.push("/settings")}>
+            <Text
+              style={{
+                fontSize: 28,
+              }}
+            >
+              ⚙️
+            </Text>
+          </Pressable>
+        </View>
 
         <ScrollView
           style={{

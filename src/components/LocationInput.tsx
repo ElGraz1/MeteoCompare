@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   ActivityIndicator,
@@ -18,6 +18,10 @@ type Props = {
 
 export default function LocationInput({ localita, setLocalita }: Props) {
   const [testo, setTesto] = useState(localita);
+  useEffect(() => {
+    setTesto(localita);
+  }, [localita]);
+
   const [suggerimenti, setSuggerimenti] = useState<CitySuggestion[]>([]);
   const [ricercaInCorso, setRicercaInCorso] = useState(false);
 
