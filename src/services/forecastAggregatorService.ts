@@ -94,8 +94,6 @@ function hasProbabilityAlert(
     getProbabilityBehavior(ilMeteoProbability) !==
     getProbabilityBehavior(treBMeteoProbability)
   );
-
-  console.log("[PROB ALERT]", ilMeteoProbability, treBMeteoProbability, result);
 }
 
 function getAccumulationBehavior(accumulation: number) {
@@ -253,7 +251,11 @@ export async function getAggregatedForecast(
 
   const cached = forecastCache.get(cacheKey);
 
-  /*   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+  console.log("[CACHE CHECK]", cacheKey);
+  console.log("[CACHE FOUND]", !!cached);
+  console.log("[CACHE SIZE]", forecastCache.size);
+
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     console.log(`[CACHE HIT] ${cacheKey}`);
 
     console.log("[CACHE DATA]", cacheKey, {
@@ -263,7 +265,7 @@ export async function getAggregatedForecast(
     });
 
     return cached.data;
-  } */
+  }
 
   console.log(`[CACHE MISS] ${cacheKey}`);
 
@@ -298,6 +300,9 @@ export async function getAggregatedForecast(
     timestamp: Date.now(),
     data: result,
   });
+
+  console.log("[CACHE SAVE]", cacheKey);
+  console.log("[CACHE SIZE]", forecastCache.size);
 
   return result;
 }
