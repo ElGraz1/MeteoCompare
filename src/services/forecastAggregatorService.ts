@@ -253,7 +253,7 @@ export async function getAggregatedForecast(
 
   const cached = forecastCache.get(cacheKey);
 
-  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+  /*   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     console.log(`[CACHE HIT] ${cacheKey}`);
 
     console.log("[CACHE DATA]", cacheKey, {
@@ -263,7 +263,7 @@ export async function getAggregatedForecast(
     });
 
     return cached.data;
-  }
+  } */
 
   console.log(`[CACHE MISS] ${cacheKey}`);
 
