@@ -23,6 +23,10 @@ export async function generateNotification() {
 
   const message = buildNotificationMessage(city, result);
 
+  if (!message) {
+    return null;
+  }
+
   return {
     message,
     city,
@@ -32,20 +36,4 @@ export async function generateNotification() {
     accumulation: result.maxAccumulation,
     provider: result.providerUsed,
   };
-
-  return `Nessuna notifica da inviare
-
-Probabilità massima rilevata:
-${result.maxProbability}%
-
-Accumulo massimo rilevato:
-${result.maxAccumulation} mm
-
-Soglie impostate:
-
-Probabilità:
-${settings.probabilityThreshold}%
-
-Accumulo:
-${settings.accumulationThreshold} mm`;
 }
