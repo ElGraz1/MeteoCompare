@@ -7,9 +7,9 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Modal, FlatList } from "react-native";
 import { ScrollView, Alert } from "react-native";
 import { router } from "expo-router";
-// import * as Notifications from "expo-notifications";
+import * as Notifications from "expo-notifications";
 import { generateNotification } from "../services/notificationService";
-//import { showLocalNotification } from "../services/localNotificationService";
+import { showLocalNotification } from "../services/localNotificationService";
 
 export default function SettingsScreen() {
   const [localita, setLocalita] = useState("");
@@ -46,11 +46,11 @@ export default function SettingsScreen() {
 
   const [criticalEndDate, setCriticalEndDate] = useState(new Date());
 
-  /* async function requestNotificationPermission() {
+  async function requestNotificationPermission() {
     const { status } = await Notifications.requestPermissionsAsync();
 
     return status === "granted";
-  } */
+  }
   useEffect(() => {
     async function loadSettings() {
       const values = await AsyncStorage.multiGet([
@@ -502,9 +502,7 @@ export default function SettingsScreen() {
         <Pressable
           onPress={async () => {
             try {
-              const message = await generateNotification();
-
-              /*             const granted = await requestNotificationPermission();
+              const granted = await requestNotificationPermission();
 
               if (!granted) {
                 Alert.alert(
@@ -517,14 +515,24 @@ export default function SettingsScreen() {
 
               if (message) {
                 await showLocalNotification("🌧 MeteoCompare", message);
-              } 
- */
-              if (message) {
-                Alert.alert("Test motore notifiche", message);
               }
 
-              /// eliminare il blocco sopra "test motore notifiche"
-              else {
+              const notification = await generateNotification();
+
+              if (notification?.message) {
+                await showLocalNotification(
+                  "🌧 MeteoCompare",
+                  notification.message,
+                  {
+                    city: notification.city,
+                    startHour: notification.startHour,
+                    endHour: notification.endHour,
+                    probability: notification.probability,
+                    accumulation: notification.accumulation,
+                    provider: notification.provider,
+                  },
+                );
+              } else {
                 Alert.alert(
                   "Test motore notifiche",
                   "Nessuna notifica da inviare",

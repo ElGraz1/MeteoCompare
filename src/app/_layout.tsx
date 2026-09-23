@@ -1,4 +1,4 @@
-/* import { Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
 import { useEffect } from "react";
@@ -66,34 +66,10 @@ export default function RootLayout() {
           title: "Dettaglio notifica",
         }}
       />
-    </Stack>
-  );
-}
-*/
-
-import { Stack } from "expo-router";
-
-export default function RootLayout() {
-  return (
-    <Stack>
       <Stack.Screen
-        name="index"
+        name="provider-info"
         options={{
-          headerShown: false,
-        }}
-      />
-
-      <Stack.Screen
-        name="settings"
-        options={{
-          title: "Impostazioni",
-        }}
-      />
-
-      <Stack.Screen
-        name="notification-details"
-        options={{
-          title: "Dettaglio notifica",
+          title: "Fonte notifica",
         }}
       />
     </Stack>

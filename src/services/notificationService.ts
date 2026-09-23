@@ -23,9 +23,15 @@ export async function generateNotification() {
 
   const message = buildNotificationMessage(city, result);
 
-  if (message) {
-    return message;
-  }
+  return {
+    message,
+    city,
+    startHour: result.firstCriticalHour ?? "",
+    endHour: result.lastCriticalHour ?? "",
+    probability: result.maxProbability,
+    accumulation: result.maxAccumulation,
+    provider: result.providerUsed,
+  };
 
   return `Nessuna notifica da inviare
 
