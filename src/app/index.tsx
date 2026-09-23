@@ -259,12 +259,11 @@ export default function HomeScreen() {
               >
                 <Pressable
                   onPress={() => {
-                    if (
-                      item.ilMeteo.probabilita > 0 ||
-                      item.ilMeteo.accumulo > 0 ||
-                      (item.treBMeteo?.probabilita ?? 0) > 0 ||
-                      (item.treBMeteo?.accumulo ?? 0) > 0
-                    ) {
+                    const negligibleRain =
+                      item.ilMeteo.accumulo <= 0.3 &&
+                      (item.treBMeteo?.accumulo ?? 0) <= 0.3;
+
+                    if (!negligibleRain) {
                       toggleOrario(item.ora);
                     }
                   }}
@@ -319,10 +318,10 @@ export default function HomeScreen() {
                       </Text>
 
                       <Text>
-                        {item.ilMeteo.probabilita > 0 ||
-                        item.ilMeteo.accumulo > 0 ||
-                        (item.treBMeteo?.probabilita ?? 0) > 0 ||
-                        (item.treBMeteo?.accumulo ?? 0) > 0
+                        {!(
+                          item.ilMeteo.accumulo <= 0.3 &&
+                          (item.treBMeteo?.accumulo ?? 0) <= 0.3
+                        )
                           ? orariAperti.includes(item.ora)
                             ? "▲"
                             : "▼"

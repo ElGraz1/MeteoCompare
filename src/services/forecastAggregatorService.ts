@@ -121,6 +121,14 @@ function hasAccumulationAlert(
     getAccumulationBehavior(treBMeteoAccumulation)
   );
 }
+
+function isNegligibleRain(
+  ilMeteoAccumulation: number,
+  treBMeteoAccumulation: number,
+) {
+  return ilMeteoAccumulation <= 0.3 && treBMeteoAccumulation <= 0.3;
+}
+
 export function buildForecastComparison(
   ilMeteoForecasts: ForecastItem[],
   treBMeteoForecasts: ForecastItem[],
@@ -198,7 +206,12 @@ export function buildForecastComparison(
       treBMeteo.accumulo,
     );
 
-    const alert = probabilityAlert || accumulationAlert;
+    const negligibleRain = isNegligibleRain(
+      ilMeteo.accumulo,
+      treBMeteo.accumulo,
+    );
+
+    const alert = !negligibleRain && (probabilityAlert || accumulationAlert);
 
     if (alert) {
       console.log(`[ALERT ${ora}]`, {
@@ -251,10 +264,6 @@ export async function getAggregatedForecast(
 
   const cached = forecastCache.get(cacheKey);
 
-  console.log("[CACHE CHECK]", cacheKey);
-  console.log("[CACHE FOUND]", !!cached);
-  console.log("[CACHE SIZE]", forecastCache.size);
-
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     console.log(`[CACHE HIT] ${cacheKey}`);
 
@@ -300,9 +309,6 @@ export async function getAggregatedForecast(
     timestamp: Date.now(),
     data: result,
   });
-
-  console.log("[CACHE SAVE]", cacheKey);
-  console.log("[CACHE SIZE]", forecastCache.size);
 
   return result;
 }
