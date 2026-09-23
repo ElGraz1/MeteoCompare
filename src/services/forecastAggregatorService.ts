@@ -198,9 +198,7 @@ export function buildForecastComparison(
       treBMeteo.accumulo,
     );
 
-    //const alert = probabilityAlert || accumulationAlert;
-
-    const alert = false;
+    const alert = probabilityAlert || accumulationAlert;
 
     if (alert) {
       console.log(`[ALERT ${ora}]`, {
