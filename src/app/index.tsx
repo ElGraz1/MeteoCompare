@@ -13,6 +13,7 @@ import {
   Pressable,
   ScrollView,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { router } from "expo-router";
 
@@ -53,13 +54,16 @@ export default function HomeScreen() {
   const [localita, setLocalita] = useState("");
   const [giorno, setGiorno] = useState("Oggi");
   const [confrontoCorrente, setConfrontoCorrente] = useState<any[]>([]);
-  const [isLoadingForecast, setIsLoadingForecast] = useState(true);
+  const [isLoadingForecast, setIsLoadingForecast] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   useEffect(() => {
     async function loadPreferredCity() {
       const city = await AsyncStorage.getItem("preferredCity");
 
       if (city) {
         setLocalita(city);
+      } else {
+        setShowWelcomeModal(true);
       }
     }
 
@@ -374,6 +378,87 @@ export default function HomeScreen() {
           </View>
         </ScrollView>
       </View>
+      <Modal visible={showWelcomeModal} animationType="fade" transparent>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            padding: 20,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              borderRadius: 20,
+              padding: 20,
+              width: "100%",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: "bold",
+                textAlign: "center",
+                marginBottom: 10,
+              }}
+            >
+              🌧 Benvenuto in MeteoCompare
+            </Text>
+
+            <Text
+              style={{
+                textAlign: "center",
+                marginBottom: 20,
+                color: "#64748b",
+              }}
+            >
+              Seleziona la tua località preferita per iniziare.
+            </Text>
+
+            <LocationInput localita={localita} setLocalita={setLocalita} />
+
+            <Text
+              style={{
+                textAlign: "center",
+                marginBottom: 20,
+                fontSize: 12,
+                color: "#64748b",
+              }}
+            >
+              Potrai modificarla in qualsiasi momento dalle impostazioni.
+            </Text>
+
+            <Pressable
+              onPress={async () => {
+                if (!localita.trim()) {
+                  return;
+                }
+
+                await AsyncStorage.setItem("preferredCity", localita);
+
+                setShowWelcomeModal(false);
+              }}
+              style={{
+                backgroundColor: "#2563eb",
+                padding: 14,
+                borderRadius: 12,
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Inizia
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

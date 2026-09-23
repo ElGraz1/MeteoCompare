@@ -9,11 +9,16 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export async function showLocalNotification(title: string, body: string) {
+export async function showLocalNotification(
+  title: string,
+  body: string,
+  data?: Record<string, any>,
+) {
   await Notifications.scheduleNotificationAsync({
     content: {
       title,
       body,
+      data,
     },
     trigger: null,
   });

@@ -7,9 +7,9 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Modal, FlatList } from "react-native";
 import { ScrollView, Alert } from "react-native";
 import { router } from "expo-router";
-import * as Notifications from "expo-notifications";
+// import * as Notifications from "expo-notifications";
 import { generateNotification } from "../services/notificationService";
-import { showLocalNotification } from "../services/localNotificationService";
+//import { showLocalNotification } from "../services/localNotificationService";
 
 export default function SettingsScreen() {
   const [localita, setLocalita] = useState("");
@@ -46,11 +46,11 @@ export default function SettingsScreen() {
 
   const [criticalEndDate, setCriticalEndDate] = useState(new Date());
 
-  async function requestNotificationPermission() {
+  /* async function requestNotificationPermission() {
     const { status } = await Notifications.requestPermissionsAsync();
 
     return status === "granted";
-  }
+  } */
   useEffect(() => {
     async function loadSettings() {
       const values = await AsyncStorage.multiGet([
@@ -489,53 +489,6 @@ export default function SettingsScreen() {
             borderRadius: 10,
           }}
         >
-          <Pressable
-            onPress={async () => {
-              try {
-                const message = await generateNotification();
-
-                const granted = await requestNotificationPermission();
-
-                if (!granted) {
-                  Alert.alert(
-                    "Permesso negato",
-                    "Le notifiche non sono abilitate.",
-                  );
-
-                  return;
-                }
-
-                if (message) {
-                  await showLocalNotification("🌧 MeteoCompare", message);
-                } else {
-                  Alert.alert(
-                    "Test motore notifiche",
-                    "Nessuna notifica da inviare",
-                  );
-                }
-              } catch (error) {
-                console.error(error);
-
-                Alert.alert("Errore", "Impossibile generare la notifica.");
-              }
-            }}
-            style={{
-              marginTop: 10,
-              backgroundColor: "#0f766e",
-              padding: 12,
-              borderRadius: 10,
-            }}
-          >
-            <Text
-              style={{
-                color: "white",
-                textAlign: "center",
-                fontWeight: "bold",
-              }}
-            >
-              🔔 Simula notifica
-            </Text>
-          </Pressable>
           <Text
             style={{
               color: "white",
@@ -544,6 +497,60 @@ export default function SettingsScreen() {
             }}
           >
             Salva
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={async () => {
+            try {
+              const message = await generateNotification();
+
+              /*             const granted = await requestNotificationPermission();
+
+              if (!granted) {
+                Alert.alert(
+                  "Permesso negato",
+                  "Le notifiche non sono abilitate.",
+                );
+
+                return;
+              }
+
+              if (message) {
+                await showLocalNotification("🌧 MeteoCompare", message);
+              } 
+ */
+              if (message) {
+                Alert.alert("Test motore notifiche", message);
+              }
+
+              /// eliminare il blocco sopra "test motore notifiche"
+              else {
+                Alert.alert(
+                  "Test motore notifiche",
+                  "Nessuna notifica da inviare",
+                );
+              }
+            } catch (error) {
+              console.error(error);
+
+              Alert.alert("Errore", "Impossibile generare la notifica.");
+            }
+          }}
+          style={{
+            marginTop: 10,
+            backgroundColor: "#0f766e",
+            padding: 12,
+            borderRadius: 10,
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              fontWeight: "bold",
+            }}
+          >
+            🔔 Simula notifica
           </Text>
         </Pressable>
 

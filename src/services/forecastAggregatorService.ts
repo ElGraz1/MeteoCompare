@@ -16,6 +16,7 @@ const CACHE_TTL = 15 * 60 * 1000;
 function normalizeCity(city: string): string {
   return city.trim().toLowerCase();
 }
+
 function getFallbackCities(city: string): string[] {
   const normalized = normalizeCity(city);
 
@@ -80,10 +81,51 @@ function normalizeSlug(slug: string): string {
 
   return normalizedSlug;
 }
+
+function getProbabilityBehavior(probability: number) {
+  return probability >= 50 ? "consider-rain" : "ignore-rain";
+}
+
+function hasProbabilityAlert(
+  ilMeteoProbability: number,
+  treBMeteoProbability: number,
+) {
+  return (
+    getProbabilityBehavior(ilMeteoProbability) !==
+    getProbabilityBehavior(treBMeteoProbability)
+  );
+}
+
+function getAccumulationBehavior(accumulation: number) {
+  if (accumulation <= 0.5) {
+    return "dry";
+  }
+
+  if (accumulation <= 2) {
+    return "negligible";
+  }
+
+  if (accumulation <= 10) {
+    return "umbrella";
+  }
+
+  return "mobility-impact";
+}
+
+function hasAccumulationAlert(
+  ilMeteoAccumulation: number,
+  treBMeteoAccumulation: number,
+) {
+  return (
+    getAccumulationBehavior(ilMeteoAccumulation) !==
+    getAccumulationBehavior(treBMeteoAccumulation)
+  );
+}
 export function buildForecastComparison(
   ilMeteoForecasts: ForecastItem[],
   treBMeteoForecasts: ForecastItem[],
 ): ForecastComparisonItem[] {
+  console.log("[BUILD FORECAST COMPARISON]");
   const ilMeteoByHour = new Map(
     ilMeteoForecasts.map((forecast) => [forecast.ora, forecast]),
   );
@@ -146,8 +188,40 @@ export function buildForecastComparison(
       treBMeteo.pressione,
     );
 
-    const alert = differenzaProbabilita > 20 || differenzaAccumulo > 3;
+    const probabilityAlert = hasProbabilityAlert(
+      ilMeteo.probabilita,
+      treBMeteo.probabilita,
+    );
 
+    const accumulationAlert = hasAccumulationAlert(
+      ilMeteo.accumulo,
+      treBMeteo.accumulo,
+    );
+
+    //const alert = probabilityAlert || accumulationAlert;
+
+    const alert = false;
+
+    if (alert) {
+      console.log(`[ALERT ${ora}]`, {
+        probILM: ilMeteo.probabilita,
+        prob3BM: treBMeteo.probabilita,
+
+        accILM: ilMeteo.accumulo,
+        acc3BM: treBMeteo.accumulo,
+
+        probabilityBehavior: getProbabilityBehavior(ilMeteo.probabilita),
+
+        probabilityBehavior3BM: getProbabilityBehavior(treBMeteo.probabilita),
+
+        accumulationBehaviorILM: getAccumulationBehavior(ilMeteo.accumulo),
+
+        accumulationBehavior3BM: getAccumulationBehavior(treBMeteo.accumulo),
+
+        probabilityAlert,
+        accumulationAlert,
+      });
+    }
     return {
       ora,
       ilMeteo,
