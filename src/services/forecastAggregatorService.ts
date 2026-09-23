@@ -96,6 +96,8 @@ function hasProbabilityAlert(
   );
 }
 
+console.log("[PROB ALERT]", ilMeteoProbability, treBMeteoProbability, result);
+
 function getAccumulationBehavior(accumulation: number) {
   if (accumulation <= 0.5) {
     return "dry";
