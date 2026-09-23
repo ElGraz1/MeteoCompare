@@ -94,9 +94,9 @@ function hasProbabilityAlert(
     getProbabilityBehavior(ilMeteoProbability) !==
     getProbabilityBehavior(treBMeteoProbability)
   );
-}
 
-console.log("[PROB ALERT]", ilMeteoProbability, treBMeteoProbability, result);
+  console.log("[PROB ALERT]", ilMeteoProbability, treBMeteoProbability, result);
+}
 
 function getAccumulationBehavior(accumulation: number) {
   if (accumulation <= 0.5) {
