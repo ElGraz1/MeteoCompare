@@ -7,8 +7,9 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Modal, FlatList } from "react-native";
 import { ScrollView, Alert } from "react-native";
 import { router } from "expo-router";
-
+import * as Notifications from "expo-notifications";
 import { generateNotification } from "../services/notificationService";
+import { showLocalNotification } from "../services/localNotificationService";
 
 export default function SettingsScreen() {
   const [localita, setLocalita] = useState("");
@@ -45,6 +46,11 @@ export default function SettingsScreen() {
 
   const [criticalEndDate, setCriticalEndDate] = useState(new Date());
 
+  async function requestNotificationPermission() {
+    const { status } = await Notifications.requestPermissionsAsync();
+
+    return status === "granted";
+  }
   useEffect(() => {
     async function loadSettings() {
       const values = await AsyncStorage.multiGet([
@@ -488,10 +494,25 @@ export default function SettingsScreen() {
               try {
                 const message = await generateNotification();
 
-                Alert.alert(
-                  "Test motore notifiche",
-                  message ?? "Nessuna notifica da inviare",
-                );
+                const granted = await requestNotificationPermission();
+
+                if (!granted) {
+                  Alert.alert(
+                    "Permesso negato",
+                    "Le notifiche non sono abilitate.",
+                  );
+
+                  return;
+                }
+
+                if (message) {
+                  await showLocalNotification("🌧 MeteoCompare", message);
+                } else {
+                  Alert.alert(
+                    "Test motore notifiche",
+                    "Nessuna notifica da inviare",
+                  );
+                }
               } catch (error) {
                 console.error(error);
 
