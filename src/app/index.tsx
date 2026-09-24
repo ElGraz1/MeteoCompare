@@ -44,12 +44,12 @@ function getDays() {
 const loadingWeatherIcons = ["☀️", "⛅", "☁️", "🌦️", "🌧️", "⛈️"];
 
 export default function HomeScreen() {
-  const [orariAperti, setOrariAperti] = useState<string[]>([]);
+  const [orarioAperto, setOrarioAperto] = useState<string | null>(null);
   const toggleOrario = (ora: string) => {
-    if (orariAperti.includes(ora)) {
-      setOrariAperti(orariAperti.filter((o) => o !== ora));
+    if (orarioAperto === ora) {
+      setOrarioAperto(null);
     } else {
-      setOrariAperti([...orariAperti, ora]);
+      setOrarioAperto(ora);
     }
   };
   const [localita, setLocalita] = useState("");
@@ -384,7 +384,7 @@ export default function HomeScreen() {
                           item.ilMeteo.accumulo <= 0.3 &&
                           (item.treBMeteo?.accumulo ?? 0) <= 0.3
                         )
-                          ? orariAperti.includes(item.ora)
+                          ? orarioAperto === item.ora
                             ? "▲"
                             : "▼"
                           : ""}{" "}
@@ -394,7 +394,7 @@ export default function HomeScreen() {
                   </View>
                 </Pressable>
 
-                {orariAperti.includes(item.ora) && (
+                {orarioAperto === item.ora && (
                   <View
                     style={{
                       marginTop: 10,
