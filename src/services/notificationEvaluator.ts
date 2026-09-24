@@ -64,8 +64,11 @@ export function evaluateNotification(
     if (impacted.length > 0) {
       firstCriticalHour = impacted[0].time;
 
-      lastCriticalHour = impacted[impacted.length - 1].time;
+      const lastHour = Number(impacted[impacted.length - 1].time.split(":")[0]);
+
+      lastCriticalHour = `${String(lastHour + 1).padStart(2, "0")}:00`;
     }
+    ``;
   }
   return {
     shouldNotify,

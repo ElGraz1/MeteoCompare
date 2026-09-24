@@ -1,9 +1,8 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import LocationInput from "../components/LocationInput";
 import { getForecastsByCity } from "../services/apiForecastService";
-import { useEffect } from "react";
 import { weatherIcons } from "../constants/weatherIcons";
 import { mapIlMeteoCode } from "../constants/weatherTypeMapper";
 import { map3BMeteoDescription } from "../constants/weatherTypeMapper";
@@ -12,8 +11,8 @@ import {
   Text,
   Pressable,
   ScrollView,
-  ActivityIndicator,
   Modal,
+  Animated,
 } from "react-native";
 import { router } from "expo-router";
 
@@ -42,6 +41,8 @@ function getDays() {
   return labels;
 }
 
+const loadingWeatherIcons = ["☀️", "⛅", "☁️", "🌦️", "🌧️", "⛈️"];
+
 export default function HomeScreen() {
   const [orariAperti, setOrariAperti] = useState<string[]>([]);
   const toggleOrario = (ora: string) => {
@@ -56,6 +57,49 @@ export default function HomeScreen() {
   const [confrontoCorrente, setConfrontoCorrente] = useState<any[]>([]);
   const [isLoadingForecast, setIsLoadingForecast] = useState(false);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+
+  const [loadingIconIndex, setLoadingIconIndex] = useState(0);
+
+  const loadingIconOpacity = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    let isActive = true;
+
+    function animateNextIcon() {
+      Animated.timing(loadingIconOpacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        if (!isActive) {
+          return;
+        }
+
+        setLoadingIconIndex(
+          (currentIndex) => (currentIndex + 1) % loadingWeatherIcons.length,
+        );
+
+        Animated.timing(loadingIconOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start(() => {
+          if (isActive) {
+            setTimeout(animateNextIcon, 800);
+          }
+        });
+      });
+    }
+
+    const initialTimeout = setTimeout(animateNextIcon, 800);
+
+    return () => {
+      isActive = false;
+      clearTimeout(initialTimeout);
+      loadingIconOpacity.stopAnimation();
+    };
+  }, [loadingIconOpacity]);
+
   useEffect(() => {
     async function loadPreferredCity() {
       const city = await AsyncStorage.getItem("preferredCity");
@@ -106,12 +150,30 @@ export default function HomeScreen() {
             alignItems: "center",
           }}
         >
-          <ActivityIndicator size="large" color="#2563eb" />
+          <Animated.View
+            style={{
+              opacity: loadingIconOpacity,
+              width: 90,
+              height: 90,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 64,
+              }}
+            >
+              {loadingWeatherIcons[loadingIconIndex]}
+            </Text>
+          </Animated.View>
 
           <Text
             style={{
-              marginTop: 12,
+              marginTop: 20,
               color: "#64748b",
+              fontSize: 16,
+              fontWeight: "600",
             }}
           >
             Caricamento previsioni...
