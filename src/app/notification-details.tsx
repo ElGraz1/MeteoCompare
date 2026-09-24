@@ -1,6 +1,18 @@
 import { ScrollView, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 
+function getRainDescription(accumulation: number) {
+  if (accumulation <= 2) {
+    return "🌦 Possibili precipitazioni domani.";
+  }
+
+  if (accumulation <= 10) {
+    return "🌧 Pioggia prevista domani.";
+  }
+
+  return "⛈ Pioggia intensa prevista domani.";
+}
+
 export default function NotificationDetailsScreen() {
   const { city, startHour, endHour, probability, accumulation, provider } =
     useLocalSearchParams();
@@ -53,7 +65,7 @@ export default function NotificationDetailsScreen() {
             fontSize: 16,
           }}
         >
-          Domani è prevista pioggia significativa.
+          {getRainDescription(Number(accumulation))}
         </Text>
 
         <Text
