@@ -513,10 +513,6 @@ export default function SettingsScreen() {
                 return;
               }
 
-              if (message) {
-                await showLocalNotification("🌧 MeteoCompare", message);
-              }
-
               const notification = await generateNotification();
 
               if (notification?.message) {
