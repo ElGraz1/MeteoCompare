@@ -1,6 +1,6 @@
 # MeteoCompare - Project Status
 
-_Updated: 23 settembre 2026_
+_Updated: 24 settembre 2026_
 
 ## 1. Panoramica
 
@@ -9,7 +9,8 @@ MeteoCompare è un'app React Native / Expo che confronta le previsioni orarie di
 ## 2. Versionamento e Git
 
 - Branch di lavoro/stabile utilizzato: `backup-v0.1`
-- Tag di sicurezza creato: `v0.1.3-pre`
+- Tag di sicurezza precedenti: `v0.1.3-pre`
+- Nuovo tag di sicurezza prima delle notifiche automatiche: `v0.1.4-pre-notifications`
 - Tag/versione stabile successiva da definire dopo i test finali
 - Repository remoto: `ElGraz1/MeteoCompare`
 - Ultima build APK verificata: installata e funzionante
@@ -57,7 +58,7 @@ http://10.0.2.2:3000
 - Temperatura e icona per entrambi i provider
 - Dettaglio espandibile di probabilità e accumulo
 - Indicatori `▼` e `▲` per aprire/chiudere il dettaglio
-- Loader mentre vengono recuperate le previsioni
+- Loader meteo animato durante il recupero delle previsioni: una sola icona alla volta (`☀️`, `⛅`, `☁️`, `🌦️`, `🌧️`, `⛈️`) con dissolvenza
 - Cache backend in-memory con TTL di 15 minuti
 
 ### Località composte
@@ -207,10 +208,12 @@ Il motore:
 
 ### Stato notifiche Android
 
-- La notifica locale reale è stata verificata nell'APK ed è funzionante
+- Notifica locale reale verificata nell'APK e funzionante
+- Richiesta permessi Android funzionante
 - Il pulsante **Simula notifica** usa dati reali e impostazioni reali
-- È presente una pagina `notification-details.tsx`
-- Il payload previsto contiene:
+- Tap sulla notifica verificato e funzionante
+- Apertura di `notification-details.tsx` verificata
+- Payload verificato:
 
 ```text
 city
@@ -220,6 +223,21 @@ probability
 accumulation
 provider
 ```
+
+- Modalità `ilm`, `3bm`, `both` e `max` validate con casi reali
+- Filtro ore critiche validato
+- L'accumulo viene ignorato quando la probabilità risultante dalla fonte scelta è inferiore al 25%
+- L'ora finale dell'intervallo viene estesa di un'ora: una sola fascia `08:00` viene mostrata come `08:00 → 09:00`
+- Testo dinamico in base all'accumulo massimo:
+
+```text
+≤ 2 mm      → 🌦 Possibili precipitazioni domani
+> 2-10 mm   → 🌧 Pioggia prevista domani
+> 10 mm     → ⛈ Pioggia intensa prevista domani
+```
+
+- Il dettaglio notifica usa la stessa classificazione dinamica della notifica Android
+- Pagina informativa `provider-info.tsx` presente e collegata dalle impostazioni
 
 ### Limitazione Expo Go
 
@@ -361,14 +379,9 @@ Dopo il deploy, tenere conto della cache server-side di 15 minuti oppure riavvia
 
 ## 8. Freccia di espansione
 
-La freccia viene mostrata quando almeno uno dei provider ha probabilità o accumulo maggiori di zero.
-
-```text
-▼ dettaglio chiuso
-▲ dettaglio aperto
-```
-
-Il triangolo ⚠️ è indipendente dalla freccia e rappresenta la divergenza decisionale tra provider.
+- La freccia `▼/▲` non viene mostrata quando entrambi i provider hanno accumulo `≤ 0,3 mm`, indipendentemente dalla probabilità
+- Negli altri casi la freccia consente di aprire o chiudere il dettaglio
+- Il triangolo `⚠️` resta indipendente dalla freccia e rappresenta la divergenza decisionale tra provider
 
 ## 9. Stato Expo / EAS
 
@@ -395,6 +408,12 @@ npx eas build -p android --profile preview
 
 La build APK è stata completata e installata con successo.
 
+Ambiente di test Android disponibile:
+
+- emulatore Android Studio configurato e raggiungibile tramite `adb`
+- installazione APK verificata con `adb install -r`
+- test notifiche, tap e dettagli eseguiti anche su emulatore
+
 ## 10. Pulizia tecnica consigliata
 
 - Rimuovere i log temporanei `[ALERT]`, `[BUILD FORECAST COMPARISON]`, `[3BM ICON]` dopo la validazione
@@ -413,7 +432,42 @@ if (cityToSearch !== slug.toLowerCase()) {
 
 ## 11. Prossimi passi prioritari
 
- Progettare l'esecuzione automatica delle notifiche all'ora scelta
+### Priorità 1 - Notifiche automatiche pubblicabili
+
+Obiettivo: inviare notifiche push all'orario scelto anche con app chiusa.
+
+Architettura prevista:
+
+```text
+App Expo
+    ↓ registra token e preferenze
+Backend Node.js / Express su Northflank
+    ↓ salva sottoscrizioni in database persistente
+Cron job Northflank
+    ↓ recupera le previsioni e applica il motore notifiche
+Expo Push Service
+    ↓
+Dispositivo Android/iOS
+```
+
+Ordine di implementazione:
+
+1. Aggiungere `app.use(express.json())` al backend
+2. Creare l'endpoint `POST /notification-subscriptions`
+3. Verificare il passaggio dati app → backend tramite log
+4. Registrare l'Expo Push Token nell'app
+5. Salvare token e preferenze in PostgreSQL
+6. Portare o condividere sul backend `forecastNotificationAdapter`, `notificationEvaluator` e `buildNotificationMessage`
+7. Inviare una push di prova dal backend
+8. Creare il cron job Northflank, inizialmente ogni 5 minuti
+9. Gestire duplicati, ticket, ricevute e token non più validi
+
+### Priorità 2 - Rifiniture release
+
+- Allineare `version`, `android.versionCode`, tag Git e nome release
+- Rimuovere log temporanei
+- Sostituire definitivamente la vecchia splash con `splash-meteocompare.png`
+- Validare il loader animato e la nuova splash su dispositivo fisico
 
 ## 12. Comandi utili
 
@@ -440,16 +494,42 @@ npx eas build -p android --profile preview
 ```bash
 git status
 git add .
-git commit -m "feat: behavioral forecast divergence alerts"
+git commit -m "feat: complete notification workflow and animated weather loader"
 git push
 ```
 
-✅ Notifica locale reale funzionante
-✅ Permission Android funzionante
-✅ Simula notifica funzionante
-✅ Tap sulla notifica funzionante
-✅ notification-details funzionante
-✅ Provider ilm / 3bm / both / max validati
-✅ Filtro accumulo sotto 25% implementato
-✅ Testo notifica dinamico in base all'accumulo
-✅ Ore interessate corrette (ora finale +1 ora)
+## 13. Punto esatto da cui ripartire
+
+Il backend Express si trova in:
+
+```text
+server/server.ts
+```
+
+Configurazione Expo già disponibile:
+
+```text
+android.package: it.elgraz.meteocompare
+EAS projectId: 19eec645-b700-4add-a16b-d3bca186d0ea
+```
+
+Primo intervento da eseguire nel backend:
+
+```ts
+app.use(cors());
+app.use(express.json());
+```
+
+Primo endpoint temporaneo da aggiungere prima di `app.listen(...)`:
+
+```ts
+app.post("/notification-subscriptions", (req, res) => {
+  console.log("[NOTIFICATION SUBSCRIPTION]", req.body);
+
+  res.json({
+    success: true,
+  });
+});
+```
+
+In questa prima fase l'endpoint deve soltanto ricevere e mostrare nei log i dati inviati dall'app. Database, cron job e invio push verranno aggiunti solo dopo aver verificato correttamente la comunicazione app → backend.

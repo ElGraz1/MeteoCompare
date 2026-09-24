@@ -10,6 +10,8 @@ import { router } from "expo-router";
 import * as Notifications from "expo-notifications";
 import { generateNotification } from "../services/notificationService";
 import { showLocalNotification } from "../services/localNotificationService";
+import { registerNotificationSubscription } from "../services/notificationSubscriptionService";
+``;
 
 export default function SettingsScreen() {
   const [localita, setLocalita] = useState("");
@@ -502,6 +504,9 @@ export default function SettingsScreen() {
         <Pressable
           onPress={async () => {
             try {
+              //da cancellare riga seguente
+              await registerNotificationSubscription();
+
               const granted = await requestNotificationPermission();
 
               if (!granted) {

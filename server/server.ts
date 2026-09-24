@@ -11,6 +11,16 @@ import { getAggregatedForecast } from "../src/services/forecastAggregatorService
 const app = express();
 
 app.use(cors());
+app.use(express.json());
+
+app.post("/notification-subscriptions", (req, res) => {
+  console.log("NOTIFICATION SUBSCRIPTION");
+  console.log(req.body);
+
+  res.json({
+    success: true,
+  });
+});
 
 app.get("/locations", async (_req, res) => {
   try {
