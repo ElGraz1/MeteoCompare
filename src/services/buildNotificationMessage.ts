@@ -20,6 +20,17 @@ function providerLabel(provider: NotificationProvider) {
   }
 }
 
+function getRainDescription(accumulation: number) {
+  if (accumulation <= 2) {
+    return "🌦 Possibili precipitazioni";
+  }
+
+  if (accumulation <= 10) {
+    return "🌧 Pioggia prevista";
+  }
+
+  return "⛈ Pioggia intensa prevista";
+}
 export function buildNotificationMessage(
   city: string,
   result: NotificationResult,
@@ -32,7 +43,7 @@ export function buildNotificationMessage(
 
 ${city}
 
-Domani è prevista pioggia significativa.
+${getRainDescription(result.maxAccumulation)} domani.
 
 Ore interessate:
 ${result.firstCriticalHour} → ${result.lastCriticalHour}
