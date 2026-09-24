@@ -38,9 +38,11 @@ export function evaluateNotification(
   for (const hour of filtered) {
     const values = getValues(hour, settings.provider);
 
+    const accumulation = values.probability < 25 ? 0 : values.accumulation;
+
     maxProbability = Math.max(maxProbability, values.probability);
 
-    maxAccumulation = Math.max(maxAccumulation, values.accumulation);
+    maxAccumulation = Math.max(maxAccumulation, accumulation);
   }
 
   const shouldNotify =
@@ -51,9 +53,11 @@ export function evaluateNotification(
     const impacted = filtered.filter((hour) => {
       const values = getValues(hour, settings.provider);
 
+      const accumulation = values.probability < 25 ? 0 : values.accumulation;
+
       return (
         values.probability >= settings.probabilityThreshold ||
-        values.accumulation >= settings.accumulationThreshold
+        accumulation >= settings.accumulationThreshold
       );
     });
 

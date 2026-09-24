@@ -39,11 +39,15 @@ export function buildNotificationMessage(
     return null;
   }
 
-  return `🌧 MeteoCompare
+  return `🌧 MeteoCompare v0.1.4-test
 
 ${city}
 
+🚨 TEST NUOVA BUILD
+
 ${getRainDescription(result.maxAccumulation)} domani.
+
+...
 
 Ore interessate:
 ${result.firstCriticalHour} → ${result.lastCriticalHour}
