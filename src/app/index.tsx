@@ -208,7 +208,7 @@ export default function HomeScreen() {
             <Pressable
               key={g}
               onPress={() => {
-                setOrariAperti([]);
+                setOrarioAperto(null);
                 setGiorno(g);
               }}
               style={{

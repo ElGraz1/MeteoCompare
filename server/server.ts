@@ -7,15 +7,38 @@ import path from "path";
 import Papa from "papaparse";
 
 import { getAggregatedForecast } from "../src/services/forecastAggregatorService";
-
+import { sendPushNotification } from "./services/expoPushService";
+import { generateNotification } from "../src/services/notificationService";
+import { generateServerNotification } from "./services/generateServerNotification";
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
 app.post("/notification-subscriptions", (req, res) => {
-  console.log("NOTIFICATION SUBSCRIPTION");
-  console.log(req.body);
+  const filePath = path.join(
+    process.cwd(),
+    "data",
+    "notification-subscriptions.json",
+  );
+
+  let subscriptions = [];
+
+  if (fs.existsSync(filePath)) {
+    subscriptions = JSON.parse(fs.readFileSync(filePath, "utf8"));
+  }
+
+  const existingIndex = subscriptions.findIndex(
+    (item: any) => item.installationId === req.body.installationId,
+  );
+
+  if (existingIndex >= 0) {
+    subscriptions[existingIndex] = req.body;
+  } else {
+    subscriptions.push(req.body);
+  }
+
+  fs.writeFileSync(filePath, JSON.stringify(subscriptions, null, 2), "utf8");
 
   res.json({
     success: true,
@@ -78,6 +101,50 @@ app.get("/forecast/:city", async (req, res) => {
       error: error instanceof Error ? error.message : "Errore",
     });
   }
+});
+
+app.post("/send-test-notification", async (_req, res) => {
+  const filePath = path.join(
+    process.cwd(),
+    "data",
+    "notification-subscriptions.json",
+  );
+
+  const subscriptions = JSON.parse(fs.readFileSync(filePath, "utf8"));
+
+  const subscription = subscriptions[0];
+  const notification = await generateServerNotification(subscription.city, {
+    provider: subscription.provider,
+    probabilityThreshold: Number(subscription.probabilityThreshold),
+    accumulationThreshold: Number(subscription.accumulationThreshold),
+    criticalStart: subscription.criticalStart,
+    criticalEnd: subscription.criticalEnd,
+  });
+
+  if (!notification) {
+    return res.json({
+      success: false,
+      message: "Nessuna notifica generata",
+    });
+  }
+
+  await sendPushNotification(
+    subscription.expoPushToken,
+    "🌧 MeteoCompare",
+    notification.message,
+    {
+      city: subscription.city,
+      startHour: notification.result.firstCriticalHour ?? "",
+      endHour: notification.result.lastCriticalHour ?? "",
+      probability: notification.result.maxProbability,
+      accumulation: notification.result.maxAccumulation,
+      provider: notification.result.providerUsed,
+    },
+  );
+
+  res.json({
+    success: true,
+  });
 });
 
 const port = Number(process.env.PORT) || 3000;

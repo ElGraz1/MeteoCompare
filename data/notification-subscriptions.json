@@ -1,0 +1,13 @@
+[
+  {
+    "installationId": "1790347792914-rqlrsw77vh",
+    "expoPushToken": "ExponentPushToken[szGRx2CGh7rfHpk_7Q5IFX]",
+    "city": "Siena",
+    "provider": "max",
+    "probabilityThreshold": "0",
+    "accumulationThreshold": "0",
+    "notificationHour": "21:55",
+    "criticalStart": "07:00",
+    "criticalEnd": "20:00"
+  }
+]

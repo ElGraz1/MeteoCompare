@@ -133,7 +133,6 @@ export function buildForecastComparison(
   ilMeteoForecasts: ForecastItem[],
   treBMeteoForecasts: ForecastItem[],
 ): ForecastComparisonItem[] {
-  console.log("[BUILD FORECAST COMPARISON]");
   const ilMeteoByHour = new Map(
     ilMeteoForecasts.map((forecast) => [forecast.ora, forecast]),
   );
@@ -213,26 +212,6 @@ export function buildForecastComparison(
 
     const alert = !negligibleRain && (probabilityAlert || accumulationAlert);
 
-    if (alert) {
-      console.log(`[ALERT ${ora}]`, {
-        probILM: ilMeteo.probabilita,
-        prob3BM: treBMeteo.probabilita,
-
-        accILM: ilMeteo.accumulo,
-        acc3BM: treBMeteo.accumulo,
-
-        probabilityBehavior: getProbabilityBehavior(ilMeteo.probabilita),
-
-        probabilityBehavior3BM: getProbabilityBehavior(treBMeteo.probabilita),
-
-        accumulationBehaviorILM: getAccumulationBehavior(ilMeteo.accumulo),
-
-        accumulationBehavior3BM: getAccumulationBehavior(treBMeteo.accumulo),
-
-        probabilityAlert,
-        accumulationAlert,
-      });
-    }
     return {
       ora,
       ilMeteo,
@@ -256,8 +235,6 @@ export async function getAggregatedForecast(
   if (cityToSearch !== slug.toLowerCase()) {
   }
 
-  console.log("[CITY]", slug);
-  console.log("[CITY_TO_SEARCH]", cityToSearch);
   const normalizedSlug = normalizeSlug(cityToSearch);
 
   const cacheKey = `${normalizedSlug}-${day}`;

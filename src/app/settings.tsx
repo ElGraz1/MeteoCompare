@@ -11,7 +11,7 @@ import * as Notifications from "expo-notifications";
 import { generateNotification } from "../services/notificationService";
 import { showLocalNotification } from "../services/localNotificationService";
 import { registerNotificationSubscription } from "../services/notificationSubscriptionService";
-``;
+import { getInstallationId } from "../services/installationIdService";
 
 export default function SettingsScreen() {
   const [localita, setLocalita] = useState("");
@@ -53,6 +53,13 @@ export default function SettingsScreen() {
 
     return status === "granted";
   }
+
+  async function getExpoPushToken() {
+    const token = await Notifications.getExpoPushTokenAsync();
+
+    return token.data;
+  }
+
   useEffect(() => {
     async function loadSettings() {
       const values = await AsyncStorage.multiGet([
@@ -504,8 +511,21 @@ export default function SettingsScreen() {
         <Pressable
           onPress={async () => {
             try {
-              //da cancellare riga seguente
-              await registerNotificationSubscription();
+              const installationId = await getInstallationId();
+
+              const expoPushToken = await getExpoPushToken();
+
+              await registerNotificationSubscription({
+                installationId,
+                expoPushToken,
+                city: localita,
+                provider,
+                probabilityThreshold: rainThreshold,
+                accumulationThreshold,
+                notificationHour,
+                criticalStart,
+                criticalEnd,
+              });
 
               const granted = await requestNotificationPermission();
 
@@ -542,7 +562,7 @@ export default function SettingsScreen() {
             } catch (error) {
               console.error(error);
 
-              Alert.alert("Errore", "Impossibile generare la notifica.");
+              Alert.alert("Errore", String(error));
             }
           }}
           style={{

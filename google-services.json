@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "752285112206",
+    "project_id": "meteocompare-a28aa",
+    "storage_bucket": "meteocompare-a28aa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752285112206:android:df7b87ba37a0a96f54b6df",
+        "android_client_info": {
+          "package_name": "it.elgraz.meteocompare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7PmAIzsXXmq1SQWc3OFwZOcqO9c3W0vY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

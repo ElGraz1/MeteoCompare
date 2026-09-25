@@ -12,6 +12,7 @@
     },
     "android": {
       "package": "it.elgraz.meteocompare",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/icon.png"
@@ -32,6 +33,7 @@
           "imageWidth": 300
         }
       ],
+      "expo-notifications",
       "@react-native-community/datetimepicker"
     ],
     "experiments": {
