@@ -103,7 +103,7 @@ app.get("/forecast/:city", async (req, res) => {
   }
 });
 
-app.post("/send-test-notification", async (_req, res) => {
+app.post("/send-weather-notification", async (_req, res) => {
   const filePath = path.join(
     process.cwd(),
     "data",
