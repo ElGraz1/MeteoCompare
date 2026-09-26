@@ -135,6 +135,7 @@ export default function SettingsScreen() {
       notificationHour,
       criticalStart,
       criticalEnd,
+      notificationsEnabled,
     });
     setSavedMessage(true);
 

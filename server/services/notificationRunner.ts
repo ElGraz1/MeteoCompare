@@ -24,6 +24,9 @@ export async function runNotifications() {
   let sentNotifications = 0;
 
   for (const subscription of subscriptions) {
+    if (!subscription.notificationsEnabled) {
+      continue;
+    }
     if (subscription.lastNotificationDate === today) {
       continue;
     }
