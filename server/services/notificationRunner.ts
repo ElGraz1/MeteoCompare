@@ -20,9 +20,14 @@ export async function runNotifications() {
   const currentMinute = String(now.getMinutes()).padStart(2, "0");
 
   const currentTime = `${currentHour}:${currentMinute}`;
+  const today = new Date().toISOString().split("T")[0];
   let sentNotifications = 0;
 
   for (const subscription of subscriptions) {
+    if (subscription.lastNotificationDate === today) {
+      continue;
+    }
+
     if (subscription.notificationHour !== currentTime) {
       continue;
     }
@@ -39,7 +44,7 @@ export async function runNotifications() {
       continue;
     }
 
-    await sendPushNotification(
+    const tickets = await sendPushNotification(
       subscription.expoPushToken,
       "🌧 MeteoCompare",
       notification.message,
@@ -52,9 +57,22 @@ export async function runNotifications() {
         provider: notification.result.providerUsed,
       },
     );
+    const hasInvalidTicket = tickets?.some(
+      (ticket: any) =>
+        ticket.status === "error" &&
+        ticket.details?.error === "DeviceNotRegistered",
+    );
+
+    if (hasInvalidTicket) {
+      subscriptions.splice(subscriptions.indexOf(subscription), 1);
+
+      continue;
+    }
+    subscription.lastNotificationDate = today;
 
     sentNotifications++;
   }
-
+  ``;
+  fs.writeFileSync(filePath, JSON.stringify(subscriptions, null, 2));
   return sentNotifications;
 }

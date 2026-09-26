@@ -24,5 +24,7 @@ export async function sendPushNotification(
     const tickets = await expo.sendPushNotificationsAsync(chunk);
 
     console.log("EXPO TICKETS:", tickets);
+
+    return tickets;
   }
 }
