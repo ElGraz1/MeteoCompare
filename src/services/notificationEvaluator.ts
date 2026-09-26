@@ -66,7 +66,7 @@ export function evaluateNotification(
 
       const lastHour = Number(impacted[impacted.length - 1].time.split(":")[0]);
 
-      lastCriticalHour = `${String(lastHour + 1).padStart(2, "0")}:00`;
+      lastCriticalHour = `${String(lastHour).padStart(2, "0")}:00`;
     }
     ``;
   }

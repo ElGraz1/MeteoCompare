@@ -6,7 +6,7 @@
     "provider": "max",
     "probabilityThreshold": "0",
     "accumulationThreshold": "0",
-    "notificationHour": "11:14",
+    "notificationHour": "11:19",
     "criticalStart": "07:00",
     "criticalEnd": "20:00",
     "lastNotificationDate": "2026-09-26"
