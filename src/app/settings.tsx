@@ -109,10 +109,6 @@ export default function SettingsScreen() {
 
     loadSettings();
   }, []);
-  console.log("SENDING SUBSCRIPTION", {
-    city: localita,
-    notificationHour,
-  });
 
   async function savePreferredCity() {
     await AsyncStorage.multiSet([
@@ -140,7 +136,6 @@ export default function SettingsScreen() {
       criticalStart,
       criticalEnd,
     });
-    console.log("SUBSCRIPTION SENT");
     setSavedMessage(true);
 
     setTimeout(() => {
