@@ -1,4 +1,4 @@
-const API_URL = "http://10.0.2.2:3000";
+const API_URL = "https://site--meteocompare-api--ddx7k442y97b.code.run";
 
 export async function registerNotificationSubscription(subscription: any) {
   const response = await fetch(`${API_URL}/notification-subscriptions`, {
