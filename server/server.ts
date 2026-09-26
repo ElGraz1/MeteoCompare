@@ -10,6 +10,8 @@ import { getAggregatedForecast } from "../src/services/forecastAggregatorService
 import { sendPushNotification } from "./services/expoPushService";
 import { generateNotification } from "../src/services/notificationService";
 import { generateServerNotification } from "./services/generateServerNotification";
+import { runNotifications } from "./services/notificationRunner";
+import { startScheduler } from "./scheduler";
 const app = express();
 
 app.use(cors());
@@ -104,50 +106,17 @@ app.get("/forecast/:city", async (req, res) => {
 });
 
 app.post("/send-weather-notification", async (_req, res) => {
-  const filePath = path.join(
-    process.cwd(),
-    "data",
-    "notification-subscriptions.json",
-  );
-
-  const subscriptions = JSON.parse(fs.readFileSync(filePath, "utf8"));
-
-  const subscription = subscriptions[0];
-  const notification = await generateServerNotification(subscription.city, {
-    provider: subscription.provider,
-    probabilityThreshold: Number(subscription.probabilityThreshold),
-    accumulationThreshold: Number(subscription.accumulationThreshold),
-    criticalStart: subscription.criticalStart,
-    criticalEnd: subscription.criticalEnd,
-  });
-
-  if (!notification) {
-    return res.json({
-      success: false,
-      message: "Nessuna notifica generata",
-    });
-  }
-
-  await sendPushNotification(
-    subscription.expoPushToken,
-    "🌧 MeteoCompare",
-    notification.message,
-    {
-      city: subscription.city,
-      startHour: notification.result.firstCriticalHour ?? "",
-      endHour: notification.result.lastCriticalHour ?? "",
-      probability: notification.result.maxProbability,
-      accumulation: notification.result.maxAccumulation,
-      provider: notification.result.providerUsed,
-    },
-  );
+  const sentNotifications = await runNotifications();
 
   res.json({
     success: true,
+    sentNotifications,
   });
 });
 
 const port = Number(process.env.PORT) || 3000;
+
+startScheduler();
 
 app.listen(port, () => {
   console.log(`Server avviato sulla porta ${port}`);

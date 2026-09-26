@@ -109,6 +109,10 @@ export default function SettingsScreen() {
 
     loadSettings();
   }, []);
+  console.log("SENDING SUBSCRIPTION", {
+    city: localita,
+    notificationHour,
+  });
 
   async function savePreferredCity() {
     await AsyncStorage.multiSet([
@@ -121,7 +125,22 @@ export default function SettingsScreen() {
       ["criticalStart", criticalStart],
       ["criticalEnd", criticalEnd],
     ]);
+    const installationId = await getInstallationId();
 
+    const expoPushToken = await getExpoPushToken();
+
+    await registerNotificationSubscription({
+      installationId,
+      expoPushToken,
+      city: localita,
+      provider,
+      probabilityThreshold: rainThreshold,
+      accumulationThreshold,
+      notificationHour,
+      criticalStart,
+      criticalEnd,
+    });
+    console.log("SUBSCRIPTION SENT");
     setSavedMessage(true);
 
     setTimeout(() => {

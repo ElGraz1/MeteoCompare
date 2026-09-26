@@ -31,12 +31,28 @@ export function mapIlMeteoCode(code: number): WeatherType {
 export function map3BMeteoDescription(description: string): WeatherType {
   const text = description.toLowerCase();
 
-  if (text.includes("sereno")) {
-    return "sun";
+  if (text.includes("temporale")) {
+    return "storm";
+  }
+
+  if (
+    text.includes("schiarite") ||
+    text.includes("parz") ||
+    text.includes("parzial")
+  ) {
+    return "rainLight";
   }
 
   if (text.includes("nubi sparse") || text.includes("poco nuvoloso")) {
     return "partlyCloudy";
+  }
+
+  if (text.includes("sereno")) {
+    return "sun";
+  }
+
+  if (text.includes("pioggia")) {
+    return "rain";
   }
 
   if (
@@ -45,14 +61,6 @@ export function map3BMeteoDescription(description: string): WeatherType {
     text.includes("coperto")
   ) {
     return "cloudy";
-  }
-
-  if (text.includes("temporale")) {
-    return "storm";
-  }
-
-  if (text.includes("pioggia")) {
-    return "rain";
   }
 
   if (text.includes("neve")) {
