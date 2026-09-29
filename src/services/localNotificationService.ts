@@ -9,6 +9,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
+console.log("NOTIFICATION HANDLER LOADED");
 export async function showLocalNotification(
   title: string,
   body: string,

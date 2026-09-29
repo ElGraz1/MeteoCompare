@@ -10,7 +10,7 @@ export async function runNotifications() {
     "data",
     "notification-subscriptions.json",
   );
-
+  console.log("SUBSCRIPTIONS FILE:", filePath);
   const subscriptions = JSON.parse(fs.readFileSync(filePath, "utf8"));
 
   const now = new Date();

@@ -9,7 +9,8 @@ import { ScrollView, Alert } from "react-native";
 import { router } from "expo-router";
 import { registerNotificationSubscription } from "../services/notificationSubscriptionService";
 import { getInstallationId } from "../services/installationIdService";
-
+import { showLocalNotification } from "../services/notificationService";
+import * as Notifications from "expo-notifications";
 export default function SettingsScreen() {
   const [localita, setLocalita] = useState("");
 
@@ -119,6 +120,14 @@ export default function SettingsScreen() {
       ["criticalStart", criticalStart],
       ["criticalEnd", criticalEnd],
     ]);
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "TEST LOCALE",
+        body: "Se vedi questa notifica Android funziona",
+      },
+      trigger: null,
+    });
     const installationId = await getInstallationId();
 
     const expoPushToken = await getExpoPushToken();
