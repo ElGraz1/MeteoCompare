@@ -22,12 +22,6 @@ export async function runNotifications() {
     hour12: false,
   });
 
-  const currentHour = String(now.getHours()).padStart(2, "0");
-
-  const currentMinute = String(now.getMinutes()).padStart(2, "0");
-
-  const currentTime = `${currentHour}:${currentMinute}`;
-
   const today = new Date().toISOString().split("T")[0];
   let sentNotifications = 0;
 
