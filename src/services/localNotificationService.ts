@@ -1,5 +1,11 @@
 import * as Notifications from "expo-notifications";
 
+Notifications.setNotificationChannelAsync("default", {
+  name: "default",
+  importance: Notifications.AndroidImportance.MAX,
+});
+
+console.log("NOTIFICATION HANDLER LOADED");
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowBanner: true,
@@ -9,7 +15,6 @@ Notifications.setNotificationHandler({
   }),
 });
 
-console.log("NOTIFICATION HANDLER LOADED");
 export async function showLocalNotification(
   title: string,
   body: string,
