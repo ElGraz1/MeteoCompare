@@ -77,10 +77,6 @@ export function parseIlMeteoHtml(html: string): ForecastItem[] {
 
     const dialog = $(`#dialog-dettaglio-${dialogId}`);
 
-    if (dialog.length === 0) {
-      return;
-    }
-
     const ora = normalizeHour(rawHour);
 
     if (!ora) {
@@ -109,6 +105,12 @@ export function parseIlMeteoHtml(html: string): ForecastItem[] {
 
     const grandine = extractNumber(getValueByLabel(dialog, "Grandine", $));
 
+    const ventoCompleto = getValueByLabel(dialog, "Vento", $);
+
+    const ventoMatch = ventoCompleto.match(/^([A-Z.]+)\s+(\d+)\/\d+\s+km\/h/i);
+
+    const vento = ventoMatch ? `${ventoMatch[1]} ${ventoMatch[2]} km/h` : "";
+
     const descrizione = dialog
       .find(".previ-descri")
       .first()
@@ -127,6 +129,7 @@ export function parseIlMeteoHtml(html: string): ForecastItem[] {
       descrizione,
       accumulo,
       grandine,
+      vento,
     });
   });
 

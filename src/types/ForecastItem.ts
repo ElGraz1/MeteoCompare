@@ -14,4 +14,6 @@ export interface ForecastItem {
   umidita: number;
   pressione: number;
   grandine: number;
+
+  vento: string;
 }

@@ -80,6 +80,14 @@ export function parseTreBMeteoHtml(html: string): ForecastItem[] {
 
     const accumulo = extractNumber(getParamValue(item, "precipitazioni", $));
 
+    const ventoRaw = getParamValue(item, "vento", $);
+
+    const ventoMatch = ventoRaw.match(/^(\d+)\s+km\/h\s+([A-Z]+)/i);
+
+    const vento = ventoMatch
+      ? `${ventoMatch[2]} ${ventoMatch[1]} km/h`
+      : ventoRaw.trim();
+
     forecasts.push({
       ora,
       codiceIcona,
@@ -90,6 +98,7 @@ export function parseTreBMeteoHtml(html: string): ForecastItem[] {
       descrizione,
       accumulo,
       grandine: 0,
+      vento,
     });
   });
 

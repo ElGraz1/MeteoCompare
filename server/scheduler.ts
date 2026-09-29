@@ -4,12 +4,8 @@ import { runNotifications } from "./services/notificationRunner";
 
 export function startScheduler() {
   cron.schedule("* * * * *", async () => {
-    console.log("Running scheduled notifications...");
-
     try {
-      const sentNotifications = await runNotifications();
-
-      console.log(`Notifications sent: ${sentNotifications}`);
+      await runNotifications();
     } catch (error) {
       console.error("Notification scheduler error:", error);
     }

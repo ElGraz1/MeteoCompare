@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import LocationInput from "../components/LocationInput";
 import { getForecastsByCity } from "../services/apiForecastService";
 import { weatherIcons } from "../constants/weatherIcons";
-import { mapIlMeteoCode } from "../constants/weatherTypeMapper";
-import { map3BMeteoDescription } from "../constants/weatherTypeMapper";
+import { mapDescriptionToWeatherType } from "../constants/weatherTypeMapper";
+
 import {
   View,
   Text,
@@ -321,13 +321,7 @@ export default function HomeScreen() {
               >
                 <Pressable
                   onPress={() => {
-                    const negligibleRain =
-                      item.ilMeteo.accumulo <= 0.3 &&
-                      (item.treBMeteo?.accumulo ?? 0) <= 0.3;
-
-                    if (!negligibleRain) {
-                      toggleOrario(item.ora);
-                    }
+                    toggleOrario(item.ora);
                   }}
                 >
                   <View
@@ -359,7 +353,13 @@ export default function HomeScreen() {
                           fontSize: 16,
                         }}
                       >
-                        {weatherIcons[mapIlMeteoCode(item.ilMeteo.codiceIcona)]}{" "}
+                        {
+                          weatherIcons[
+                            mapDescriptionToWeatherType(
+                              item.ilMeteo.descrizione,
+                            )
+                          ]
+                        }{" "}
                         {item.ilMeteo.temperatura}°
                       </Text>
 
@@ -371,7 +371,7 @@ export default function HomeScreen() {
                       >
                         {
                           weatherIcons[
-                            map3BMeteoDescription(
+                            mapDescriptionToWeatherType(
                               item.treBMeteo?.descrizione ?? "",
                             )
                           ]
@@ -380,14 +380,7 @@ export default function HomeScreen() {
                       </Text>
 
                       <Text>
-                        {!(
-                          item.ilMeteo.accumulo <= 0.3 &&
-                          (item.treBMeteo?.accumulo ?? 0) <= 0.3
-                        )
-                          ? orarioAperto === item.ora
-                            ? "▲"
-                            : "▼"
-                          : ""}{" "}
+                        {orarioAperto === item.ora ? "▲" : "▼"}{" "}
                         {item.alert ? "⚠️" : ""}
                       </Text>
                     </View>
@@ -412,24 +405,75 @@ export default function HomeScreen() {
                       <View
                         style={{
                           alignItems: "center",
+                          width: "45%",
                         }}
                       >
-                        <Text>iLM</Text>
-                        <Text>{item.ilMeteo.probabilita}%</Text>
+                        <Text
+                          style={{
+                            fontWeight: "bold",
+                            marginBottom: 5,
+                          }}
+                        >
+                          iLM
+                        </Text>
 
-                        <Text>{item.ilMeteo.accumulo} mm</Text>
+                        <Text>
+                          {
+                            weatherIcons[
+                              mapDescriptionToWeatherType(
+                                item.ilMeteo.descrizione,
+                              )
+                            ]
+                          }{" "}
+                          {item.ilMeteo.descrizione}
+                        </Text>
+
+                        <Text>🌡 {item.ilMeteo.temperatura}°C</Text>
+
+                        <Text>💨 {item.ilMeteo.vento}</Text>
+
+                        <Text>💧 {item.ilMeteo.umidita}%</Text>
+
+                        <Text>🌧 {item.ilMeteo.probabilita}%</Text>
+
+                        <Text>💦 {item.ilMeteo.accumulo} mm</Text>
                       </View>
 
                       <View
                         style={{
                           alignItems: "center",
+                          width: "45%",
                         }}
                       >
-                        <Text>3BM</Text>
+                        <Text
+                          style={{
+                            fontWeight: "bold",
+                            marginBottom: 5,
+                          }}
+                        >
+                          3BM
+                        </Text>
 
-                        <Text>{item.treBMeteo?.probabilita}%</Text>
+                        <Text>
+                          {
+                            weatherIcons[
+                              mapDescriptionToWeatherType(
+                                item.treBMeteo?.descrizione ?? "",
+                              )
+                            ]
+                          }{" "}
+                          {item.treBMeteo?.descrizione}
+                        </Text>
 
-                        <Text>{item.treBMeteo?.accumulo} mm</Text>
+                        <Text>🌡 {item.treBMeteo?.temperatura}°C</Text>
+
+                        <Text>💨 {item.treBMeteo?.vento}</Text>
+
+                        <Text>💧 {item.treBMeteo?.umidita}%</Text>
+
+                        <Text>🌧 {item.treBMeteo?.probabilita}%</Text>
+
+                        <Text>💦 {item.treBMeteo?.accumulo} mm</Text>
                       </View>
                     </View>
                   </View>
