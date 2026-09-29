@@ -3,6 +3,7 @@ import cron from "node-cron";
 import { runNotifications } from "./services/notificationRunner";
 
 export function startScheduler() {
+  console.log("[RUN NOTIFICATIONS]");
   cron.schedule("* * * * *", async () => {
     try {
       console.log("[SCHEDULER TICK]");
