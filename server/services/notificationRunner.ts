@@ -15,15 +15,29 @@ export async function runNotifications() {
 
   const now = new Date();
 
+  const currentTime = now.toLocaleTimeString("it-IT", {
+    timeZone: "Europe/Rome",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
   const currentHour = String(now.getHours()).padStart(2, "0");
 
   const currentMinute = String(now.getMinutes()).padStart(2, "0");
 
   const currentTime = `${currentHour}:${currentMinute}`;
+
   const today = new Date().toISOString().split("T")[0];
   let sentNotifications = 0;
 
   for (const subscription of subscriptions) {
+    console.log(
+      "[SUBSCRIPTION]",
+      subscription.city,
+      subscription.notificationHour,
+      currentTime,
+    );
     if (!subscription.notificationsEnabled) {
       continue;
     }
@@ -75,7 +89,7 @@ export async function runNotifications() {
 
     sentNotifications++;
   }
-  ``;
+
   fs.writeFileSync(filePath, JSON.stringify(subscriptions, null, 2));
   return sentNotifications;
 }
