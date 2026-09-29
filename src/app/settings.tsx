@@ -7,9 +7,6 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Modal, FlatList } from "react-native";
 import { ScrollView, Alert } from "react-native";
 import { router } from "expo-router";
-import * as Notifications from "expo-notifications";
-import { generateNotification } from "../services/notificationService";
-import { showLocalNotification } from "../services/localNotificationService";
 import { registerNotificationSubscription } from "../services/notificationSubscriptionService";
 import { getInstallationId } from "../services/installationIdService";
 
@@ -56,6 +53,7 @@ export default function SettingsScreen() {
 
   async function getExpoPushToken() {
     const token = await Notifications.getExpoPushTokenAsync();
+    console.log("APP TOKEN:", token);
 
     return token.data;
   }

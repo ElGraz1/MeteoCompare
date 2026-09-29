@@ -54,7 +54,7 @@ export async function runNotifications() {
     if (!notification) {
       continue;
     }
-
+    console.log("SERVER TOKEN:", subscription.expoPushToken);
     const tickets = await sendPushNotification(
       subscription.expoPushToken,
       "🌧 MeteoCompare",
