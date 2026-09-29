@@ -230,8 +230,6 @@ export async function getAggregatedForecast(
   slug: string,
   day: number = 0,
 ): Promise<AggregatedForecast> {
-  console.log("[FORECAST REQUEST]", slug, day);
-
   const cityToSearch = normalizeCity(slug);
 
   if (cityToSearch !== slug.toLowerCase()) {
@@ -242,7 +240,6 @@ export async function getAggregatedForecast(
   const cacheKey = `${normalizedSlug}-${day}`;
 
   const cached = forecastCache.get(cacheKey);
-  console.log("[CACHE CHECK]", cacheKey, cached ? "FOUND" : "NOT FOUND");
 
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     console.log(`[CACHE HIT] ${cacheKey}`);
@@ -289,6 +286,6 @@ export async function getAggregatedForecast(
     timestamp: Date.now(),
     data: result,
   });
-  console.log("[CACHE SAVED]", cacheKey);
+
   return result;
 }
