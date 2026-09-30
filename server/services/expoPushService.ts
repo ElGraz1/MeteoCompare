@@ -13,6 +13,7 @@ export async function sendPushNotification(
       to: expoPushToken,
       sound: "default",
       channelId: "default",
+      priority: "high",
       title,
       body,
       data,
