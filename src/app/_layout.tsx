@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
 import { useEffect } from "react";
+import "../services/localNotificationService";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -27,8 +28,15 @@ export default function RootLayout() {
       },
     );
 
+    const receivedSubscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        console.log("NOTIFICATION RECEIVED", notification);
+      },
+    );
+
     return () => {
       subscription.remove();
+      receivedSubscription.remove();
     };
   }, []);
 

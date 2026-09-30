@@ -54,6 +54,8 @@ export default function SettingsScreen() {
   async function getExpoPushToken() {
     const token = await Notifications.getExpoPushTokenAsync();
 
+    console.log("APP TOKEN:", token.data);
+
     return token.data;
   }
 
@@ -120,7 +122,7 @@ export default function SettingsScreen() {
     ]);
 
     await requestNotificationPermission();
-
+    const installationId = await getInstallationId();
     const expoPushToken = await getExpoPushToken();
 
     await registerNotificationSubscription({
