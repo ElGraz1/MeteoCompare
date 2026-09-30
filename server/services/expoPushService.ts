@@ -23,6 +23,7 @@ export async function sendPushNotification(
   const chunks = expo.chunkPushNotifications(messages);
 
   for (const chunk of chunks) {
+    console.log("EXPO MESSAGE:", JSON.stringify(chunk, null, 2));
     const tickets = await expo.sendPushNotificationsAsync(chunk);
 
     console.log("EXPO TICKETS:", tickets);
