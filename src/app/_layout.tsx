@@ -41,7 +41,6 @@ export default function RootLayout() {
           headerShown: false,
         }}
       />
-
       <Stack.Screen
         name="settings"
         options={{
@@ -54,7 +53,6 @@ export default function RootLayout() {
           title: "Probabilità minima",
         }}
       />
-
       <Stack.Screen
         name="accumulation-info"
         options={{
@@ -71,6 +69,12 @@ export default function RootLayout() {
         name="provider-info"
         options={{
           title: "Fonte notifica",
+        }}
+      />
+      <Stack.Screen
+        name="calendar-alerts"
+        options={{
+          title: "Calendario Meteo",
         }}
       />
     </Stack>

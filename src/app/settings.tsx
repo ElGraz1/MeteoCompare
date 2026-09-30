@@ -24,7 +24,7 @@ export default function SettingsScreen() {
   const [accumulationThreshold, setAccumulationThreshold] = useState("3");
 
   const [provider, setProvider] = useState("max");
-
+  const [notificationMode, setNotificationMode] = useState("daily");
   const [showTimePicker, setShowTimePicker] = useState(false);
 
   const [time, setTime] = useState(new Date());
@@ -68,6 +68,7 @@ export default function SettingsScreen() {
         "provider",
         "criticalStart",
         "criticalEnd",
+        "notificationMode",
       ]);
 
       const settings = Object.fromEntries(values);
@@ -95,6 +96,9 @@ export default function SettingsScreen() {
       if (settings.provider) {
         setProvider(settings.provider);
       }
+      if (settings.notificationMode) {
+        setNotificationMode(settings.notificationMode);
+      }
       if (settings.criticalStart) {
         setCriticalStart(settings.criticalStart);
       }
@@ -117,6 +121,7 @@ export default function SettingsScreen() {
       ["provider", provider],
       ["criticalStart", criticalStart],
       ["criticalEnd", criticalEnd],
+      ["notificationMode", notificationMode],
     ]);
 
     await requestNotificationPermission();
@@ -187,7 +192,8 @@ export default function SettingsScreen() {
 
     setCriticalEnd(`${hh}:${mm}`);
   };
-
+  const [showNotificationModeModal, setShowNotificationModeModal] =
+    useState(false);
   const [showProviderModal, setShowProviderModal] = useState(false);
 
   return (
@@ -258,6 +264,63 @@ export default function SettingsScreen() {
           marginTop: -10,
         }}
       >
+        <Text
+          style={{
+            marginBottom: 8,
+          }}
+        >
+          📅 Tipo notifica
+        </Text>
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            marginBottom: 15,
+          }}
+        >
+          <Pressable
+            onPress={() => setShowNotificationModeModal(true)}
+            style={{
+              flex: 1,
+              borderWidth: 1,
+              borderRadius: 10,
+              padding: 12,
+            }}
+          >
+            <Text>
+              {notificationMode === "daily" ? "Quotidiana" : "Personalizzata"}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            disabled={notificationMode === "daily"}
+            onPress={() => {
+              if (notificationMode === "custom") {
+                router.push("/calendar-alerts");
+              }
+            }}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              backgroundColor:
+                notificationMode === "daily" ? "#e5e7eb" : "#dbeafe",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                color: notificationMode === "daily" ? "#9ca3af" : "#ffffff",
+                fontSize: 18,
+              }}
+            >
+              📅
+            </Text>
+          </Pressable>
+        </View>
         <Text>🕘 Ora notifica</Text>
         <Pressable
           onPress={() => setShowTimePicker(true)}
@@ -649,6 +712,72 @@ export default function SettingsScreen() {
                 </Pressable>
               )}
             />
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        visible={showNotificationModeModal}
+        transparent
+        animationType="fade"
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            backgroundColor: "rgba(0,0,0,0.4)",
+            padding: 20,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              borderRadius: 15,
+              padding: 20,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "bold",
+                marginBottom: 15,
+              }}
+            >
+              📅 Tipo notifica
+            </Text>
+
+            <Pressable
+              onPress={() => {
+                setNotificationMode("daily");
+                setShowNotificationModeModal(false);
+              }}
+              style={{ padding: 12 }}
+            >
+              <Text
+                style={{
+                  fontWeight: notificationMode === "daily" ? "700" : "400",
+                  color: notificationMode === "daily" ? "#2563eb" : "black",
+                }}
+              >
+                Quotidiana
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => {
+                setNotificationMode("custom");
+                setShowNotificationModeModal(false);
+              }}
+              style={{ padding: 12 }}
+            >
+              <Text
+                style={{
+                  fontWeight: notificationMode === "custom" ? "700" : "400",
+                  color: notificationMode === "custom" ? "#2563eb" : "black",
+                }}
+              >
+                Personalizzata
+              </Text>
+            </Pressable>
           </View>
         </View>
       </Modal>
