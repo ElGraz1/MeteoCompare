@@ -10,7 +10,7 @@ export async function runNotifications() {
     "data",
     "notification-subscriptions.json",
   );
-  console.log("SUBSCRIPTIONS FILE:", filePath);
+
   const subscriptions = JSON.parse(fs.readFileSync(filePath, "utf8"));
 
   const now = new Date();
@@ -54,7 +54,6 @@ export async function runNotifications() {
     if (!notification) {
       continue;
     }
-    console.log("SERVER TOKEN:", subscription.expoPushToken);
     const tickets = await sendPushNotification(
       subscription.expoPushToken,
       "🌧 MeteoCompare",

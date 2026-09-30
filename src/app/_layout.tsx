@@ -28,15 +28,8 @@ export default function RootLayout() {
       },
     );
 
-    const receivedSubscription = Notifications.addNotificationReceivedListener(
-      (notification) => {
-        console.log("NOTIFICATION RECEIVED", notification);
-      },
-    );
-
     return () => {
       subscription.remove();
-      receivedSubscription.remove();
     };
   }, []);
 
