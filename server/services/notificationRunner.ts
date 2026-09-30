@@ -23,6 +23,10 @@ export async function runNotifications() {
   });
 
   const today = new Date().toISOString().split("T")[0];
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const tomorrowDate = tomorrow.toISOString().split("T")[0];
   let sentNotifications = 0;
 
   for (const subscription of subscriptions) {
@@ -41,6 +45,22 @@ export async function runNotifications() {
 
     if (subscription.notificationHour !== currentTime) {
       continue;
+    }
+
+    console.log(
+      "[CUSTOM CHECK]",
+      subscription.city,
+      tomorrowDate,
+      subscription.selectedDates,
+    );
+
+    if (subscription.notificationMode === "custom") {
+      if (
+        !subscription.selectedDates ||
+        !subscription.selectedDates.includes(tomorrowDate)
+      ) {
+        continue;
+      }
     }
 
     const notification = await generateServerNotification(subscription.city, {

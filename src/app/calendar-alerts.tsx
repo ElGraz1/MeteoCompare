@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, Pressable, Alert } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
@@ -81,16 +81,7 @@ export default function CalendarAlertsScreen() {
       JSON.stringify(Object.keys(selectedDates)),
     );
 
-    Alert.alert(
-      "Calendario salvato",
-      `${Object.keys(selectedDates).length} date salvate`,
-      [
-        {
-          text: "OK",
-          onPress: () => router.back(),
-        },
-      ],
-    );
+    router.back();
   }
 
   return (

@@ -19,6 +19,7 @@ app.use(express.json());
 
 app.post("/notification-subscriptions", (req, res) => {
   console.log("SELECTED DATES:", req.body.selectedDates);
+  console.log(JSON.stringify(req.body, null, 2));
 
   const filePath = path.join(
     process.cwd(),
