@@ -10,6 +10,7 @@ import { router } from "expo-router";
 import { registerNotificationSubscription } from "../services/notificationSubscriptionService";
 import { getInstallationId } from "../services/installationIdService";
 import * as Notifications from "expo-notifications";
+
 export default function SettingsScreen() {
   const [localita, setLocalita] = useState("");
 
@@ -45,6 +46,9 @@ export default function SettingsScreen() {
 
   const [criticalEndDate, setCriticalEndDate] = useState(new Date());
 
+  const [calendarSelectedDates, setCalendarSelectedDates] = useState<string[]>(
+    [],
+  );
   async function requestNotificationPermission() {
     const { status } = await Notifications.requestPermissionsAsync();
 
@@ -106,6 +110,11 @@ export default function SettingsScreen() {
       if (settings.criticalEnd) {
         setCriticalEnd(settings.criticalEnd);
       }
+      const storedDates = await AsyncStorage.getItem("calendarSelectedDates");
+
+      if (storedDates) {
+        setCalendarSelectedDates(JSON.parse(storedDates));
+      }
     }
 
     loadSettings();
@@ -139,6 +148,8 @@ export default function SettingsScreen() {
       criticalStart,
       criticalEnd,
       notificationsEnabled,
+      notificationMode,
+      selectedDates: calendarSelectedDates,
     });
     setSavedMessage(true);
 

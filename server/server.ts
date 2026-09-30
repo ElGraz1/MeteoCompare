@@ -18,6 +18,8 @@ app.use(cors());
 app.use(express.json());
 
 app.post("/notification-subscriptions", (req, res) => {
+  console.log("SELECTED DATES:", req.body.selectedDates);
+
   const filePath = path.join(
     process.cwd(),
     "data",
