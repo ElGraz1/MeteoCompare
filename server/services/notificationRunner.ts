@@ -39,13 +39,6 @@ export async function runNotifications() {
     if (!subscription.notificationsEnabled) {
       continue;
     }
-    if (subscription.lastNotificationDate === today) {
-      continue;
-    }
-
-    if (subscription.notificationHour !== currentTime) {
-      continue;
-    }
 
     console.log(
       "[CUSTOM CHECK]",
@@ -53,6 +46,13 @@ export async function runNotifications() {
       tomorrowDate,
       subscription.selectedDates,
     );
+    if (subscription.lastNotificationDate === today) {
+      continue;
+    }
+
+    if (subscription.notificationHour !== currentTime) {
+      continue;
+    }
 
     if (subscription.notificationMode === "custom") {
       if (
