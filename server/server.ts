@@ -6,7 +6,10 @@ import fs from "fs";
 import path from "path";
 import Papa from "papaparse";
 
-import { getAggregatedForecast } from "../src/services/forecastAggregatorService";
+import {
+  getAggregatedForecast,
+  clearForecastCache,
+} from "../src/services/forecastAggregatorService";
 import { sendPushNotification } from "./services/expoPushService";
 import { generateNotification } from "../src/services/notificationService";
 import { generateServerNotification } from "./services/generateServerNotification";
@@ -106,6 +109,15 @@ app.get("/forecast/:city", async (req, res) => {
       error: error instanceof Error ? error.message : "Errore",
     });
   }
+});
+
+app.delete("/cache/:city", (req, res) => {
+  clearForecastCache(req.params.city);
+
+  res.json({
+    success: true,
+    city: req.params.city,
+  });
 });
 
 app.post("/send-weather-notification", async (_req, res) => {

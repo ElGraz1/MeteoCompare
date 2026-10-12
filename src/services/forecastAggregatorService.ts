@@ -226,6 +226,23 @@ export function buildForecastComparison(
   });
 }
 
+export function clearForecastCache(city?: string) {
+  if (!city) {
+    forecastCache.clear();
+    return;
+  }
+
+  const normalizedSlug = normalizeSlug(city);
+
+  for (const key of forecastCache.keys()) {
+    if (key.startsWith(`${normalizedSlug}-`)) {
+      forecastCache.delete(key);
+    }
+  }
+
+  console.log(`[CACHE CLEARED] ${normalizedSlug}`);
+}
+
 export async function getAggregatedForecast(
   slug: string,
   day: number = 0,

@@ -7,7 +7,7 @@ Notifications.setNotificationChannelAsync("default", {
   vibrationPattern: [0, 250, 250, 250],
   lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
 });
-console.log("NOTIFICATION HANDLER LOADED");
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowBanner: true,

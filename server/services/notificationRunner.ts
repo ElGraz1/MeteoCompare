@@ -55,12 +55,15 @@ export async function runNotifications() {
     }
 
     if (subscription.notificationMode === "custom") {
-      if (
-        !subscription.selectedDates ||
-        !subscription.selectedDates.includes(tomorrowDate)
-      ) {
+      const selectedDates = subscription.selectedDates ?? [];
+
+      const shouldNotifyForDate = selectedDates.includes(tomorrowDate);
+
+      if (!shouldNotifyForDate) {
         continue;
       }
+
+      console.log("[CUSTOM MATCH]", subscription.city, tomorrowDate);
     }
 
     const notification = await generateServerNotification(subscription.city, {
