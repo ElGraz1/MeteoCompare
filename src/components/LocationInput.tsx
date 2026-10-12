@@ -11,6 +11,8 @@ import {
 
 import { searchCity, CitySuggestion } from "../services/ilMeteoService";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 type Props = {
   localita: string;
   setLocalita: (valore: string) => void;
@@ -23,6 +25,9 @@ export default function LocationInput({ localita, setLocalita }: Props) {
   }, [localita]);
 
   const [suggerimenti, setSuggerimenti] = useState<CitySuggestion[]>([]);
+  const [recentCities, setRecentCities] = useState<string[]>([]);
+  const [showRecentCities, setShowRecentCities] = useState(false);
+
   const [ricercaInCorso, setRicercaInCorso] = useState(false);
 
   const handleTestoChange = async (nuovoTesto: string) => {
@@ -43,11 +48,42 @@ export default function LocationInput({ localita, setLocalita }: Props) {
     }
   };
 
-  const selezionaLocalita = (localitaScelta: CitySuggestion) => {
-    setTesto(localitaScelta.nome);
-    setLocalita(localitaScelta.nome);
-    setSuggerimenti([]);
+  const saveRecentCity = async (city: string) => {
+    const updated = [
+      city,
+      ...recentCities.filter((item) => item !== city),
+    ].slice(0, 3);
+
+    setRecentCities(updated);
+
+    await AsyncStorage.setItem("recentCities", JSON.stringify(updated));
+
+    await AsyncStorage.setItem("preferredCity", city);
   };
+
+  const selezionaLocalita = async (localitaScelta: CitySuggestion) => {
+    setTesto(localitaScelta.nome);
+
+    setLocalita(localitaScelta.nome);
+
+    setSuggerimenti([]);
+
+    setShowRecentCities(false);
+
+    await saveRecentCity(localitaScelta.nome);
+  };
+
+  useEffect(() => {
+    async function loadRecentCities() {
+      const saved = await AsyncStorage.getItem("recentCities");
+
+      if (saved) {
+        setRecentCities(JSON.parse(saved));
+      }
+    }
+
+    loadRecentCities();
+  }, []);
 
   return (
     <View
@@ -69,6 +105,11 @@ export default function LocationInput({ localita, setLocalita }: Props) {
         <TextInput
           value={testo}
           onChangeText={handleTestoChange}
+          onFocus={() => {
+            if (recentCities.length > 0) {
+              setShowRecentCities(true);
+            }
+          }}
           placeholder="Inserisci località"
           autoCorrect={false}
           style={{
@@ -80,7 +121,48 @@ export default function LocationInput({ localita, setLocalita }: Props) {
 
         {ricercaInCorso && <ActivityIndicator size="small" color="#2563eb" />}
       </View>
+      {showRecentCities &&
+        suggerimenti.length === 0 &&
+        recentCities.length > 0 && (
+          <View
+            style={{
+              marginTop: 4,
+              backgroundColor: "white",
+              borderRadius: 12,
+              overflow: "hidden",
+              borderWidth: 1,
+              borderColor: "#e2e8f0",
+            }}
+          >
+            {recentCities.map((city) => (
+              <Pressable
+                key={city}
+                onPress={async () => {
+                  setTesto(city);
 
+                  setLocalita(city);
+
+                  setShowRecentCities(false);
+
+                  await saveRecentCity(city);
+                }}
+                style={{
+                  padding: 12,
+                  borderBottomWidth: 1,
+                  borderBottomColor: "#e2e8f0",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                  }}
+                >
+                  🕘 {city}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        )}
       {suggerimenti.length > 0 && (
         <View
           style={{
