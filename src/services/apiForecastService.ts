@@ -11,3 +11,15 @@ export async function getForecastsByCity(city: string, day: number = 0) {
 
   return response.json();
 }
+
+export async function clearForecastCache(city: string) {
+  const response = await fetch(`${API_BASE_URL}/cache/${city.toLowerCase()}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  return response.json();
+}

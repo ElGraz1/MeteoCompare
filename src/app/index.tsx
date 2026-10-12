@@ -2,7 +2,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect, useRef } from "react";
 import LocationInput from "../components/LocationInput";
-import { getForecastsByCity } from "../services/apiForecastService";
+import {
+  getForecastsByCity,
+  clearForecastCache,
+} from "../services/apiForecastService";
 import { weatherIcons } from "../constants/weatherIcons";
 import { mapDescriptionToWeatherType } from "../constants/weatherTypeMapper";
 
@@ -245,15 +248,51 @@ export default function HomeScreen() {
             🌍 {localita}
           </Text>
 
-          <Pressable onPress={() => router.push("/settings")}>
-            <Text
-              style={{
-                fontSize: 28,
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 16,
+            }}
+          >
+            <Pressable
+              onPress={async () => {
+                try {
+                  const day = giorni.indexOf(giorno);
+
+                  await clearForecastCache(localita);
+
+                  setIsLoadingForecast(true);
+
+                  const result = await getForecastsByCity(localita, day);
+
+                  setConfrontoCorrente(result.confronto);
+                } catch (error) {
+                  console.error(error);
+                } finally {
+                  setIsLoadingForecast(false);
+                }
               }}
             >
-              ⚙️
-            </Text>
-          </Pressable>
+              <Text
+                style={{
+                  fontSize: 28,
+                }}
+              >
+                🔄
+              </Text>
+            </Pressable>
+
+            <Pressable onPress={() => router.push("/settings")}>
+              <Text
+                style={{
+                  fontSize: 28,
+                }}
+              >
+                ⚙️
+              </Text>
+            </Pressable>
+          </View>
         </View>
 
         <ScrollView
