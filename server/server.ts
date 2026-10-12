@@ -36,15 +36,11 @@ app.post("/notification-subscriptions", (req, res) => {
     subscriptions = JSON.parse(fs.readFileSync(filePath, "utf8"));
   }
 
-  const existingIndex = subscriptions.findIndex(
-    (item: any) => item.installationId === req.body.installationId,
+  subscriptions = subscriptions.filter(
+    (item: any) => item.expoPushToken !== req.body.expoPushToken,
   );
 
-  if (existingIndex >= 0) {
-    subscriptions[existingIndex] = req.body;
-  } else {
-    subscriptions.push(req.body);
-  }
+  subscriptions.push(req.body);
 
   fs.writeFileSync(filePath, JSON.stringify(subscriptions, null, 2), "utf8");
 

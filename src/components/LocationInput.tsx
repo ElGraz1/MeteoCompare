@@ -12,6 +12,14 @@ import {
 import { searchCity, CitySuggestion } from "../services/ilMeteoService";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  BorderRadius,
+  Colors,
+  Elevation,
+  Spacing,
+  Typography,
+} from "../constants/theme";
+import { useColorScheme } from "../hooks/use-color-scheme";
 
 type Props = {
   localita: string;
@@ -19,16 +27,16 @@ type Props = {
 };
 
 export default function LocationInput({ localita, setLocalita }: Props) {
+  const scheme = useColorScheme();
+  const colors = Colors[scheme === "dark" ? "dark" : "light"];
   const [testo, setTesto] = useState(localita);
-  useEffect(() => {
-    setTesto(localita);
-  }, [localita]);
 
   const [suggerimenti, setSuggerimenti] = useState<CitySuggestion[]>([]);
   const [recentCities, setRecentCities] = useState<string[]>([]);
-  const [showRecentCities, setShowRecentCities] = useState(false);
 
   const [ricercaInCorso, setRicercaInCorso] = useState(false);
+  const displayedRecentCities =
+    recentCities.length > 0 ? recentCities : localita.trim() ? [localita] : [];
 
   const handleTestoChange = async (nuovoTesto: string) => {
     setTesto(nuovoTesto);
@@ -52,7 +60,7 @@ export default function LocationInput({ localita, setLocalita }: Props) {
     const updated = [
       city,
       ...recentCities.filter((item) => item !== city),
-    ].slice(0, 3);
+    ].slice(0, 5);
 
     setRecentCities(updated);
 
@@ -67,8 +75,6 @@ export default function LocationInput({ localita, setLocalita }: Props) {
     setLocalita(localitaScelta.nome);
 
     setSuggerimenti([]);
-
-    setShowRecentCities(false);
 
     await saveRecentCity(localitaScelta.nome);
   };
@@ -88,7 +94,7 @@ export default function LocationInput({ localita, setLocalita }: Props) {
   return (
     <View
       style={{
-        marginBottom: 20,
+        marginBottom: 0,
         zIndex: 10,
       }}
     >
@@ -96,83 +102,100 @@ export default function LocationInput({ localita, setLocalita }: Props) {
         style={{
           flexDirection: "row",
           alignItems: "center",
-          backgroundColor: "white",
-          borderRadius: 12,
-          paddingHorizontal: 12,
-          height: 56,
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+          borderWidth: 1,
+          borderRadius: BorderRadius.md,
+          paddingHorizontal: Spacing.md,
+          height: 48,
+          minHeight: 48,
+          ...Elevation.card,
         }}
       >
+        <Text
+          accessibilityElementsHidden
+          style={{
+            color: colors.primary,
+            fontSize: 19,
+            marginRight: Spacing.sm,
+          }}
+        >
+          ⌕
+        </Text>
         <TextInput
           value={testo}
           onChangeText={handleTestoChange}
-          onFocus={() => {
-            if (recentCities.length > 0) {
-              setShowRecentCities(true);
-            }
-          }}
           placeholder="Inserisci località"
+          placeholderTextColor={colors.textTertiary}
           autoCorrect={false}
           style={{
             flex: 1,
-            fontSize: 16,
+            color: colors.text,
+            fontSize: Typography.scale.body.fontSize,
             paddingVertical: 12,
           }}
         />
-
-        {ricercaInCorso && <ActivityIndicator size="small" color="#2563eb" />}
+        {ricercaInCorso && (
+          <ActivityIndicator size="small" color={colors.primary} />
+        )}
       </View>
-      {showRecentCities &&
-        suggerimenti.length === 0 &&
-        recentCities.length > 0 && (
+      {suggerimenti.length === 0 &&
+        displayedRecentCities.length > 0 &&
+        testo.trim() === localita.trim() && (
           <View
             style={{
-              marginTop: 4,
-              backgroundColor: "white",
-              borderRadius: 12,
-              overflow: "hidden",
-              borderWidth: 1,
-              borderColor: "#e2e8f0",
+              flexDirection: "row",
+              alignItems: "center",
+              marginTop: 7,
+              marginBottom: 4,
             }}
           >
-            {recentCities.map((city) => (
-              <Pressable
-                key={city}
-                onPress={async () => {
-                  setTesto(city);
-
-                  setLocalita(city);
-
-                  setShowRecentCities(false);
-
-                  await saveRecentCity(city);
-                }}
-                style={{
-                  padding: 12,
-                  borderBottomWidth: 1,
-                  borderBottomColor: "#e2e8f0",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
+            <Text
+              style={{
+                color: colors.textTertiary,
+                fontSize: 11,
+                fontWeight: "700",
+                marginRight: 8,
+              }}
+            >
+              Recenti
+            </Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={{ alignItems: "center", gap: 8 }}
+            >
+              {displayedRecentCities.map((city) => (
+                <Pressable
+                  key={city}
+                  accessibilityRole="button"
+                  onPress={async () => {
+                    setTesto(city);
+                    setLocalita(city);
+                    await saveRecentCity(city);
                   }}
+                  style={({ pressed }) => ({ opacity: pressed ? 0.65 : 1 })}
                 >
-                  🕘 {city}
-                </Text>
-              </Pressable>
-            ))}
+                  <Text style={{ color: colors.textSecondary, fontSize: 11 }}>
+                    {city}
+                  </Text>
+                </Pressable>
+              ))}
+            </ScrollView>
           </View>
         )}
       {suggerimenti.length > 0 && (
         <View
           style={{
             marginTop: 4,
-            backgroundColor: "white",
-            borderRadius: 12,
+            backgroundColor: colors.surface,
+            borderRadius: BorderRadius.md,
             overflow: "hidden",
             borderWidth: 1,
-            borderColor: "#e2e8f0",
+            borderColor: colors.border,
             maxHeight: 250,
+            ...Elevation.card,
           }}
         >
           <ScrollView nestedScrollEnabled>
@@ -181,15 +204,19 @@ export default function LocationInput({ localita, setLocalita }: Props) {
                 key={suggerimento.id}
                 onPress={() => selezionaLocalita(suggerimento)}
                 style={({ pressed }) => ({
-                  padding: 12,
-                  backgroundColor: pressed ? "#eff6ff" : "white",
+                  padding: 14,
+                  backgroundColor: pressed
+                    ? colors.primaryContainer
+                    : colors.surface,
                   borderBottomWidth: 1,
-                  borderBottomColor: "#e2e8f0",
+                  borderBottomColor: colors.border,
                 })}
               >
                 <Text
                   style={{
-                    fontSize: 16,
+                    color: colors.text,
+                    fontSize: 17,
+                    fontWeight: "500",
                   }}
                 >
                   {suggerimento.nome}
@@ -198,8 +225,8 @@ export default function LocationInput({ localita, setLocalita }: Props) {
                 <Text
                   style={{
                     marginTop: 2,
-                    fontSize: 12,
-                    color: "#64748b",
+                    fontSize: 13,
+                    color: colors.textSecondary,
                   }}
                 >
                   {suggerimento.provincia} · {suggerimento.regione}
@@ -217,7 +244,7 @@ export default function LocationInput({ localita, setLocalita }: Props) {
           <Text
             style={{
               marginTop: 6,
-              color: "#64748b",
+              color: colors.textSecondary,
               fontSize: 13,
             }}
           >

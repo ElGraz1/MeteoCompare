@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MeteoCompare — concept UI</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --canvas: #edf2f8;
+        --device: #f7f9fc;
+        --surface: #ffffff;
+        --surface-soft: #f1f5fa;
+        --surface-blue: #eaf3ff;
+        --ink: #15243a;
+        --ink-soft: #65748a;
+        --ink-faint: #8794a7;
+        --line: #e8edf4;
+        --blue: #2867db;
+        --blue-deep: #184da9;
+        --blue-tint: #e7f0ff;
+        --green: #158267;
+        --green-tint: #e5f5ef;
+        --amber: #a6640a;
+        --amber-tint: #fff2db;
+        --shadow: 0 24px 70px rgb(30 49 77 / 11%), 0 3px 10px rgb(30 49 77 / 5%);
+        --card-shadow: 0 5px 18px rgb(30 49 77 / 5%);
+      }
+
+      [data-theme="dark"] {
+        color-scheme: dark;
+        --canvas: #0d1420;
+        --device: #111b2a;
+        --surface: #182437;
+        --surface-soft: #202f44;
+        --surface-blue: #1b3558;
+        --ink: #f0f5fd;
+        --ink-soft: #a7b5c9;
+        --ink-faint: #8393aa;
+        --line: #28374c;
+        --blue: #82b2ff;
+        --blue-deep: #a9caff;
+        --blue-tint: #1c3558;
+        --green: #72d4b4;
+        --green-tint: #173c37;
+        --amber: #f2c275;
+        --amber-tint: #46351f;
+        --shadow: 0 24px 70px rgb(0 0 0 / 30%), 0 3px 10px rgb(0 0 0 / 16%);
+        --card-shadow: 0 5px 18px rgb(0 0 0 / 12%);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(ellipse at 50% -15%, rgb(121 170 255 / 18%), transparent 43%),
+          var(--canvas);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        transition: background-color 180ms ease, color 180ms ease;
+      }
+
+      button { font: inherit; }
+
+      .page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 44px 28px 54px;
+      }
+
+      .intro {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin: 0 auto 29px;
+        max-width: 870px;
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--blue);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .15em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 40px);
+        letter-spacing: -.045em;
+        line-height: 1.05;
+      }
+
+      .intro-copy {
+        margin: 10px 0 0;
+        color: var(--ink-soft);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        flex: none;
+        padding: 11px 15px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--ink);
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+        box-shadow: var(--card-shadow);
+      }
+
+      .theme-toggle:hover { transform: translateY(-1px); }
+
+      .screens {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(300px, 390px));
+        justify-content: center;
+        align-items: start;
+        gap: 30px;
+      }
+
+      .screen-column { min-width: 0; }
+
+      .screen-label {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0 0 11px 5px;
+        color: var(--ink-soft);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .11em;
+        text-transform: uppercase;
+      }
+
+      .screen-label span {
+        display: grid;
+        width: 21px;
+        height: 21px;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--blue-tint);
+        color: var(--blue);
+        font-size: 10px;
+      }
+
+      .phone {
+        position: relative;
+        min-height: 810px;
+        overflow: hidden;
+        border: 7px solid #17243a;
+        border-radius: 38px;
+        background: var(--device);
+        box-shadow: var(--shadow);
+      }
+
+      [data-theme="dark"] .phone { border-color: #05090f; }
+
+      .statusbar {
+        display: flex;
+        height: 39px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1px 22px 0;
+        color: var(--ink);
+        font-size: 11px;
+        font-weight: 750;
+      }
+
+      .status-icons { display: flex; align-items: center; gap: 5px; }
+      .signal { font-size: 10px; letter-spacing: -2px; }
+      .wifi { font-size: 12px; }
+      .battery {
+        width: 19px;
+        height: 10px;
+        border: 1.3px solid currentColor;
+        border-radius: 3px;
+        position: relative;
+      }
+      .battery::before {
+        content: "";
+        position: absolute;
+        inset: 2px 3px 2px 2px;
+        border-radius: 1px;
+        background: currentColor;
+      }
+      .battery::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        right: -3px;
+        width: 2px;
+        height: 4px;
+        border-radius: 0 2px 2px 0;
+        background: currentColor;
+      }
+
+      .appbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 18px 15px;
+      }
+
+      .brand { display: flex; align-items: center; gap: 9px; }
+      .brand-mark {
+        display: grid;
+        width: 32px;
+        height: 32px;
+        place-items: center;
+        border-radius: 11px;
+        background: linear-gradient(145deg, #4893fb, #2867db 66%, #2055ba);
+        color: white;
+        font-size: 17px;
+        box-shadow: 0 4px 10px rgb(40 103 219 / 25%);
+      }
+      .brand-name { font-size: 15px; font-weight: 800; letter-spacing: -.035em; }
+      .brand-caption { margin-top: 1px; color: var(--ink-faint); font-size: 9px; font-weight: 650; }
+      .app-actions { display: flex; gap: 8px; }
+      .icon-button {
+        display: grid;
+        width: 35px;
+        height: 35px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--surface);
+        color: var(--ink-soft);
+        font-size: 16px;
+      }
+
+      .screen-content { padding: 0 15px 28px; }
+
+      .search {
+        display: flex;
+        height: 43px;
+        align-items: center;
+        gap: 9px;
+        padding: 0 13px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--surface);
+        color: var(--ink-faint);
+        box-shadow: var(--card-shadow);
+        font-size: 12px;
+      }
+      .search-icon { color: var(--blue); font-size: 16px; }
+      .recent { margin: 8px 0 0 3px; color: var(--ink-faint); font-size: 9px; }
+      .recent strong { color: var(--ink-soft); font-weight: 700; }
+
+      .days {
+        display: flex;
+        gap: 7px;
+        margin: 18px 0 21px;
+        overflow: hidden;
+      }
+      .day {
+        min-width: 57px;
+        padding: 8px 10px 9px;
+        border-radius: 12px;
+        background: var(--surface);
+        color: var(--ink-soft);
+        text-align: center;
+        box-shadow: var(--card-shadow);
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .day.active { background: var(--blue); color: white; }
+      [data-theme="dark"] .day.active { color: #102039; }
+      .day small { display: block; margin-top: 3px; opacity: .73; font-size: 8px; font-weight: 550; }
+
+      .cityline { display: flex; align-items: flex-end; justify-content: space-between; }
+      .city-overline {
+        margin-bottom: 4px;
+        color: var(--ink-faint);
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: .13em;
+      }
+      .city-name { font-size: 27px; font-weight: 820; letter-spacing: -.055em; line-height: 1; }
+      .today-label { margin-top: 5px; color: var(--ink-soft); font-size: 10px; }
+      .current-weather { display: flex; align-items: center; gap: 8px; padding-bottom: 1px; }
+      .sun-symbol { font-size: 29px; filter: drop-shadow(0 3px 4px rgb(241 180 70 / 20%)); }
+      .temp { font-size: 24px; font-weight: 750; letter-spacing: -.055em; }
+
+      .summary {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 16px 0 20px;
+        padding: 13px 14px;
+        overflow: hidden;
+        border-radius: 17px;
+        background: linear-gradient(110deg, var(--surface-blue), var(--surface));
+        box-shadow: var(--card-shadow);
+      }
+      .summary::after {
+        content: "";
+        position: absolute;
+        top: -27px;
+        right: -13px;
+        width: 95px;
+        height: 95px;
+        border: 1px solid rgb(87 145 235 / 15%);
+        border-radius: 50%;
+        box-shadow: 0 0 0 13px rgb(87 145 235 / 4%), 0 0 0 27px rgb(87 145 235 / 3%);
+      }
+      .summary-icon {
+        display: grid;
+        width: 36px;
+        height: 36px;
+        flex: none;
+        place-items: center;
+        border-radius: 12px;
+        background: var(--surface);
+        color: var(--blue);
+        font-size: 17px;
+      }
+      .summary-copy { position: relative; z-index: 1; }
+      .summary-title { font-size: 11px; font-weight: 800; }
+      .summary-subtitle { margin-top: 3px; color: var(--ink-soft); font-size: 9px; }
+      .summary-count {
+        position: relative;
+        z-index: 1;
+        margin-left: auto;
+        padding: 6px 8px;
+        border-radius: 9px;
+        background: var(--amber-tint);
+        color: var(--amber);
+        font-size: 9px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin: 0 2px 10px;
+      }
+      .section-title { font-size: 13px; font-weight: 800; letter-spacing: -.02em; }
+      .section-meta { color: var(--ink-faint); font-size: 9px; }
+
+      .forecast-card {
+        padding: 4px 11px;
+        border-radius: 18px;
+        background: var(--surface);
+        box-shadow: var(--card-shadow);
+      }
+      .forecast-row { padding: 11px 0 10px; }
+      .forecast-row + .forecast-row { border-top: 1px solid var(--line); }
+      .hourline { display: flex; align-items: center; gap: 9px; }
+      .hour { width: 36px; flex: none; font-size: 11px; font-weight: 800; }
+      .provider-columns { display: grid; flex: 1; grid-template-columns: 1fr 1fr; gap: 6px; }
+      .provider {
+        min-width: 0;
+        padding: 7px 8px;
+        border-radius: 11px;
+        background: var(--surface-soft);
+      }
+      .provider.ilm { box-shadow: inset 2px 0 0 var(--blue); }
+      .provider.bm { box-shadow: inset 2px 0 0 var(--green); }
+      .provider-name { display: flex; align-items: center; gap: 4px; color: var(--ink-soft); font-size: 8px; font-weight: 750; }
+      .provider-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--blue); }
+      .bm .provider-dot { background: var(--green); }
+      .provider-value { margin-top: 4px; font-size: 14px; font-weight: 800; letter-spacing: -.025em; white-space: nowrap; }
+      .provider-value span { margin-right: 3px; font-size: 13px; }
+      .row-trailing { display: flex; width: 42px; flex: none; flex-direction: column; align-items: center; gap: 4px; }
+      .alert-pill { padding: 4px 5px; border-radius: 7px; background: var(--amber-tint); color: var(--amber); font-size: 7px; font-weight: 850; }
+      .chevron { color: var(--ink-faint); font-size: 12px; }
+
+      .details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 10px 0 1px 45px;
+      }
+      .detail-column { padding: 9px; border-radius: 12px; background: var(--surface-soft); }
+      .detail-provider { margin-bottom: 7px; color: var(--blue); font-size: 8px; font-weight: 850; }
+      .detail-column:last-child .detail-provider { color: var(--green); }
+      .detail-line { display: flex; justify-content: space-between; gap: 4px; padding: 3px 0; color: var(--ink-soft); font-size: 8px; }
+      .detail-line strong { color: var(--ink); font-size: 8px; font-weight: 750; }
+
+      .updated {
+        margin: 11px 0 0;
+        color: var(--ink-faint);
+        font-size: 8px;
+        text-align: center;
+      }
+
+      .settings-header { padding: 7px 2px 19px; }
+      .backline { display: flex; align-items: center; gap: 10px; }
+      .back-button {
+        display: grid;
+        width: 33px;
+        height: 33px;
+        place-items: center;
+        border-radius: 11px;
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: var(--card-shadow);
+        font-size: 17px;
+      }
+      .settings-title { font-size: 20px; font-weight: 820; letter-spacing: -.04em; }
+      .settings-subtitle { margin: 7px 0 0 43px; color: var(--ink-soft); font-size: 10px; }
+
+      .settings-section { margin-top: 17px; }
+      .settings-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 0 3px 8px;
+        color: var(--ink-faint);
+        font-size: 9px;
+        font-weight: 850;
+        letter-spacing: .12em;
+      }
+      .enabled {
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: var(--green-tint);
+        color: var(--green);
+        font-size: 8px;
+        letter-spacing: 0;
+      }
+      .settings-card {
+        overflow: hidden;
+        border-radius: 16px;
+        background: var(--surface);
+        box-shadow: var(--card-shadow);
+      }
+      .setting-row {
+        display: flex;
+        min-height: 54px;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+      }
+      .setting-row + .setting-row { border-top: 1px solid var(--line); }
+      .setting-icon {
+        display: grid;
+        width: 29px;
+        height: 29px;
+        flex: none;
+        place-items: center;
+        border-radius: 10px;
+        background: var(--blue-tint);
+        color: var(--blue);
+        font-size: 13px;
+      }
+      .setting-text { min-width: 0; flex: 1; }
+      .setting-name { font-size: 10px; font-weight: 750; }
+      .setting-description { margin-top: 3px; color: var(--ink-faint); font-size: 8px; }
+      .setting-value { color: var(--ink-soft); font-size: 9px; font-weight: 700; white-space: nowrap; }
+      .row-chevron { margin-left: 1px; color: var(--ink-faint); font-size: 15px; }
+      .switch {
+        width: 34px;
+        height: 20px;
+        padding: 3px;
+        border-radius: 999px;
+        background: var(--blue);
+      }
+      .switch::after {
+        content: "";
+        display: block;
+        width: 14px;
+        height: 14px;
+        margin-left: auto;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
+      }
+      .time-range { display: flex; align-items: center; gap: 6px; }
+      .time-chip {
+        padding: 6px 8px;
+        border-radius: 8px;
+        background: var(--surface-soft);
+        color: var(--ink);
+        font-size: 9px;
+        font-weight: 750;
+      }
+      .range-dash { color: var(--ink-faint); font-size: 9px; }
+
+      .save-button {
+        display: flex;
+        width: 100%;
+        min-height: 45px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 19px;
+        border: 0;
+        border-radius: 14px;
+        background: var(--blue);
+        color: #fff;
+        box-shadow: 0 7px 16px rgb(40 103 219 / 22%);
+        font-size: 11px;
+        font-weight: 800;
+      }
+      [data-theme="dark"] .save-button { color: #102039; }
+      .saved-note { margin-top: 8px; color: var(--green); font-size: 8px; text-align: center; }
+
+      .phone-home-indicator {
+        position: absolute;
+        bottom: 7px;
+        left: 50%;
+        width: 102px;
+        height: 4px;
+        transform: translateX(-50%);
+        border-radius: 99px;
+        background: var(--ink);
+        opacity: .78;
+      }
+
+      .concept-note {
+        max-width: 810px;
+        margin: 22px auto 0;
+        color: var(--ink-faint);
+        font-size: 10px;
+        line-height: 1.6;
+        text-align: center;
+      }
+
+      @media (max-width: 760px) {
+        .page { padding: 30px 16px 38px; }
+        .intro { align-items: flex-start; }
+        .intro-copy { max-width: 330px; }
+        .screens { grid-template-columns: minmax(0, 390px); gap: 22px; }
+        .phone { min-height: 805px; }
+        .theme-toggle { padding: 10px 12px; font-size: 0; }
+        .theme-toggle span { font-size: 16px; }
+      }
+    </style>
+  </head>
+  <body data-theme="light">
+    <main class="page">
+      <header class="intro">
+        <div>
+          <p class="eyebrow">MeteoCompare · concept 2026</p>
+          <h1>Previsioni, a confronto.</h1>
+          <p class="intro-copy">Un’anteprima della nuova Home e delle Impostazioni: più leggibili, curate e pensate per far emergere ciò che conta.</p>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Attiva tema scuro">
+          <span id="theme-icon">☾</span><span id="theme-label">Anteprima scura</span>
+        </button>
+      </header>
+
+      <section class="screens" aria-label="Anteprima delle schermate">
+        <div class="screen-column">
+          <h2 class="screen-label"><span>01</span> Home · confronto orario</h2>
+          <article class="phone" aria-label="Mockup schermata Home">
+            <div class="statusbar">
+              <span>9:41</span>
+              <span class="status-icons"><span class="signal">▂▄▆</span><span class="wifi">◔</span><span class="battery"></span></span>
+            </div>
+            <header class="appbar">
+              <div class="brand">
+                <div class="brand-mark">☼</div>
+                <div><div class="brand-name">MeteoCompare</div><div class="brand-caption">Due fonti. Una vista chiara.</div></div>
+              </div>
+              <div class="app-actions">
+                <div class="icon-button" aria-label="Aggiorna">↻</div>
+                <div class="icon-button" aria-label="Impostazioni">⚙</div>
+              </div>
+            </header>
+
+            <div class="screen-content">
+              <div class="search"><span class="search-icon">⌕</span><span>Cerca una località</span><span style="margin-left:auto;font-size:9px">⌄</span></div>
+              <p class="recent"><strong>Recenti</strong> &nbsp; Torino &nbsp; Bologna &nbsp; Firenze</p>
+
+              <nav class="days" aria-label="Giorni previsione">
+                <div class="day active">Oggi<small>Lun 12</small></div>
+                <div class="day">Mar<small>13 ott</small></div>
+                <div class="day">Mer<small>14 ott</small></div>
+                <div class="day">Gio<small>15 ott</small></div>
+                <div class="day">Ven<small>16 ott</small></div>
+              </nav>
+
+              <div class="cityline">
+                <div>
+                  <div class="city-overline">LA TUA LOCALITÀ</div>
+                  <div class="city-name">Milano</div>
+                  <div class="today-label">Oggi · Lunedì 12 ottobre</div>
+                </div>
+                <div class="current-weather"><span class="sun-symbol">⛅</span><span class="temp">19°</span></div>
+              </div>
+
+              <div class="summary">
+                <div class="summary-icon">↗</div>
+                <div class="summary-copy"><div class="summary-title">Il confronto di oggi</div><div class="summary-subtitle">Previsioni simili, con alcune differenze.</div></div>
+                <div class="summary-count">2 da notare</div>
+              </div>
+
+              <div class="section-heading"><div class="section-title">Previsioni orarie</div><div class="section-meta">Tocca un’ora per i dettagli</div></div>
+
+              <div class="forecast-card">
+                <div class="forecast-row">
+                  <div class="hourline">
+                    <div class="hour">08:00</div>
+                    <div class="provider-columns">
+                      <div class="provider ilm"><div class="provider-name"><span class="provider-dot"></span>iLMeteo</div><div class="provider-value"><span>☁️</span> 16°</div></div>
+                      <div class="provider bm"><div class="provider-name"><span class="provider-dot"></span>3BMeteo</div><div class="provider-value"><span>🌦</span> 14°</div></div>
+                    </div>
+                    <div class="row-trailing"><span class="alert-pill">DIFF.</span><span class="chevron">⌃</span></div>
+                  </div>
+                  <div class="details">
+                    <div class="detail-column">
+                      <div class="detail-provider">iLMETEO</div>
+                      <div class="detail-line"><span>Condizioni</span><strong>Nuvoloso</strong></div>
+                      <div class="detail-line"><span>Vento</span><strong>8 km/h</strong></div>
+                      <div class="detail-line"><span>Umidità</span><strong>72%</strong></div>
+                      <div class="detail-line"><span>Pioggia</span><strong>20% · 0 mm</strong></div>
+                    </div>
+                    <div class="detail-column">
+                      <div class="detail-provider">3BMETEO</div>
+                      <div class="detail-line"><span>Condizioni</span><strong>Pioggia debole</strong></div>
+                      <div class="detail-line"><span>Vento</span><strong>11 km/h</strong></div>
+                      <div class="detail-line"><span>Umidità</span><strong>84%</strong></div>
+                      <div class="detail-line"><span>Pioggia</span><strong>55% · 1 mm</strong></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="forecast-row">
+                  <div class="hourline">
+                    <div class="hour">09:00</div>
+                    <div class="provider-columns">
+                      <div class="provider ilm"><div class="provider-name"><span class="provider-dot"></span>iLMeteo</div><div class="provider-value"><span>⛅</span> 18°</div></div>
+                      <div class="provider bm"><div class="provider-name"><span class="provider-dot"></span>3BMeteo</div><div class="provider-value"><span>⛅</span> 17°</div></div>
+                    </div>
+                    <div class="row-trailing"><span style="height:15px"></span><span class="chevron">⌄</span></div>
+                  </div>
+                </div>
+
+                <div class="forecast-row">
+                  <div class="hourline">
+                    <div class="hour">10:00</div>
+                    <div class="provider-columns">
+                      <div class="provider ilm"><div class="provider-name"><span class="provider-dot"></span>iLMeteo</div><div class="provider-value"><span>☀️</span> 20°</div></div>
+                      <div class="provider bm"><div class="provider-name"><span class="provider-dot"></span>3BMeteo</div><div class="provider-value"><span>🌤</span> 19°</div></div>
+                    </div>
+                    <div class="row-trailing"><span style="height:15px"></span><span class="chevron">⌄</span></div>
+                  </div>
+                </div>
+
+                <div class="forecast-row">
+                  <div class="hourline">
+                    <div class="hour">11:00</div>
+                    <div class="provider-columns">
+                      <div class="provider ilm"><div class="provider-name"><span class="provider-dot"></span>iLMeteo</div><div class="provider-value"><span>☀️</span> 21°</div></div>
+                      <div class="provider bm"><div class="provider-name"><span class="provider-dot"></span>3BMeteo</div><div class="provider-value"><span>☀️</span> 21°</div></div>
+                    </div>
+                    <div class="row-trailing"><span style="height:15px"></span><span class="chevron">⌄</span></div>
+                  </div>
+                </div>
+              </div>
+              <p class="updated">Dati dimostrativi · aggiornati alle 07:42</p>
+            </div>
+            <div class="phone-home-indicator"></div>
+          </article>
+        </div>
+
+        <div class="screen-column">
+          <h2 class="screen-label"><span>02</span> Impostazioni · preferenze</h2>
+          <article class="phone" aria-label="Mockup schermata Impostazioni">
+            <div class="statusbar">
+              <span>9:41</span>
+              <span class="status-icons"><span class="signal">▂▄▆</span><span class="wifi">◔</span><span class="battery"></span></span>
+            </div>
+            <div class="screen-content">
+              <header class="settings-header">
+                <div class="backline"><div class="back-button">‹</div><div class="settings-title">Impostazioni</div></div>
+                <p class="settings-subtitle">Personalizza località e avvisi meteo.</p>
+              </header>
+
+              <section class="settings-section">
+                <h3 class="settings-label">LOCALITÀ</h3>
+                <div class="settings-card">
+                  <div class="setting-row">
+                    <div class="setting-icon">⌖</div>
+                    <div class="setting-text"><div class="setting-name">Località preferita</div><div class="setting-description">Usata per previsioni e notifiche</div></div>
+                    <div class="setting-value">Milano</div><div class="row-chevron">›</div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="settings-section">
+                <h3 class="settings-label">NOTIFICHE METEO <span class="enabled">ATTIVE</span></h3>
+                <div class="settings-card">
+                  <div class="setting-row">
+                    <div class="setting-icon">♧</div>
+                    <div class="setting-text"><div class="setting-name">Avvisi pioggia</div><div class="setting-description">Notifiche per pioggia significativa</div></div>
+                    <div class="switch" aria-label="Notifiche attive"></div>
+                  </div>
+                  <div class="setting-row">
+                    <div class="setting-icon">◷</div>
+                    <div class="setting-text"><div class="setting-name">Frequenza</div><div class="setting-description">Quando vuoi ricevere gli avvisi</div></div>
+                    <div class="setting-value">Quotidiana</div><div class="row-chevron">›</div>
+                  </div>
+                  <div class="setting-row">
+                    <div class="setting-icon">▦</div>
+                    <div class="setting-text"><div class="setting-name">Calendario</div><div class="setting-description">Date selezionate</div></div>
+                    <div class="setting-value">Scegli date</div><div class="row-chevron">›</div>
+                  </div>
+                  <div class="setting-row">
+                    <div class="setting-icon">◷</div>
+                    <div class="setting-text"><div class="setting-name">Ora notifica</div><div class="setting-description">Promemoria del giorno prima</div></div>
+                    <div class="setting-value">20:00</div><div class="row-chevron">›</div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="settings-section">
+                <h3 class="settings-label">CRITERI METEO</h3>
+                <div class="settings-card">
+                  <div class="setting-row">
+                    <div class="setting-icon">☂</div>
+                    <div class="setting-text"><div class="setting-name">Probabilità minima</div></div>
+                    <div class="setting-value">60%</div><div class="row-chevron">›</div>
+                  </div>
+                  <div class="setting-row">
+                    <div class="setting-icon">⌁</div>
+                    <div class="setting-text"><div class="setting-name">Accumulo minimo</div></div>
+                    <div class="setting-value">3 mm</div><div class="row-chevron">›</div>
+                  </div>
+                  <div class="setting-row">
+                    <div class="setting-icon">◉</div>
+                    <div class="setting-text"><div class="setting-name">Fonte notifica</div><div class="setting-description">Criterio prudenziale tra i provider</div></div>
+                    <div class="setting-value">Più prudente</div><div class="row-chevron">›</div>
+                  </div>
+                  <div class="setting-row">
+                    <div class="setting-icon">◷</div>
+                    <div class="setting-text"><div class="setting-name">Ore critiche</div><div class="setting-description">Fascia da monitorare</div></div>
+                    <div class="time-range"><span class="time-chip">07:00</span><span class="range-dash">—</span><span class="time-chip">20:00</span></div>
+                  </div>
+                </div>
+              </section>
+
+              <button class="save-button" type="button">✓ &nbsp; Salva impostazioni</button>
+              <div class="saved-note">Le preferenze verranno applicate agli avvisi futuri.</div>
+            </div>
+            <div class="phone-home-indicator"></div>
+          </article>
+        </div>
+      </section>
+      <p class="concept-note">Mockup statico a scopo di concept. I valori meteo sono dimostrativi; il selettore in alto alterna il tema chiaro e scuro per mostrare il sistema colori proposto.</p>
+    </main>
+
+    <script>
+      const page = document.body;
+      const toggle = document.getElementById("theme-toggle");
+      const icon = document.getElementById("theme-icon");
+      const label = document.getElementById("theme-label");
+
+      toggle.addEventListener("click", () => {
+        const isDark = page.dataset.theme !== "dark";
+        page.dataset.theme = isDark ? "dark" : "light";
+        icon.textContent = isDark ? "☀" : "☾";
+        label.textContent = isDark ? "Anteprima chiara" : "Anteprima scura";
+        toggle.setAttribute("aria-label", isDark ? "Attiva tema chiaro" : "Attiva tema scuro");
+      });
+    </script>
+  </body>
+</html>

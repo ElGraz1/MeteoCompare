@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>MeteoCompare — concept splash e icona</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --page: #edf2f8;
+        --surface: #fff;
+        --ink: #15243a;
+        --muted: #65748a;
+        --line: #e3eaf3;
+        --blue: #2867db;
+        --blue-soft: #e7f0ff;
+        --card-shadow: 0 18px 50px rgb(30 49 77 / 9%);
+      }
+
+      [data-theme="dark"] {
+        color-scheme: dark;
+        --page: #0d1420;
+        --surface: #182437;
+        --ink: #f0f5fd;
+        --muted: #a7b5c9;
+        --line: #28374c;
+        --blue: #82b2ff;
+        --blue-soft: #1c3558;
+        --card-shadow: 0 18px 50px rgb(0 0 0 / 22%);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(ellipse at 50% -12%, rgb(103 158 255 / 17%), transparent 42%),
+          var(--page);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        transition: background-color 180ms ease, color 180ms ease;
+      }
+
+      button { font: inherit; }
+
+      .page {
+        width: min(1080px, 100%);
+        margin: 0 auto;
+        padding: 48px 26px 56px;
+      }
+
+      .intro {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin: 0 auto 30px;
+        max-width: 900px;
+      }
+
+      .eyebrow {
+        margin: 0 0 9px;
+        color: var(--blue);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .15em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(27px, 4vw, 38px);
+        letter-spacing: -.045em;
+        line-height: 1.08;
+      }
+
+      .intro-copy {
+        margin: 10px 0 0;
+        max-width: 560px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .theme-toggle {
+        flex: none;
+        padding: 10px 15px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: var(--card-shadow);
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(280px, 390px) minmax(340px, 460px);
+        align-items: start;
+        justify-content: center;
+        gap: clamp(24px, 5vw, 58px);
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0 0 12px 4px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 850;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+      }
+
+      .section-title span {
+        display: grid;
+        width: 22px;
+        height: 22px;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-size: 12px;
+      }
+
+      .phone {
+        overflow: hidden;
+        position: relative;
+        aspect-ratio: 9 / 18.8;
+        padding: 13px;
+        border: 1px solid rgb(255 255 255 / 58%);
+        border-radius: 39px;
+        background: #dce5f1;
+        box-shadow: 0 28px 70px rgb(20 35 55 / 20%), 0 3px 9px rgb(20 35 55 / 8%);
+      }
+
+      .phone::before {
+        position: absolute;
+        z-index: 2;
+        top: 19px;
+        left: 50%;
+        width: 76px;
+        height: 20px;
+        border-radius: 20px;
+        background: #101a2b;
+        content: "";
+        transform: translateX(-50%);
+      }
+
+      .splash {
+        display: flex;
+        position: relative;
+        height: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 29px;
+        background:
+          radial-gradient(ellipse at 50% 39%, rgb(107 165 255 / 26%), transparent 38%),
+          radial-gradient(ellipse at 12% 4%, rgb(89 139 237 / 22%), transparent 43%),
+          linear-gradient(155deg, #162943 2%, #102039 51%, #0d192d 100%);
+        color: #f5f8ff;
+        text-align: center;
+      }
+
+      .splash::before,
+      .splash::after {
+        position: absolute;
+        width: 270px;
+        height: 270px;
+        border: 1px solid rgb(185 211 255 / 8%);
+        border-radius: 50%;
+        content: "";
+      }
+
+      .splash::before { top: 25%; left: -160px; }
+      .splash::after { right: -178px; bottom: 16%; width: 320px; height: 320px; }
+
+      .splash-center {
+        z-index: 1;
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        padding: 24px;
+        transform: translateY(-9px);
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 106px;
+        height: 106px;
+        place-items: center;
+        border: 1px solid rgb(255 255 255 / 30%);
+        border-radius: 32px;
+        background: linear-gradient(145deg, #4385f4, #2463d1 72%, #1f58be);
+        box-shadow: 0 18px 46px rgb(24 82 177 / 42%), inset 0 1px 0 rgb(255 255 255 / 34%);
+      }
+
+      .brand-mark svg { width: 80px; height: 80px; }
+
+      .wordmark {
+        margin: 25px 0 0;
+        font-size: 25px;
+        font-weight: 760;
+        letter-spacing: -.045em;
+      }
+
+      .tagline {
+        margin: 8px 0 0;
+        color: #b5c5de;
+        font-size: 13px;
+        letter-spacing: .015em;
+      }
+
+      .splash-bottom {
+        position: absolute;
+        bottom: 38px;
+        color: #8195b2;
+        font-size: 10px;
+        font-weight: 650;
+        letter-spacing: .17em;
+        text-transform: uppercase;
+      }
+
+      .home-indicator {
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        width: 98px;
+        height: 4px;
+        border-radius: 4px;
+        background: rgb(255 255 255 / 65%);
+        transform: translateX(-50%);
+      }
+
+      .icon-panel {
+        padding: 23px;
+        border: 1px solid var(--line);
+        border-radius: 27px;
+        background: var(--surface);
+        box-shadow: var(--card-shadow);
+      }
+
+      .icon-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .icon-card {
+        display: flex;
+        min-height: 205px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 17px 12px 13px;
+        border: 1px solid var(--line);
+        border-radius: 19px;
+        background: color-mix(in srgb, var(--surface) 75%, var(--page));
+        text-align: center;
+      }
+
+      .icon-card.wide {
+        min-height: 179px;
+        grid-column: 1 / -1;
+      }
+
+      .app-icon {
+        display: grid;
+        width: 112px;
+        height: 112px;
+        place-items: center;
+        overflow: hidden;
+        border-radius: 26px;
+        background: linear-gradient(145deg, #4385f4, #2463d1 72%, #1f58be);
+        box-shadow: 0 12px 26px rgb(35 94 196 / 25%), inset 0 1px 0 rgb(255 255 255 / 28%);
+      }
+
+      .app-icon svg { width: 88px; height: 88px; }
+
+      .adaptive-demo {
+        display: grid;
+        width: 112px;
+        height: 112px;
+        place-items: center;
+        border-radius: 24px;
+        background: linear-gradient(145deg, #75aaff, #3b78e4);
+        box-shadow: 0 12px 26px rgb(35 94 196 / 22%);
+      }
+
+      .adaptive-demo .safe-zone {
+        display: grid;
+        width: 80px;
+        height: 80px;
+        place-items: center;
+      }
+
+      .adaptive-demo svg { width: 80px; height: 80px; }
+
+      .mono-icon {
+        display: grid;
+        width: 112px;
+        height: 112px;
+        place-items: center;
+        border-radius: 26px;
+        background: #17263c;
+        box-shadow: 0 12px 26px rgb(20 35 55 / 20%);
+      }
+
+      .mono-icon svg { width: 84px; height: 84px; }
+
+      .icon-label {
+        margin: 13px 0 0;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .icon-caption {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 10px;
+        line-height: 1.45;
+      }
+
+      .design-notes {
+        display: grid;
+        gap: 10px;
+        margin-top: 17px;
+        padding: 15px 16px;
+        border-radius: 17px;
+        background: var(--blue-soft);
+      }
+
+      .note {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
+      .note b { color: var(--ink); }
+      .note-mark { color: var(--blue); font-weight: 900; }
+
+      @media (max-width: 760px) {
+        .page { padding: 30px 17px 38px; }
+        .intro { align-items: flex-start; }
+        .theme-toggle { padding-inline: 11px; }
+        .layout { grid-template-columns: minmax(0, 400px); }
+        .icon-panel { padding: 17px; }
+      }
+
+      @media (max-width: 420px) {
+        .intro { flex-direction: column; gap: 14px; }
+        .phone { border-radius: 34px; }
+        .brand-mark { width: 94px; height: 94px; border-radius: 29px; }
+        .brand-mark svg { width: 72px; height: 72px; }
+        .wordmark { font-size: 23px; }
+      }
+    </style>
+  </head>
+  <body data-theme="light">
+    <main class="page">
+      <header class="intro">
+        <div>
+          <p class="eyebrow">MeteoCompare · identità visiva</p>
+          <h1>Splash screen e icona</h1>
+          <p class="intro-copy">
+            Un’identità essenziale, coerente con la nuova interfaccia: un cielo
+            profondo, il segno del meteo e due linee che richiamano il confronto
+            tra provider.
+          </p>
+        </div>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">
+          ◐&nbsp; Anteprima scura
+        </button>
+      </header>
+
+      <div class="layout">
+        <section aria-labelledby="splashTitle">
+          <h2 class="section-title" id="splashTitle"><span>1</span> Splash screen</h2>
+          <div class="phone">
+            <div class="splash">
+              <div class="splash-center">
+                <div class="brand-mark">
+                  <svg viewBox="0 0 100 100" role="img" aria-label="Sole, nuvola e confronto">
+                    <circle cx="65" cy="30" r="14" fill="#ffd36c"/>
+                    <g stroke="#ffd36c" stroke-linecap="round" stroke-width="3.4">
+                      <path d="M65 8v6M65 46v6M43 30h6M81 30h6M49.5 14.5l4.2 4.2M76.3 41.3l4.2 4.2M80.5 14.5l-4.2 4.2"/>
+                    </g>
+                    <path d="M25 55.5c0-8.1 6.6-14.7 14.7-14.7 5.4 0 10.2 2.9 12.7 7.3a13.7 13.7 0 0 1 24.5 8.4c0 7.6-6.1 13.7-13.7 13.7H39.8C31.6 70.2 25 63.6 25 55.5Z" fill="#f5f8ff"/>
+                    <path d="M34 80h32" stroke="#a9f0d7" stroke-linecap="round" stroke-width="4"/>
+                    <path d="M40 88h25" stroke="#dce8ff" stroke-linecap="round" stroke-width="4" opacity=".84"/>
+                    <circle cx="28" cy="80" r="2.7" fill="#a9f0d7"/>
+                    <circle cx="34" cy="88" r="2.7" fill="#dce8ff"/>
+                  </svg>
+                </div>
+                <p class="wordmark">MeteoCompare</p>
+                <p class="tagline">Due fonti. Una vista chiara.</p>
+              </div>
+              <span class="splash-bottom">Previsioni a confronto</span>
+              <span class="home-indicator" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="iconTitle">
+          <h2 class="section-title" id="iconTitle"><span>2</span> Icona app</h2>
+          <div class="icon-panel">
+            <div class="icon-grid">
+              <article class="icon-card">
+                <div class="app-icon">
+                  <svg viewBox="0 0 100 100" role="img" aria-label="Icona MeteoCompare">
+                    <circle cx="65" cy="30" r="14" fill="#ffd36c"/>
+                    <g stroke="#ffd36c" stroke-linecap="round" stroke-width="3.4">
+                      <path d="M65 8v6M65 46v6M43 30h6M81 30h6M49.5 14.5l4.2 4.2M76.3 41.3l4.2 4.2M80.5 14.5l-4.2 4.2"/>
+                    </g>
+                    <path d="M25 55.5c0-8.1 6.6-14.7 14.7-14.7 5.4 0 10.2 2.9 12.7 7.3a13.7 13.7 0 0 1 24.5 8.4c0 7.6-6.1 13.7-13.7 13.7H39.8C31.6 70.2 25 63.6 25 55.5Z" fill="#f5f8ff"/>
+                    <path d="M34 80h32" stroke="#a9f0d7" stroke-linecap="round" stroke-width="4"/>
+                    <path d="M40 88h25" stroke="#dce8ff" stroke-linecap="round" stroke-width="4" opacity=".84"/>
+                    <circle cx="28" cy="80" r="2.7" fill="#a9f0d7"/>
+                    <circle cx="34" cy="88" r="2.7" fill="#dce8ff"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="icon-label">iOS · icona app</p>
+                  <p class="icon-caption">Angoli arrotondati dal sistema</p>
+                </div>
+              </article>
+
+              <article class="icon-card">
+                <div class="adaptive-demo">
+                  <div class="safe-zone">
+                    <svg viewBox="0 0 100 100" role="img" aria-label="Livello foreground per icona Android adattiva">
+                      <circle cx="65" cy="30" r="14" fill="#ffd36c"/>
+                      <g stroke="#ffd36c" stroke-linecap="round" stroke-width="3.4">
+                        <path d="M65 8v6M65 46v6M43 30h6M81 30h6M49.5 14.5l4.2 4.2M76.3 41.3l4.2 4.2M80.5 14.5l-4.2 4.2"/>
+                      </g>
+                      <path d="M25 55.5c0-8.1 6.6-14.7 14.7-14.7 5.4 0 10.2 2.9 12.7 7.3a13.7 13.7 0 0 1 24.5 8.4c0 7.6-6.1 13.7-13.7 13.7H39.8C31.6 70.2 25 63.6 25 55.5Z" fill="#f5f8ff"/>
+                      <path d="M34 80h32" stroke="#a9f0d7" stroke-linecap="round" stroke-width="4"/>
+                      <path d="M40 88h25" stroke="#dce8ff" stroke-linecap="round" stroke-width="4" opacity=".84"/>
+                      <circle cx="28" cy="80" r="2.7" fill="#a9f0d7"/>
+                      <circle cx="34" cy="88" r="2.7" fill="#dce8ff"/>
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <p class="icon-label">Android · adattiva</p>
+                  <p class="icon-caption">Simulazione area sicura centrale</p>
+                </div>
+              </article>
+
+              <article class="icon-card wide">
+                <div class="mono-icon">
+                  <svg viewBox="0 0 100 100" role="img" aria-label="Versione monocromatica per icona Android">
+                    <circle cx="65" cy="30" r="14" fill="#fff"/>
+                    <g stroke="#fff" stroke-linecap="round" stroke-width="3.4">
+                      <path d="M65 8v6M65 46v6M43 30h6M81 30h6M49.5 14.5l4.2 4.2M76.3 41.3l4.2 4.2M80.5 14.5l-4.2 4.2"/>
+                    </g>
+                    <path d="M25 55.5c0-8.1 6.6-14.7 14.7-14.7 5.4 0 10.2 2.9 12.7 7.3a13.7 13.7 0 0 1 24.5 8.4c0 7.6-6.1 13.7-13.7 13.7H39.8C31.6 70.2 25 63.6 25 55.5Z" fill="#fff"/>
+                    <path d="M34 80h32M40 88h25" stroke="#fff" stroke-linecap="round" stroke-width="4"/>
+                    <circle cx="28" cy="80" r="2.7" fill="#fff"/>
+                    <circle cx="34" cy="88" r="2.7" fill="#fff"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="icon-label">Android · tematizzata</p>
+                  <p class="icon-caption">Glifo monocromatico per icone a tema</p>
+                </div>
+              </article>
+            </div>
+
+            <div class="design-notes">
+              <div class="note"><span class="note-mark">✦</span><span><b>Un solo simbolo:</b> sole e nuvola identificano il meteo; le due tracce sotto suggeriscono il confronto.</span></div>
+              <div class="note"><span class="note-mark">✦</span><span><b>Colori coordinati:</b> blu del brand, luce calda e accento menta riprendono il design system.</span></div>
+              <div class="note"><span class="note-mark">✦</span><span><b>Splash essenziale:</b> marchio, nome e payoff su uno sfondo notte blu, senza animazioni o contenuti aggiuntivi.</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const toggle = document.getElementById("themeToggle");
+      toggle.addEventListener("click", () => {
+        const dark = document.body.dataset.theme !== "dark";
+        document.body.dataset.theme = dark ? "dark" : "light";
+        toggle.setAttribute("aria-pressed", String(dark));
+        toggle.innerHTML = dark ? "☀&nbsp; Anteprima chiara" : "◐&nbsp; Anteprima scura";
+      });
+    </script>
+  </body>
+</html>
